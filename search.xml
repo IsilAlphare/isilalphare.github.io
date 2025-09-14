@@ -4,6 +4,64 @@
   
     
     <entry>
+      <title>博客搭建（二） 草稿和多设备管理</title>
+      <link href="/2025/09/14/%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA(2)/"/>
+      <url>/2025/09/14/%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA(2)/</url>
+      
+        <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\css\APlayer.min.css"><script src="\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="\js\Meting.min.js"></script><h1 id="草稿功能"><a href="#草稿功能" class="headerlink" title="草稿功能"></a>草稿功能</h1><p>在写博客时，我们经常会有多篇文章同时在创作，但只想发布已经完成的。</p><p>直接用 <code>git</code> 来选择推送哪个文件是行不通的，因为 Hexo 的工作流程是：<code>hexo generate</code> 命令会处理 <code>source</code> 目录下的<strong>所有</strong>符合条件的文件，生成整个网站，然后 <code>hexo deploy</code> 会将这个<strong>完整的网站</strong>推送到服务器。</p><p>因此，我们的目标不是选择推送哪个文件，而是<strong>控制 <code>hexo generate</code> 命令处理哪些文章</strong>。</p><p>下面介绍两种常用方式，都是基于hexo的原生功能，即草稿（draft）和未来发布</p><h3 id="方法一：使用-Hexo-的草稿（Draft）功能（官方推荐）"><a href="#方法一：使用-Hexo-的草稿（Draft）功能（官方推荐）" class="headerlink" title="方法一：使用 Hexo 的草稿（Draft）功能（官方推荐）"></a>方法一：使用 Hexo 的草稿（Draft）功能（官方推荐）</h3><p>这是 Hexo 专门为此设计的标准工作流程，也是最清晰的方法。</p><h4 id="工作原理"><a href="#工作原理" class="headerlink" title="工作原理"></a>工作原理</h4><p>Hexo 有一个特殊的文件夹 <code>source/_drafts</code>。放在这个文件夹里的任何 Markdown 文件都不会在默认的 <code>hexo generate</code> 中被处理成公开的文章。</p><h4 id="操作步骤"><a href="#操作步骤" class="headerlink" title="操作步骤"></a>操作步骤</h4><ol><li><p><strong>创建一篇草稿</strong>： </p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo new draft <span class="string">&quot;我还没写好的文章&quot;</span></span><br></pre></td></tr></table></figure><p>执行后，Hexo 会在 <code>source/_drafts</code> 文件夹下创建一个名为 <code>我还没写好的文章.md</code> 的文件，而不是在 <code>_posts</code> 文件夹里。</p></li><li><p><strong>在本地预览草稿</strong>： 默认情况下，<code>hexo server</code> 是看不到草稿的。如果想在本地预览，需要加上 <code>--drafts</code> 参数：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo server --drafts</span><br></pre></td></tr></table></figure><p>这样，就可以在 <code>localhost:4000</code> 看到包括草稿在内的所有文章了，它们不会被发布。</p></li><li><p><strong>发布草稿</strong>： 当您的文章写完，准备发布时，使用 <code>publish</code> 命令。</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo publish post <span class="string">&quot;我还没写好的文章&quot;</span></span><br></pre></td></tr></table></figure><p>这个命令会做两件事：</p><ul><li>将 <code>我还没写好的文章.md</code> 文件从 <code>source/_drafts</code> <strong>移动到</strong> <code>source/_posts</code> 文件夹。</li><li>自动为文件的 Front-matter 里的 <code>date</code> 字段填上当前的发布日期。</li></ul></li></ol><p>现在，这篇文章就在 <code>_posts</code> 文件夹里了，下次您运行 <code>hexo generate</code> 和 <code>hexo deploy</code> 时，它就会被正常发布。</p><h3 id="方法二：利用-Front-matter-设置文章为“草稿”或“隐藏”"><a href="#方法二：利用-Front-matter-设置文章为“草稿”或“隐藏”" class="headerlink" title="方法二：利用 Front-matter 设置文章为“草稿”或“隐藏”"></a>方法二：利用 Front-matter 设置文章为“草稿”或“隐藏”</h3><p>如果不想移动文件，希望所有文章都留在 <code>_posts</code> 文件夹里统一管理，可以通过修改文章头部的 Front-matter 来实现。</p><h4 id="工作原理-1"><a href="#工作原理-1" class="headerlink" title="工作原理"></a>工作原理</h4><p>在文章的 Front-matter 中添加一个 <code>published: false</code> 或者 <code>draft: true</code> 的字段，然后在 Hexo 的主配置文件中告诉 Hexo 忽略带有这些字段的文章。</p><p><strong>不过，更简单且无需修改配置的方法是利用 <code>date</code> 字段。</strong> Hexo 默认不会生成发布日期在未来的文章。</p><h4 id="操作步骤-1"><a href="#操作步骤-1" class="headerlink" title="操作步骤"></a>操作步骤</h4><ol><li><p><strong>设置一个未来的日期</strong>： 对于不想发布的文章，只需将其 Front-matter 中的 <code>date</code> 设置为一个未来的时间。</p><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">title:</span> <span class="string">一篇暂时不想发布的文章</span></span><br><span class="line"><span class="attr">date:</span> <span class="number">2099-12-31 23:59:59</span> <span class="comment"># 设置一个非常遥远的未来日期</span></span><br><span class="line"><span class="attr">tags:</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="string">这里是文章内容...</span></span><br></pre></td></tr></table></figure></li><li><p><strong>正常生成和部署</strong>： 现在，当您运行 <code>hexo generate</code> 时，Hexo 会自动跳过这篇日期在未来的文章。您可以放心地 <code>hexo deploy</code>，它不会出现在您的线上博客里。</p></li><li><p><strong>在本地预览未来文章</strong>： 如果您想在本地预览这些设置了未来日期的文章，可以使用 <code>--future</code> 参数：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo server --future</span><br></pre></td></tr></table></figure></li><li><p><strong>准备发布</strong>： 当想发布这篇文章时，只需将 <code>date</code> 修改为当前的日期和时间，然后重新生成和部署即可。</p></li></ol><h1 id="多设备管理"><a href="#多设备管理" class="headerlink" title="多设备管理"></a>多设备管理</h1><p>有的时候我们会出现在多台设备上管理博客的情况，比如我用工作电脑摸鱼的时候，也想搞搞博客。这个时候，只将github.io结尾的那个项目clone下来是不够的–会丢失大量信息。应该用的方法是：</p><h3 id="为源文件建立一个独立的-Git-仓库"><a href="#为源文件建立一个独立的-Git-仓库" class="headerlink" title="为源文件建立一个独立的 Git 仓库"></a><strong>为源文件建立一个独立的 Git 仓库</strong></h3><p>将博客<strong>源文件</strong>（即 <code>my-blog-source</code> 整个文件夹）也用 Git 管理起来，并推送到一个<strong>新的、独立的</strong> GitHub 仓库（例如，创建一个私有仓库叫 <code>blog-source</code>）。</p><ol><li><p>在 GitHub 上创建一个新的仓库（比如 <code>blog-source</code>）。</p></li><li><p>在 <code>my-blog-source</code> 文件夹下，执行：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">git init</span><br><span class="line">git add .</span><br><span class="line">git commit -m <span class="string">&quot;Initial commit of my blog source&quot;</span></span><br><span class="line">git branch -M main</span><br><span class="line">git remote add origin https://github.com/your-username/blog-source.git</span><br><span class="line">git push -u origin main</span><br></pre></td></tr></table></figure></li></ol><p>这样，就拥有了两个仓库啦：</p><ul><li><code>blog-source</code>：这个是存放 Markdown 文章、配置文件、主题等<strong>源文件</strong>的，用于博客管理的全套信息。</li><li><code>your-username.github.io</code>：存放由 <code>hexo deploy</code> 推送的<strong>已发布的网站文件</strong>。</li></ul><p>以后换任何电脑，只需要 <code>git clone</code> 你的 <code>blog-source</code> 仓库，运行 <code>npm install</code>，就可以立刻恢复完整的写作环境啦。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> blog </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> tech </tag>
+            
+            <tag> 兴趣 </tag>
+            
+            <tag> 博客 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>博客搭建（一） 初始化</title>
+      <link href="/2025/09/14/%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/"/>
+      <url>/2025/09/14/%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/</url>
+      
+        <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\css\APlayer.min.css"><script src="\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="\js\Meting.min.js"></script><blockquote><p>最近收到了阿里云的域名续费通知，发现这个心血来潮网站也快一年了。本意是想分享一些生活和技术相关的东西，但并未勤快地更新（特别是技术相关）。<br>那么，就先从本博客的搭建开始说起吧~</p></blockquote><h2 id="域名"><a href="#域名" class="headerlink" title="域名"></a>域名</h2><p>在阿里云的万网上买的，有一个第一年1元的活动。不同的域名价格不一样，比如com, cn这些会很贵，cc, top这种就会便宜一点。</p><p>比如我选择的域名：starrydome.top</p><p>关于网站搭建的博客，可以参考这篇：</p><h2 id="初步搭建"><a href="#初步搭建" class="headerlink" title="初步搭建"></a>初步搭建</h2><p>我选择的是新手小白都喜欢用的简单且花里胡哨的框架hexo,并配合butterfly进行主题化。因为是中文母语开发者的原因，社区和文档也非常易懂。</p><ul><li>购买域名，部署博客托管在github Pages站点，然后再解析到个人域名，可以参考这一篇：</li><li><a href="https://zhuanlan.zhihu.com/p/102592286"> 从零开始搭建个人博客（超详细） - 知乎</a></li></ul><p><a href="https://zhuanlan.zhihu.com/p/404320856"> 零基础使用hexo搭建butterfly主题的博客 - 知乎</a></p><ul><li>我使用的主题样式 – butterfly官方的gitee项目页：</li></ul><p><a href="https://gitee.com/immyw/hexo-theme-butterfly">hexo-theme-butterfly: 🦋 A Hexo Theme: Butterfly (gitee.com)</a></p><ul><li>使用方法在官方文档里事无巨细，比如主题配置相关：</li></ul><p><a href="https://butterfly.js.org/posts/dc584b87/">Butterfly 文檔(二) 主題頁面 | Butterfly</a></p><ul><li>在非管理员模式下执行脚本的方法可参考这篇：（其他的也适用）<br><a href=""><code>https://blog.csdn.net/JONE_WUQINGJIANG/article/details/103044919</code></a></li></ul><p>​另，文中gitee的下载镜像已经失效。github的命令为：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> -b master https://github.com/jerryc127/hexo-theme-butterfly.git themes/butterfly</span><br></pre></td></tr></table></figure><h3 id="可能的问题"><a href="#可能的问题" class="headerlink" title="可能的问题"></a>可能的问题</h3><p>网站打不开可能是没有认证完全的原因<br> 查看域名信息，看看是否认证完了（实名制 邮箱等）</p><h2 id="🌟网页更新和部署"><a href="#🌟网页更新和部署" class="headerlink" title="🌟网页更新和部署"></a>🌟网页更新和部署</h2><p>怎么写文章呢？hello-world.md里面其实就说了<br>Create a new post</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure><p>更新完一个页面后，三条命令</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hexo g //生成静态页面</span><br><span class="line">hexo s //在4000端口查看当前页面</span><br><span class="line">hexo d //将当前更改部署到网页上</span><br></pre></td></tr></table></figure><h3 id="可能的问题-1"><a href="#可能的问题-1" class="headerlink" title="可能的问题"></a>可能的问题</h3><h4 id="hexo明明安装了却无法使用命令的问题"><a href="#hexo明明安装了却无法使用命令的问题" class="headerlink" title="hexo明明安装了却无法使用命令的问题"></a>hexo明明安装了却无法使用命令的问题</h4><p>在确保node.js安装正常的情况下，在所有hexo命令前加上nxp即可</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmx hexo g</span><br></pre></td></tr></table></figure><h4 id="图片保存问题"><a href="#图片保存问题" class="headerlink" title="图片保存问题"></a>图片保存问题</h4><p>在本地保存的图片要想挂到网上会显示不了</p><p>第一种办法是在source下面创建一个文件夹 用相对路径。但是有的可以显示有的又不行，很烦</p><p>尽量不要使用相对路径&#x2F;本地路径</p><p>最好还是尽量采用<strong>全外链</strong>的方式</p><p><a href="https://sm.ms/">Image Upload - SM.MS - Simple Free Image Hosting</a></p><p>sm.ms是个图床上传网站，相当于个人的云图库。上传之后会自动生成外链，还有md格式，cv就好了</p><h4 id="本地部署和线上不一致的问题"><a href="#本地部署和线上不一致的问题" class="headerlink" title="本地部署和线上不一致的问题"></a>本地部署和线上不一致的问题</h4><ol><li>需要先<code>hexo clean</code>， 删除<strong>public文件夹（即hexo的缓存）</strong></li><li>然后重新<code>hexo g</code> <code>hexo d</code></li><li>打开域名网站后，记得<code>shft + f5</code>强制再刷新一次</li></ol><p>注意：图片什么的别放<code>public</code>里，这是缓存</p><p>想固定存放应该放<code>source/img</code>里 这样就不会每次清缓存都丢失</p><p>source&#x2F;img中的图片都是可以直接在文章中以&#x2F;img&#x2F;…来引用的</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> blog </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> tech </tag>
+            
+            <tag> 兴趣 </tag>
+            
+            <tag> 博客 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>《从月亮与六便士》看毛姆作品中的 “堕落怪人”</title>
       <link href="/2025/01/09/%E3%80%8A%E4%BB%8E%E6%9C%88%E4%BA%AE%E4%B8%8E%E5%85%AD%E4%BE%BF%E5%A3%AB%E3%80%8B%E7%9C%8B%E6%AF%9B%E5%A7%86%E4%BD%9C%E5%93%81%E4%B8%AD%E7%9A%84-%E2%80%9C%E5%A0%95%E8%90%BD%E6%80%AA%E4%BA%BA%E2%80%9D/"/>
       <url>/2025/01/09/%E3%80%8A%E4%BB%8E%E6%9C%88%E4%BA%AE%E4%B8%8E%E5%85%AD%E4%BE%BF%E5%A3%AB%E3%80%8B%E7%9C%8B%E6%AF%9B%E5%A7%86%E4%BD%9C%E5%93%81%E4%B8%AD%E7%9A%84-%E2%80%9C%E5%A0%95%E8%90%BD%E6%80%AA%E4%BA%BA%E2%80%9D/</url>
