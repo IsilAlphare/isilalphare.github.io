@@ -1,0 +1,83 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="关于 · Starry Dome" description="Isil Alphare 的个人空间：星空、代码与愚公移山。">
+  <section class="page-hero">
+    <p class="eyebrow">About Isil Alphare</p>
+    <h1>关于</h1>
+    <div class="quote-block">
+      <p>Elen síla lúmenn' omentielvo.</p>
+      <span>愿星光，洒在我们相逢的时刻。</span>
+    </div>
+  </section>
+
+  <section class="content-section">
+    <div class="about-grid">
+      <aside class="about-sidebar">
+        <div class="avatar-placeholder" aria-label="头像占位"></div>
+        <div class="sidebar-info">
+          <strong>Isil Alphare</strong>
+          <p>XiaoYu / Frontend Engineer</p>
+          <p style="margin-top: 12px; opacity: 0.7;">中山 · 南京 · 杭州</p>
+        </div>
+      </aside>
+
+      <div class="about-content">
+        <h2>蘇醒</h2>
+        <p>我是 Isil Alphare，你也可以唤我 XiaoYu。生于广东中山，求学七年落脚南京，如今在杭州，以一名前端工程师的身份，写下人生新的一页。</p>
+        
+        <p>星穹之名，自有其来处。在托尔金的《精灵宝钻》里，精灵们最初于星光下苏醒，徘徊在幽暗的森林与初生的海边 —— 那是世界尚未有太阳的年代，唯有星辰照亮万物。我爱这个意象，于是把自己的角落命名为 Starry Dome，一座藏于互联网深处的星穹，我的世界最初的样子。</p>
+
+        <h2>遙望</h2>
+        <p>我已仰望星空许久。我从十二岁起学习天文、观测星空，也曾参与过 2016 年全国中学生天文知识竞赛（CNAO）。此后循着暗夜去过许多地方：在潮州凤凰山沐浴壮丽的英仙座流星雨，料峭春寒中于盱眙与东台湿地上辨认三垣二十八宿，也曾奔赴丽江高美古与昆明天文台瞻仰那些精妙的机械。</p>
+        
+        <p>天地如此浩瀚美丽，人类是如此的渺小孤独，这让我欣喜，也让我痛苦。少年时的凝望让我逐渐漂浮抽离，与社会的联系愈发孱弱冰冷。</p>
+
+
+        <h2>錨點</h2>
+        <p>18 岁时开始的水利学习让我重新被重力捕获，落回地面。在港口航道与海岸工程专业修习的那些年，我在水、土、钢、砼之间，懂得了 “人定胜天” 的决心，明白了愚公移山的勇气意味着什么 —— 一群蚂蚁，也能撼动一整座森林。</p>
+        
+        <p>它给了我一种笃定：作为一个渺小的人类，我这双手也确实能改变些什么。不因为世界浩瀚、自然伟力而放弃希望，用愚公移山的方式去做，去改变，这种明了让我对抗并打败了曾经的迷茫与漂浮。这份笃定成为了我的锚，也成为了我未来人生灰色的地基。</p>
+        
+        <p>即使后来因现实的引力过于沉重，我选择转向了互联网与 AI 去追寻时代的浪潮，我也没有迷失 —— 我知道这一切都是时代狂欢的尾声，终会散场。而我之所是，从不由它们定义。</p>
+
+        <h2>玩心</h2>
+        <p>“你永远无法竞争过一个纯粹来玩的人”。所以我始终带着一些顽皮，留着一点抽离，身临其境地体验着发生的一切，也坦然为自己规划下一段旅程。技术当可靠、当有用，但它同样可以是美的 —— 好的设计不是装饰，而是让每一次交互都自然得像呼吸。</p>
+
+        <h2>塵間</h2>
+        <p>星与码之外，我也热爱一切形式的美。我弹了八年钢琴，写了八年毛笔字，至今仍常回到硬笔的纸上。我爱逛美术馆与博物馆，看音乐剧，也在二次元的世界中产生着感情和回忆 —— 《蔷薇少女》和《Gosick》是我美学的启蒙之一，《LoveLive!》的感动长存我心；闲时也会开一局《文明 6》或《星露谷物语》，照料或驰骋一方小小的天地。</p>
+        
+        <p>或许未来某天，我会重新回到校园，认真而系统地研读历史、宗教，以及其相关的一切。</p>
+        
+        <p style="margin-top: 64px; font-family: 'IBM Plex Serif', serif; font-style: italic;">在此之前，愿你在这片星穹下，与我一同仰望。</p>
+
+        <figure class="image-placeholder image-placeholder-original about-ending-image">
+          <img src="/starfall/starry-dome-painting.png" alt="星空下的人" loading="lazy" />
+          <figcaption>星空下的人</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  @media (max-width: 860px) {
+    .about-grid {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+    .about-sidebar {
+      position: static;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--crater);
+    }
+    .avatar-placeholder {
+      width: 120px;
+      margin-bottom: 0;
+    }
+  }
+</style>

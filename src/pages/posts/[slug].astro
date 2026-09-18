@@ -1,0 +1,37 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts');
+  return posts.map((post) => ({
+    params: { slug: post.data.slug },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const dateText = post.data.date.toLocaleDateString('zh-CN', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+---
+
+<BaseLayout title={`${post.data.title} · Starry Dome`} description={`${post.data.category}：${post.data.title}`}>
+  <article class="article-page migrated-post">
+    <header class="article-hero">
+      <a class="article-back" href="/posts/">← 回到文章</a>
+      <p class="eyebrow">{post.data.category} · {dateText}</p>
+      <h1>{post.data.title}</h1>
+      <div class="article-tags" aria-label="文章标签">
+        {post.data.tags.map((tag: string) => <span>{tag}</span>)}
+      </div>
+    </header>
+
+    <section class="article-body article-prose panel">
+      <Content />
+    </section>
+  </article>
+</BaseLayout>

@@ -1,0 +1,28 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { collections } from '../data/collections';
+---
+<BaseLayout title="收藏馆 · Starry Dome" description="书、影、音和有趣网站的私人收藏馆。">
+  <section class="page-hero">
+    <p class="eyebrow">Collection jars</p>
+    <h1>收藏馆</h1>
+    <p>这里统一放书、影、音和有趣网站。第一版先像收集罐一样展示标签和少量精选，后续再接入评分、短评、外链与多维表格。</p>
+  </section>
+  <section class="content-section">
+    <div class="collections-grid">
+      {collections.map((collection) => (
+        <article class="panel jar">
+          <div>
+            <div class="jar-type">{collection.type}</div>
+            <h3>{collection.title}</h3>
+            <p>{collection.description}</p>
+            <div class="tags">
+              {collection.tags.map((tag) => <span>{tag}</span>)}
+            </div>
+          </div>
+          <p class="meta">{collection.items.join(' · ')}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,53 @@
+---
+import '../styles/global.css';
+import { navItems, site } from '../data/site';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title = site.title, description = site.description } = Astro.props;
+---
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#13111c" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=IBM+Plex+Serif:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <div class="site-shell">
+      <div class="cosmic-background" aria-hidden="true">
+        <span class="glow glow-one"></span>
+        <span class="glow glow-two"></span>
+        <span class="glow glow-three"></span>
+        <span class="starfield"></span>
+      </div>
+      <header class="site-header">
+        <a class="brand" href="/" aria-label="Starry Dome 首页">
+          <span class="brand-mark">✦</span>
+          <span>
+            <strong>{site.name}</strong>
+            <small>{site.cnName}</small>
+          </span>
+        </a>
+        <nav class="site-nav" aria-label="主导航">
+          {navItems.map((item) => <a href={item.href}>{item.label}</a>)}
+        </nav>
+      </header>
+      <main>
+        <slot />
+      </main>
+      <footer class="site-footer">
+        <p>{site.tagline}</p>
+        <p class="footer-quote">{site.quenya}</p>
+      </footer>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,55 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { postCategories } from '../../data/posts';
+
+const posts = (await getCollection('posts')).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime(),
+);
+
+const categoryGroups = postCategories.map((category) => ({
+  ...category,
+  posts: posts.filter((post) => post.data.category === category.title),
+}));
+
+const formatDate = (date: Date) => date.toLocaleDateString('zh-CN', {
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+});
+---
+<BaseLayout title="文章 · Starry Dome" description="技术札记、生活切片与拾光摘录。">
+  <section class="page-hero">
+    <p class="eyebrow">Archive</p>
+    <h1>文章</h1>
+    <p>技术、生活与阅读留下的回声，沿着时间的星轨，在这里重新相逢。</p>
+  </section>
+  <section class="content-section">
+    <div class="article-category-list">
+      {categoryGroups.map((category, index) => (
+        <section class="article-category panel">
+          <header class="article-category-header">
+            <div class="index">0{index + 1}</div>
+            <div>
+              <p class="eyebrow">{category.key} · {category.posts.length} 篇</p>
+              <h2>{category.title}</h2>
+              <p>{category.subtitle}</p>
+            </div>
+          </header>
+          <div class="archive-list">
+            {category.posts.map((post) => (
+              <a class="archive-row" href={`/posts/${post.data.slug}/`}>
+                <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
+                <div>
+                  <h3>{post.data.title}</h3>
+                  <p>{post.data.tags.join(' · ') || category.title}</p>
+                </div>
+                <span aria-hidden="true">↗</span>
+              </a>
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
+  </section>
+</BaseLayout>

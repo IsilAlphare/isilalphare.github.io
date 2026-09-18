@@ -1,0 +1,162 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { starfallNodes } from '../data/starfallLog';
+
+const formatWhisper = (text = '') => text
+  .split('\n')
+  .map((line) => {
+    const trimmed = line.trim();
+    if (trimmed.startsWith('*') && trimmed.endsWith('*')) {
+      return `<em>${trimmed.slice(1, -1)}</em>`;
+    }
+    return line;
+  })
+  .join('<br/>');
+
+const getTemperatureClass = (node: { theme: string }) => {
+  if (node.theme === 'dark') return 'node-temp-dark';
+  if (node.theme === 'steel') return 'node-temp-steel';
+  if (node.theme === 'winter') return 'node-temp-winter';
+  if (node.theme === 'summer') return 'node-temp-summer';
+  return '';
+};
+---
+
+<BaseLayout title="逐星記 Starfall Log · Starry Dome" description="一页关于星空、远行、蛰伏与重返的逐星时间轴。">
+  <section class="starfall-hero">
+    <div class="starfall-hero-image" aria-hidden="true"></div>
+    <div class="starfall-hero-content">
+      <div class="starfall-hero-star" aria-hidden="true"></div>
+      <h1><span class="title-zh">逐星記</span><span class="title-en">Starfall Log</span></h1>
+      <p class="starfall-subtitle">我在群星之下学会谦卑,又在人类垒起的高峰前重新长出骨骼。</p>
+    </div>
+  </section>
+
+  <section class="starfall-timeline" aria-label="逐星记时间轴">
+    {starfallNodes.map((node, index) => {
+      const photos = node.photos.length > 0 ? node.photos : [''];
+      return (
+        <article class={`timeline-node theme-${node.theme} ${getTemperatureClass(node)} ${index % 2 === 1 ? 'is-alt' : ''}`} data-reveal>
+          <div class="timeline-dot" aria-hidden="true"></div>
+          <div class="timeline-card">
+            <div class="timeline-media">
+              <details class="photo-cluster">
+                <summary>
+                  {photos[0] ? (
+                    <div class="star-photo" style={`background-image: url('${photos[0]}')`}>
+                      <span>{node.year}</span>
+                    </div>
+                  ) : (
+                    <div class="star-photo is-placeholder">
+                      <span>深色星空占位图</span>
+                    </div>
+                  )}
+                </summary>
+                {photos.length > 1 && (
+                  <div class="photo-strip">
+                    {photos.map((photo, photoIndex) => (
+                      <div class="photo-thumb" style={`background-image: url('${photo}')`} aria-label={`${node.title} 照片 ${photoIndex + 1}`}></div>
+                    ))}
+                  </div>
+                )}
+              </details>
+            </div>
+
+            <div class="timeline-copy">
+              <h2>
+                {node.articleUrl ? <a class="timeline-title-link" href={node.articleUrl}>{node.title}</a> : node.title}
+              </h2>
+              {node.subtitle && <p class="timeline-subtitle" set:html={node.subtitle}></p>}
+              {node.whisper && <blockquote class="timeline-whisper" set:html={formatWhisper(node.whisper)}></blockquote>}
+              {node.footnote && <p class="timeline-footnote">{node.footnote}</p>}
+            </div>
+          </div>
+          {index < starfallNodes.length - 1 && (
+            <div class="timeline-boat-run" aria-hidden="true">
+              <div class="timeline-cargo-ship">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            </div>
+          )}
+        </article>
+      );
+    })}
+  </section>
+
+  <section class="starfall-ending">
+    <p>我终究没能成为天文学家,只做了一个爱好者;可正因如此,星空于我永远是热爱,而非生计。</p>
+    <div class="hero-actions">
+      <a class="btn primary" href="/">返回主站</a>
+      <a class="btn" href="/about/">回到关于页</a>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  const revealNodes = document.querySelectorAll('[data-reveal]');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { rootMargin: '45% 0px 45% 0px', threshold: 0.08 });
+
+  revealNodes.forEach((node) => observer.observe(node));
+  window.setTimeout(() => {
+    revealNodes.forEach((node) => node.classList.add('is-visible'));
+  }, 1200);
+
+  const boatRuns = Array.from(document.querySelectorAll('.timeline-boat-run'));
+  const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+  const updateBoatRuns = () => {
+    const markerY = window.innerHeight * 0.52;
+
+    boatRuns.forEach((run) => {
+      const node = run.closest('.timeline-node');
+      const nextNode = node?.nextElementSibling;
+      const currentDot = node?.querySelector('.timeline-dot');
+      const nextDot = nextNode?.querySelector('.timeline-dot');
+      const ship = run.querySelector('.timeline-cargo-ship');
+
+      if (!(node instanceof HTMLElement) || !(nextNode instanceof HTMLElement) || !(run instanceof HTMLElement) || !(currentDot instanceof HTMLElement) || !(nextDot instanceof HTMLElement) || !(ship instanceof HTMLElement)) return;
+
+      const nodeRect = node.getBoundingClientRect();
+      const currentDotRect = currentDot.getBoundingClientRect();
+      const nextDotRect = nextDot.getBoundingClientRect();
+      const runTop = currentDotRect.bottom;
+      const runBottom = nextDotRect.top;
+      const runHeight = Math.max(72, runBottom - runTop);
+      const shipHeight = ship.offsetHeight;
+      const travel = Math.max(0, runHeight - shipHeight);
+      const rawProgress = (markerY - runTop) / Math.max(1, runBottom - runTop);
+      const progress = clamp(rawProgress, 0, 1);
+
+      run.style.setProperty('--boat-run-top', `${currentDotRect.bottom - nodeRect.top}px`);
+      run.style.setProperty('--boat-run-height', `${runHeight}px`);
+      ship.style.setProperty('--ship-y', `${progress * travel}px`);
+      ship.style.setProperty('--ship-opacity', rawProgress < -0.16 || rawProgress > 1.16 ? '0.42' : '1');
+    });
+  };
+
+  let boatFrame = 0;
+  const requestBoatUpdate = () => {
+    if (boatFrame) return;
+    boatFrame = window.requestAnimationFrame(() => {
+      boatFrame = 0;
+      updateBoatRuns();
+    });
+  };
+
+  updateBoatRuns();
+  window.addEventListener('scroll', requestBoatUpdate, { passive: true });
+  window.addEventListener('resize', requestBoatUpdate);
+  window.setTimeout(updateBoatRuns, 300);
+</script>

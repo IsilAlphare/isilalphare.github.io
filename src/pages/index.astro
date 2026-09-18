@@ -1,0 +1,124 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { site } from '../data/site';
+import { postCategories } from '../data/posts';
+import { collections } from '../data/collections';
+import { photos } from '../data/photos';
+
+const allPosts = (await getCollection('posts')).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime(),
+);
+const categoryCards = postCategories.map((category) => ({
+  ...category,
+  posts: allPosts.filter((post) => post.data.category === category.title).slice(0, 3),
+  count: allPosts.filter((post) => post.data.category === category.title).length,
+}));
+---
+<BaseLayout title={site.title} description={site.description}>
+  <section class="section hero">
+    <div>
+      <p class="eyebrow">Personal observatory · digital garden</p>
+      <h1>Starry <span>Dome</span></h1>
+      <p class="tagline">{site.tagline}</p>
+      <p class="quenya">{site.quenya}</p>
+      <div class="hero-actions">
+        <a class="btn primary" href="/posts">进入文章</a>
+        <a class="btn" href="/collections">打开收藏馆</a>
+      </div>
+    </div>
+    <div class="orbital-card" aria-label="星辰、穹庐、大海与森林的动态抽象插画">
+      <div class="dome-aura" aria-hidden="true"></div>
+      <div class="constellation" aria-hidden="true">
+        <span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span>
+      </div>
+      <div class="sea-lines" aria-hidden="true">
+        <span></span><span></span><span></span>
+      </div>
+      <div class="forest-lines" aria-hidden="true">
+        <span></span><span></span><span></span><span></span><span></span>
+      </div>
+      <div class="spirit-lights" aria-hidden="true">
+        <span></span><span></span><span></span><span></span>
+      </div>
+      <div class="blossom-dust" aria-hidden="true">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section intro-panel">
+    <p>这里收留一些技术札记、这里收藏一些四维虫子的闪光切片。<br/>在这一座夜色里的小小穹顶中，有星辰，有海风，有林间的安静，也有慢慢沉淀下来的自己。</p>
+  </section>
+
+  <section class="section" style="padding-top: 118px;">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">Notes under the dome</p>
+        <h2>星轨，天空的道路</h2>
+      </div>
+      <p>把散落的想法铺成星轨，让每一次回望都能沿着微光抵达来处。</p>
+    </div>
+    <div class="grid-3">
+      {categoryCards.map((category) => (
+        <article class="panel">
+          <span class="meta">{category.count} pieces · {category.key}</span>
+          <h3>{category.title}</h3>
+          <p>{category.subtitle}</p>
+          <div class="post-list">
+            {category.posts.map((post) => (
+              <a class="post-row home-post-row" href={`/posts/${post.data.slug}/`}>
+                <span>{post.data.date.toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit' })}</span>
+                <strong>{post.data.title}</strong>
+                <p>{post.data.tags.join(' · ') || category.title}</p>
+              </a>
+            ))}
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="section" style="padding-top: 118px;">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">Collection jars</p>
+        <h2>我的收集罐</h2>
+      </div>
+      <p>书、影、音和有趣的赛博空间陈列于此，像把星尘暂时封存在玻璃罐里。</p>
+    </div>
+    <div class="collections-grid">
+      {collections.map((collection) => (
+        <article class="panel jar">
+          <div>
+            <div class="jar-type">{collection.type}</div>
+            <h3>{collection.title}</h3>
+            <p>{collection.description}</p>
+            <div class="tags">
+              {collection.tags.map((tag) => <span>{tag}</span>)}
+            </div>
+          </div>
+          <p class="meta">{collection.items.join(' · ')}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="section" style="padding-top: 118px;">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">Selected light</p>
+        <h2>被留下的光</h2>
+      </div>
+      <p>有些光不必解释来处，只要被温柔地留下，就会在漫长的夜里继续闪烁。</p>
+    </div>
+    <div class="photo-wall">
+      {photos.map((photo) => (
+        <article class={`photo-card ${photo.color}`} style={`--photo-image: url('${photo.image}')`}>
+          <h3>{photo.title}</h3>
+          <p>{photo.meta}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+</BaseLayout>
