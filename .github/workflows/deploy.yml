@@ -29,6 +29,7 @@ jobs:
         with:
           path: .
           package-manager: pnpm@latest
+          node-version: 24
 
   deploy:
     environment:
