@@ -16,7 +16,7 @@ const motifs = ['rose', 'arch', 'halo', 'eclipse', 'orbit', 'cross'];
   <section class="content-section anime-collection" aria-label="留下启蒙的动画作品">
     <ul class="work-grid">
       {animeWorks.map(({title, cover}, index) => (
-        <li class:list={['work', `tone-${index % 4}`, { 'film-work': index >= 12 }]}>
+        <li class:list={['work', `tone-${index % 4}`, { 'film-work': ['吸血鬼猎人D', '攻壳机动队'].includes(title) }]}>
           <div class="work-cover"><Image src={cover} alt={`${title}动画海报`} widths={[240, 400, 640]} sizes="(max-width: 700px) 45vw, 30vw" width={640} format="webp" loading={index < 3 ? "eager" : "lazy"} /></div>
           <div class="motif" aria-hidden="true"><CelestialMotif variant={motifs[index % motifs.length]} /></div>
           <div class="work-caption"><span class="small-star" aria-hidden="true">✦</span><h2>{title}</h2></div>

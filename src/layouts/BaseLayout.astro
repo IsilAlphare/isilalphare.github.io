@@ -1,5 +1,7 @@
 ---
 import '../styles/global.css';
+import { ClientRouter } from 'astro:transitions';
+import NightPlayer from '../components/NightPlayer.astro';
 import StarlightVisit from '../components/StarlightVisit.astro';
 import LetterBoard from '../components/LetterBoard.astro';
 import WalineThread from '../components/WalineThread.astro';
@@ -18,6 +20,7 @@ const { title = site.title, description = site.description, noindex = false } = 
 <!doctype html>
 <html lang="zh-CN">
   <head>
+    <ClientRouter />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
@@ -30,7 +33,8 @@ const { title = site.title, description = site.description, noindex = false } = 
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=IBM+Plex+Serif:wght@400;500&family=Inter:wght@400;500;600;700&family=Great+Vibes&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
     <title>{title}</title>
   </head>
-  <body>
+  <body transition:animate="none">
+    <NightPlayer />
     <div class="site-shell">
       <div class="cosmic-background" aria-hidden="true">
         <span class="glow glow-one"></span>

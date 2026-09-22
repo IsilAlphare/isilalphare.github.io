@@ -62,7 +62,10 @@ const isStarfall = variant === 'starfall';
 </style>
 
 <script>
+  import { onPageLoad } from '../lib/pageLifecycle';
   import { starFaces, orbitPosition } from '../lib/domeGeometry';
+  onPageLoad(({signal, cleanup}) => {
+
   document.querySelectorAll<HTMLElement>('.dome-observatory').forEach(figure => {
     const polygons = Array.from(figure.querySelectorAll<SVGPolygonElement>('.solid-star polygon'));
     const planets = Array.from(figure.querySelectorAll<SVGCircleElement>('.planet'));
@@ -97,10 +100,12 @@ const isStarfall = variant === 'starfall';
     }
     const observer=new IntersectionObserver(entries=>{ visible=entries[0].isIntersecting; sync(); });
     observer.observe(figure);
-    reduced.addEventListener('change',sync);
-    document.addEventListener('visibilitychange',sync);
-    window.addEventListener('pagehide',()=>{ cancelAnimationFrame(frame); observer.disconnect(); });
-    window.addEventListener('pageshow',()=>{ observer.observe(figure); sync(); });
+    reduced.addEventListener('change',sync,{signal});
+    document.addEventListener('visibilitychange',sync,{signal});
+    window.addEventListener('pagehide',()=>{ cancelAnimationFrame(frame); observer.disconnect(); },{signal});
+    window.addEventListener('pageshow',()=>{ observer.observe(figure); sync(); },{signal});
+    cleanup(()=>{cancelAnimationFrame(frame);observer.disconnect();});
     sync();
+  });
   });
 </script>

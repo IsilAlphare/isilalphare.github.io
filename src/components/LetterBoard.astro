@@ -34,6 +34,10 @@ const examples=publicBook?[
   </article>)}</div>
 </section>
 <script>
+  import { onPageLoad } from '../lib/pageLifecycle';
+
+  onPageLoad(({signal, cleanup}) => {
+
   document.querySelectorAll<HTMLElement>('.letter-board').forEach(board=>{
     const scope=board.dataset.scope!;
     const key='starry-dome:letters-preview:v1:'+scope;
@@ -78,8 +82,9 @@ const examples=publicBook?[
       catch{status.textContent='本次预览已展示；浏览器无法保存，关闭页面后会丢失。';}
       render();(form.elements.namedItem('message') as HTMLTextAreaElement).value='';
     });
-    window.addEventListener('starlight-letter-saved',render);
+    window.addEventListener('starlight-letter-saved',render,{signal});
     render();
+  });
   });
 </script>
 <style>

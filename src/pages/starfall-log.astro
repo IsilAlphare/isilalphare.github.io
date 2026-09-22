@@ -76,8 +76,12 @@ const getTemperatureClass = (node: { theme: string }) => {
 </BaseLayout>
 
 <script>
+  import { onPageLoad } from '../lib/pageLifecycle';
   import { readingPosition } from '../lib/starfallProgress.mjs';
+  onPageLoad(({signal, cleanup}) => {
+
   const river = document.querySelector<HTMLElement>('.starfall-timeline')!;
+  if (!river) return;
   const boat = river.querySelector<HTMLElement>('.memory-boat')!;
   const nodes = Array.from(river.querySelectorAll<HTMLElement>('.timeline-node'));
   let stops: number[] = [];
@@ -106,9 +110,11 @@ const getTemperatureClass = (node: { theme: string }) => {
     update();
   };
   const requestUpdate = () => { if (!frame) frame = requestAnimationFrame(update); };
-  window.addEventListener('scroll', requestUpdate, { passive: true });
-  window.addEventListener('resize', measure);
-  new ResizeObserver(measure).observe(river);
-  document.fonts.ready.then(measure);
+  window.addEventListener('scroll', requestUpdate, { passive: true, signal });
+  window.addEventListener('resize', measure, {signal});
+  const observer = new ResizeObserver(measure); observer.observe(river);
+  cleanup(()=>{observer.disconnect();cancelAnimationFrame(frame);});
+  document.fonts.ready.then(()=>{if(!signal.aborted)measure();});
   measure();
+  });
 </script>

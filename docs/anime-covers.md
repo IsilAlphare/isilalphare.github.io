@@ -18,3 +18,6 @@
 - **游戏人生**：[来源](https://myanimelist.net/anime/19815) · [原图](https://cdn.myanimelist.net/images/anime/1074/111944l.jpg) · `src/assets/anime/no-game-no-life.jpg`
 - **吸血鬼猎人D**：[来源](https://kg-portal.ru/anime/vampirehunterd2/posters/1/) · [原图](https://media.kg-portal.ru/anime/v/vampirehunterd2/posters/vampirehunterd2_1.jpg) · `src/assets/anime/vampire-hunter-d.jpg`
 - **攻壳机动队**：[来源](https://www.sensacine.com/peliculas/pelicula-15254/) · [原图](https://es.web.img3.acsta.net/medias/nmedia/18/85/94/86/20078371.jpg) · `src/assets/anime/ghost-in-the-shell.jpg`
+
+- **秦时明月**：以《百步飞剑》海报代表系列 · [来源](https://anilist.co/anime/9806/Qin-Shi-Mingyue-Bai-Bu-Fei-Jian) · [原图](https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx9806-98ES0ETwtquV.jpg) · `src/assets/anime/qin-shi-ming-yue.jpg`
+- **火影忍者**：以 2002 年少年篇海报代表系列 · [来源](https://myanimelist.net/anime/20/Naruto) · [原图](https://cdn.myanimelist.net/images/anime/1141/142503l.jpg) · `src/assets/anime/naruto.jpg`

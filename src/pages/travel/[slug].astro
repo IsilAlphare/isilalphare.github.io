@@ -41,7 +41,12 @@ const collages = trip.photos.filter(photo=>photo.collage);
   </dialog>
 </BaseLayout>
 <script>
+  import { onPageLoad } from '../../lib/pageLifecycle';
+
+  onPageLoad(({signal, cleanup}) => {
+
   const dialog=document.querySelector<HTMLDialogElement>('.photo-dialog')!;
+  if(!dialog)return;
   const image=dialog.querySelector<HTMLImageElement>('.viewer-image')!;
   const caption=dialog.querySelector<HTMLElement>('.viewer-caption')!;
   let trigger:HTMLElement|null=null;
@@ -53,6 +58,7 @@ const collages = trip.photos.filter(photo=>photo.collage);
   dialog.querySelector('.viewer-close')!.addEventListener('click',()=>dialog.close());
   dialog.addEventListener('click',event=>{if(event.target===dialog)dialog.close();});
   dialog.addEventListener('close',()=>trigger?.focus());
+  });
 </script>
 <style>
   .travel-header { max-width: 1040px; }

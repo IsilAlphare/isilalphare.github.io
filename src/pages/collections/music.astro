@@ -1,4 +1,5 @@
 ---
+import MusicTrack from '../../components/MusicTrack.astro';
 import ArtistConstellation from '../../components/ArtistConstellation.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { musicGroups, musicArtists, themeTrackCount } from '../../data/music';
@@ -35,7 +36,7 @@ import { musicGroups, musicArtists, themeTrackCount } from '../../data/music';
         <p class="group-description">{group.description}</p>
         <ol class="track-list">
           {group.tracks.map((track) => (
-            <li><span class="track-number" aria-hidden="true">✦</span><div><h3>{track.title}</h3><p>{track.artists}</p></div></li>
+            <li><span class="track-number" aria-hidden="true">✦</span><div><h3><MusicTrack title={track.title} artists={track.artists} /></h3><p>{track.artists}</p></div></li>
           ))}
         </ol>
         {group.id === 'stage' && <a class="music-essay" href="/posts/mozart-lopera-rock/">舞台之外的文字 ·《睡玫瑰》 →</a>}
@@ -108,6 +109,10 @@ import { musicGroups, musicArtists, themeTrackCount } from '../../data/music';
 </style>
 
 <script>
+  import { onPageLoad } from '../../lib/pageLifecycle';
+
+  onPageLoad(({signal, cleanup}) => {
+
   document.querySelectorAll<HTMLElement>('.theme-tabs').forEach((tablist) => {
     const tabs = Array.from(tablist.querySelectorAll<HTMLButtonElement>('[role="tab"]'));
     function selectTab(tab: HTMLButtonElement, updateHash = false) {
@@ -118,7 +123,7 @@ import { musicGroups, musicArtists, themeTrackCount } from '../../data/music';
         const panel = document.getElementById(item.getAttribute('aria-controls')!);
         if (panel) panel.hidden = !selected;
       });
-      if (updateHash) history.replaceState(null, '', `#${tab.getAttribute('aria-controls')}`);
+      if (updateHash) history.replaceState(history.state, '', `#${tab.getAttribute('aria-controls')}`);
     }
     function fromHash() {
       const tab = tabs.find((item) => `#${item.getAttribute('aria-controls')}` === location.hash);
@@ -142,6 +147,7 @@ import { musicGroups, musicArtists, themeTrackCount } from '../../data/music';
       });
     });
     fromHash();
-    window.addEventListener('hashchange', fromHash);
+    window.addEventListener('hashchange', fromHash, {signal});
+  });
   });
 </script>

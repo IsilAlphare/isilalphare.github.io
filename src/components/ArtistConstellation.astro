@@ -1,4 +1,5 @@
 ---
+import MusicTrack from './MusicTrack.astro';
 interface Props {
   artist: { id: string; name: string; role: string; tracks: { title: string; artists: string }[] };
   index: number;
@@ -20,10 +21,10 @@ const accents = ['#d2b6c9', '#a9c9c3', '#b9acd9', '#b2bfd9', '#d0b6a4'];
     </svg>
     <header class="artist-center"><span class="center-star" aria-hidden="true">✧</span><p>{artist.role}</p><h3 id={`name-${artist.id}`}>{artist.name}</h3></header>
     <ul class="orbit-tracks">
-      {visibleTracks.map((track, i) => <li class={`song-star position-${i}`}><span class="song-spark" aria-hidden="true">✦</span><h4 title={track.artists}>{track.title}</h4><p class="song-credit">{track.artists}</p></li>)}
+      {visibleTracks.map((track, i) => <li class={`song-star position-${i}`}><span class="song-spark" aria-hidden="true">✦</span><h4 title={track.artists}><MusicTrack title={track.title} artists={track.artists} /></h4><p class="song-credit">{track.artists}</p></li>)}
     </ul>
   </div>
-  {moreTracks.length > 0 && <details class="more-tracks"><summary>星轨继续 · 还有 {moreTracks.length} 首<span aria-hidden="true">＋</span></summary><ul>{moreTracks.map((track) => <li><h4>{track.title}</h4><p>{track.artists}</p></li>)}</ul></details>}
+  {moreTracks.length > 0 && <details class="more-tracks"><summary>星轨继续 · 还有 {moreTracks.length} 首<span aria-hidden="true">＋</span></summary><ul>{moreTracks.map((track) => <li><h4><MusicTrack title={track.title} artists={track.artists} /></h4><p>{track.artists}</p></li>)}</ul></details>}
 </article>
 <style>
   .constellation { position: relative; isolation: isolate; min-width: 0; overflow: hidden; padding: 24px; background: radial-gradient(ellipse at center, rgba(152,125,184,.075), transparent 68%), #15141d; scroll-margin-top: 110px; }

@@ -40,12 +40,15 @@ const writeLabel=article?'给这篇文章留言':travel?'给这段旅途留言':
   {!commentsEnabled && <button type="button" class="preview-reset">重置本地体验</button>}
 </dialog>
 <script>
+  import { onPageLoad } from '../lib/pageLifecycle';
   import { starFaces } from '../lib/domeGeometry';
   import { createDoubleTap } from '../lib/starTap.mjs';
   import { commentsEnabled, walineServerURL } from '../lib/comments';
   import { addComment } from '@waline/api';
   import { GUESTBOOK_PATH, markedMessage } from '../lib/commentIdentity.mjs';
   import { refreshStarlightCount, leaveStarlight } from '../lib/starlight';
+  onPageLoad(({signal, cleanup}) => {
+
   const widget=document.querySelector<HTMLElement>('.starlight-visit');
   if (widget) {
   const star=widget.querySelector<HTMLButtonElement>('.visit-star')!;
@@ -225,7 +228,7 @@ const writeLabel=article?'给这篇文章留言':travel?'给这段旅途留言':
   star.addEventListener('lostpointercapture',release);
   window.addEventListener('resize',()=>{
     if(widget.style.left){const r=widget.getBoundingClientRect();place(r.left,r.top);}
-  });
+  },{signal});
   // Keep the mobile companion clear of comment actions, including after dragging.
   let avoidanceFrame=0;
   function avoidCommentActions(){
@@ -242,11 +245,13 @@ const writeLabel=article?'给这篇文章留言':travel?'给这段旅途留言':
       }
     });
   }
-  window.addEventListener('scroll',avoidCommentActions,{passive:true});
-  window.addEventListener('resize',avoidCommentActions);
+  window.addEventListener('scroll',avoidCommentActions,{passive:true,signal});
+  window.addEventListener('resize',avoidCommentActions,{signal});
   star.addEventListener('pointerup',avoidCommentActions);
   const commentBoard=document.querySelector('#comments');
-  if(commentBoard)new MutationObserver(avoidCommentActions).observe(commentBoard,{childList:true,subtree:true});
+  const commentObserver=new MutationObserver(avoidCommentActions);
+  if(commentBoard)commentObserver.observe(commentBoard,{childList:true,subtree:true});
+  cleanup(()=>commentObserver.disconnect());
   const sealFrames:Keyframe[][]=[
     [{transform:'scale(.75)',filter:'brightness(1)'},{transform:'scale(1.4) rotate(90deg)',filter:'brightness(2.2)'},{transform:'scale(1) rotate(180deg)',filter:'brightness(1)'}],
     [{transform:'rotate(-25deg)'},{transform:'rotate(20deg)',filter:'drop-shadow(0 0 8px #e8dfc4)'},{transform:'rotate(-8deg)'},{transform:'rotate(0)'}],
@@ -273,10 +278,12 @@ const writeLabel=article?'给这篇文章留言':travel?'给这段旅途留言':
     cancelAnimationFrame(frame);
     if(!reduced.matches && !document.hidden)frame=requestAnimationFrame(paint);
   }
-  reduced.addEventListener('change',motion);document.addEventListener('visibilitychange',motion);
+  reduced.addEventListener('change',motion,{signal});document.addEventListener('visibilitychange',motion,{signal});
+  cleanup(()=>{cancelAnimationFrame(frame);cancelAnimationFrame(avoidanceFrame);clearTimeout(timer);clearTimeout(hintTimer);clearTimeout(clickTimer);});
   renderStar();widget.hidden=false;motion();
   if(commentsEnabled)void refreshStarlightCount();
   }
+  });
 </script>
 <style>
 .starlight-visit[hidden],.visit-response[hidden],.letter-form[hidden],.letter-saved[hidden]{display:none;}

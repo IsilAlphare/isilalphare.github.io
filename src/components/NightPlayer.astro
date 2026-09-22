@@ -1,0 +1,88 @@
+<aside transition:persist="night-player" class="night-player" hidden aria-label="夜航播放器">
+  <svg class="player-stardust" viewBox="0 0 460 130" preserveAspectRatio="none" aria-hidden="true"><path d="M302 16l2 5 5 2-5 2-2 5-2-5-5-2 5-2Z M388 54l1.5 4 4 1.5-4 1.5-1.5 4-1.5-4-4-1.5 4-1.5Z"/><circle cx="225" cy="13" r="1"/><circle cx="350" cy="38" r="1.2"/><circle cx="420" cy="22" r=".8"/><circle cx="270" cy="45" r=".7"/><path class="star-thread" d="M180 5Q275 55 440 10"/></svg>
+  <div class="player-caption"><span class="player-star" aria-hidden="true"><svg viewBox="0 0 44 44"><defs><linearGradient id="player-prism" x2="1" y2="1"><stop stop-color="#f2dfad"/><stop offset=".45" stop-color="#d2b9ed"/><stop offset="1" stop-color="#8bc9d0"/></linearGradient></defs><path d="M22 3Q24 19 39 22Q24 25 22 41Q20 25 5 22Q20 19 22 3Z" fill="url(#player-prism)"/><path d="M22 3V41M5 22H39" stroke="#faf0d5" stroke-width=".5" opacity=".65"/></svg></span><div><strong data-player-title></strong><small data-player-artists></small></div><button type="button" class="player-close" aria-label="关闭播放器">×</button></div>
+  <audio controls preload="none" aria-label="歌曲播放控制"></audio>
+  <p class="player-status" role="status" aria-live="polite"></p>
+</aside>
+<script>
+  const player=document.querySelector<HTMLElement>('.night-player');
+  if(player){
+    const audio=player.querySelector('audio')!;
+    const status=player.querySelector<HTMLElement>('.player-status')!;
+    let activeId='';
+    let timeout:ReturnType<typeof setTimeout>;
+    let generation=0;
+    let lastTrigger:HTMLButtonElement|null=null;
+    function highlight(playing:boolean){
+      document.querySelectorAll<HTMLButtonElement>('[data-song-id]').forEach(button=>{
+        button.setAttribute('aria-pressed',String(playing && button.dataset.songId===activeId));
+      });
+    }
+    document.addEventListener('astro:page-load',()=>highlight(!audio.paused));
+    function failed(){
+      clearTimeout(timeout);audio.pause();highlight(false);
+      status.textContent='这首歌暂时无法播放，换一首听听吧。';
+      document.querySelectorAll<HTMLButtonElement>('[data-song-id]').forEach(button=>{
+        if(button.dataset.songId===activeId){button.disabled=true;button.setAttribute('aria-label',`${button.dataset.songTitle} · 暂时无法播放`);}
+      });
+    }
+    document.addEventListener('click',event=>{
+      const button=(event.target as Element).closest<HTMLButtonElement>('[data-song-id]');
+      if(!button || button.disabled)return;
+      const id=button.dataset.songId!;
+      if(!/^\d+$/.test(id))return;
+      player.hidden=false;lastTrigger=button;
+      clearTimeout(timeout);
+      if(activeId===id && !audio.paused){audio.pause();status.textContent='已暂停';return;}
+      if(activeId!==id || audio.error){
+        activeId=id;audio.pause();
+        player.querySelector('[data-player-title]')!.textContent=button.dataset.songTitle!;
+        player.querySelector('[data-player-artists]')!.textContent=button.dataset.songArtists!;
+        // Resolve a fresh public URL on every new selection; never store expiring CDN URLs.
+        audio.src=`https://music.163.com/song/media/outer/url?id=${id}.mp3`;
+      }
+      status.textContent='正在接住这段旋律…';
+      const request=++generation;
+      timeout=setTimeout(failed,15000);
+      void audio.play().catch(error=>{
+        if(request!==generation || error?.name==='AbortError')return;
+        if(error?.name==='NotAllowedError'){clearTimeout(timeout);status.textContent='请点击播放器里的播放键继续';return;}
+        failed();
+      });
+    });
+    audio.addEventListener('playing',()=>{clearTimeout(timeout);status.textContent='';highlight(true);});
+    audio.addEventListener('pause',()=>{clearTimeout(timeout);highlight(false);});
+    audio.addEventListener('ended',()=>{status.textContent='这一曲已落幕';highlight(false);});
+    audio.addEventListener('error',()=>{if(audio.error)failed();});
+    audio.addEventListener('waiting',()=>{status.textContent='旋律正在赶来…';clearTimeout(timeout);timeout=setTimeout(failed,15000);});
+    player.querySelector('.player-close')!.addEventListener('click',()=>{
+      generation++;clearTimeout(timeout);audio.pause();audio.removeAttribute('src');audio.load();
+      player.hidden=true;activeId='';highlight(false);
+      if(lastTrigger && !lastTrigger.disabled && lastTrigger.getClientRects().length)lastTrigger.focus({preventScroll:true});
+    });
+  }
+</script>
+<style>
+  .night-player{position:fixed;isolation:isolate;z-index:45;bottom:20px;left:50%;transform:translateX(-50%);width:min(460px,calc(100vw - 140px));padding:16px 20px 11px;border:1px solid #cbb9e014;border-radius:26px;background:radial-gradient(ellipse at 8% 0%,#b99ad52b,transparent 60%),linear-gradient(125deg,#262035b8,#121923ad);box-shadow:0 14px 48px #07061155,inset 0 1px 14px #dac8ee08;backdrop-filter:blur(26px) saturate(125%);-webkit-backdrop-filter:blur(26px) saturate(125%);color:#e8dfc4;}
+  .night-player::before{content:'';position:absolute;z-index:-1;pointer-events:none;inset:-2px;border-radius:inherit;border:1px solid #c6b1e02b;filter:blur(3px);box-shadow:-12px -5px 28px #b29aca13,16px 8px 32px #87c0d010;}
+  .night-player[hidden]{display:none;}
+  .player-stardust{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;fill:#e5d4ed;opacity:.4;filter:drop-shadow(0 0 4px #d1b4e8);}
+  .star-thread{fill:none;stroke:#b6c5e0;stroke-width:.5;opacity:.4;}
+  .player-caption{position:relative;display:flex;align-items:center;gap:12px;}
+  .player-caption>div{flex:1;min-width:0;}
+  .player-star{flex:none;width:38px;height:38px;filter:drop-shadow(0 0 9px #c8a3df55);animation:star-breathe 7s ease-in-out infinite;}
+  .player-star svg{width:100%;height:100%;}
+  strong,small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  strong{font-size:13px;font-weight:400;line-height:1.8;letter-spacing:.035em;text-shadow:0 0 14px #e9d6b52b;}
+  small{font-size:10px;color:#bcb1c9;line-height:1.8;}
+  .player-close{flex-shrink:0;border:0;background:none;color:#b6a8c4;font-size:23px;width:36px;height:36px;border-radius:50%;cursor:pointer;transition:background .2s,color .2s;}
+  .player-close:hover{color:#f0e5cd;background:#d2b8e310;}
+  audio{position:relative;display:block;width:100%;height:40px;margin-top:9px;border-radius:20px;color-scheme:dark;opacity:.85;}
+  audio::-webkit-media-controls-panel{background-color:#252333;}
+  .player-status{position:relative;font-size:11px;line-height:1.6;color:#c5b6ce;margin:6px 0 0;}
+  .player-status:empty{display:none;}
+  button:focus-visible{outline:1px solid #ceb3e0;outline-offset:2px;}
+  @keyframes star-breathe{0%,100%{opacity:.7;filter:drop-shadow(0 0 6px #c8a3df44);}50%{opacity:1;filter:drop-shadow(0 0 12px #c8a3df88);}}
+  @media(prefers-reduced-motion:reduce){.player-star{animation:none;}}
+  @media(max-width:600px){.night-player{left:10px;transform:none;bottom:calc(12px + env(safe-area-inset-bottom));width:calc(100vw - 108px);padding:12px 10px 8px;border-radius:21px;}.player-star{width:24px;height:30px;}.player-caption{gap:7px;}.player-close{width:30px;height:34px;}audio{height:44px;}}
+</style>

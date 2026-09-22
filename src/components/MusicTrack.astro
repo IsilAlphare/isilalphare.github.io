@@ -1,0 +1,16 @@
+---
+import { playableSong } from '../lib/musicPlayback';
+interface Props { title: string; artists: string }
+const { title, artists } = Astro.props;
+const song = playableSong(title, artists);
+---
+{song ? <button class="song-play" type="button" data-song-id={song.id} data-song-title={title} data-song-artists={artists} aria-label={`播放 ${title} · ${artists}`} aria-pressed="false">{title}<span class="play-spark" aria-hidden="true">♫</span></button> : <span>{title}</span>}
+<style>
+  .song-play{border:0;padding:4px 0;background:none;font:inherit;line-height:inherit;color:inherit;cursor:pointer;text-align:inherit;max-width:100%;overflow-wrap:anywhere;transition:color .25s,text-shadow .25s;}
+  .play-spark{display:inline-block;margin-left:.45em;font-size:.7em;color:#bca4d6;opacity:.65;}
+  .song-play:hover,.song-play[aria-pressed="true"]{color:#eee1bc;text-shadow:0 0 15px #c8a3dc66;}
+  .song-play[aria-pressed="true"] .play-spark{color:#e4d095;opacity:1;}
+  .song-play:disabled{cursor:default;color:inherit;text-shadow:none;}
+  .song-play:disabled .play-spark{display:none;}
+  .song-play:focus-visible{outline:1px solid #c4a8d6;outline-offset:5px;border-radius:3px;}
+</style>
