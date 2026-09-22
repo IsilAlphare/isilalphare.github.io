@@ -1,26 +1,31 @@
 ---
 import { getCollection } from 'astro:content';
+import FlowingLabel from '../../components/FlowingLabel.astro';
+import CelestialMotif from '../../components/CelestialMotif.astro';
+import CollectionLink from '../../components/CollectionLink.astro';
+import '../../styles/collection-reading.css';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 const reviews = (await getCollection('posts', ({ data }) => Boolean(data.screen)))
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 const formatDate = (date: Date) => date.toISOString().slice(0, 10).replaceAll('-', '.');
 ---
 <BaseLayout title="银幕潮汐 · Starry Dome" description="电影、剧集与音乐剧，散场之后仍在心里回响的故事。">
-  <section class="page-hero">
+  <section class="page-hero reading-hero">
     <a class="article-back" href="/collections/">← 回到收藏馆</a>
-    <p class="eyebrow">Screen tides · {reviews.length} 篇影评</p>
+    <div class="reading-emblem"><CelestialMotif variant="eclipse" size={96} /><FlowingLabel text="Screen Tides" /></div>
+    <span class="reading-tally">{reviews.length} 篇影评</span>
     <h1>银幕潮汐</h1>
     <p>电影、剧集与音乐剧，散场之后仍在心里回响的故事。</p>
   </section>
   <section class="content-section screen-list" aria-label="影评列表">
-    {reviews.map((post) => (
+    {reviews.map((post, index) => (
       <article class="panel screen-entry">
-        <p class="eyebrow">{post.data.screen!.type} · {post.data.screen!.work}</p>
+        <div class="screen-heading"><CelestialMotif variant={["eclipse","orbit","rose"][index % 3]} size={80} /><div><span class="screen-number">0{index + 1}</span><p class="eyebrow">{post.data.screen!.type} · {post.data.screen!.work}</p></div></div>
         <h2><a href={`/posts/${post.data.slug}/`}>{post.data.title}</a></h2>
         <blockquote>{post.data.screen!.excerpt}</blockquote>
         <footer>
           <span>写于 <time datetime={post.data.date.toISOString().slice(0, 10)}>{formatDate(post.data.date)}</time></span>
-          <a class="article-back" href={`/posts/${post.data.slug}/`} aria-label={`阅读《${post.data.title}》全文`}>阅读影评 →</a>
+          <CollectionLink href={`/posts/${post.data.slug}/`} title={`《${post.data.title}》影评`} />
         </footer>
       </article>
     ))}
@@ -34,4 +39,17 @@ const formatDate = (date: Date) => date.toISOString().slice(0, 10).replaceAll('-
   .screen-entry h2 a:hover { color: var(--elf-starlight); }
   .screen-entry blockquote { margin: 0 0 30px; padding-left: 20px; border-left: 2px solid var(--elf-violet); color: var(--asteroid); line-height: 1.9; }
   .screen-entry footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; font-size: 13px; color: var(--asteroid); }
+</style>
+
+<style>
+.screen-list { gap:32px; }
+.screen-entry { position:relative; overflow:hidden; border-radius:28px 28px 8px 8px; border-color:#bba4cc30; background:radial-gradient(ellipse at 100% 0%,#a99cc715,transparent 65%),linear-gradient(140deg,#191621e8,#100f18e8); }
+.screen-heading { display:flex;align-items:center;gap:16px;color:#bdb0d0; }
+.screen-number { font:italic 20px Georgia,serif;color:#c8b69488;letter-spacing:.15em; }
+.screen-heading .eyebrow { margin:8px 0 0;line-height:1.8; }
+.screen-entry h2 { font-family:"Songti SC","IBM Plex Serif",serif;letter-spacing:.06em; }
+.screen-entry h2 a { color:#e8dfc4; }
+.screen-entry blockquote { border-left:1px solid #bda3cf60; }
+.screen-entry footer { border-top:1px solid #bda3cf25;padding-top:20px; }
+@media(max-width:600px){.screen-heading{gap:8px;}.screen-heading .eyebrow{font-size:11px;}.screen-entry{padding:24px 20px;}}
 </style>

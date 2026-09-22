@@ -1,0 +1,6 @@
+.reading-hero .article-back{display:block;width:fit-content;margin-bottom:30px;color:#aa9bbd;font-size:12px;letter-spacing:.06em;}
+.reading-emblem{display:flex;align-items:center;gap:12px;color:#c4b1cf;margin-left:-18px;}
+.reading-tally{display:block;margin:6px 0 18px;color:#94869f;font-size:11px;letter-spacing:.14em;}
+.reading-hero h1{color:#e8dfc4;text-shadow:0 0 34px #baa0cf18;}
+@media(max-width:600px){.reading-emblem{gap:0;margin-left:-12px;}.reading-emblem .flowing-label{font-size:30px;}.reading-emblem .motif-frame{flex-shrink:0;}.reading-hero .article-back{margin-bottom:20px;}}
+@media(max-width:360px){.reading-emblem .flowing-label{font-size:25px;}}

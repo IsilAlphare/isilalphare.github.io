@@ -1,5 +1,8 @@
 ---
 import { getCollection } from 'astro:content';
+import FlowingLabel from '../../components/FlowingLabel.astro';
+import CelestialMotif from '../../components/CelestialMotif.astro';
+import '../../styles/collection-reading.css';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { books, bookThemes, readingNotes } from '../../data/books';
 const posts = await getCollection('posts');
@@ -12,21 +15,22 @@ for (const book of readingNotes) {
 const dateText = (date: string) => date.replaceAll('-', '.');
 ---
 <BaseLayout title="书架微光 · Starry Dome" description="沿着阅读的主题，收起书名，也留下读过之后的回声。">
-  <section class="page-hero">
+  <section class="page-hero reading-hero">
     <a class="article-back" href="/collections/">← 回到收藏馆</a>
-    <p class="eyebrow">Bookshelf glimmers · {books.length} 部作品 · {readingNotes.length} 篇札记</p>
+    <div class="reading-emblem"><CelestialMotif variant="arch" size={96} /><FlowingLabel text="Bookshelf Glimmers" /></div>
+    <span class="reading-tally">{books.length} 部作品 · {readingNotes.length} 篇札记</span>
     <h1>书架微光</h1>
     <p>沿着阅读的主题，收起书名，也留下读过之后的回声。</p>
     <nav class="shelf-nav" aria-label="书架页内导航">
-      <a href="#themes">主题书架 ↓</a><a href="#notes">阅读札记 ↓</a>
+      <a href="#themes">主题书架 <span aria-hidden="true">✧</span></a><a href="#notes">阅读札记 <span aria-hidden="true">✧</span></a>
     </nav>
   </section>
   <section class="content-section" id="themes" aria-labelledby="themes-title">
-    <header class="shelf-heading"><p class="eyebrow">Reading paths</p><h2 id="themes-title">主题书架</h2><p>一些反复走近的主题，和沿途遇见的书。</p></header>
+    <header class="shelf-heading"><FlowingLabel text="Reading Paths" /><h2 id="themes-title">主题书架</h2><p>一些反复走近的主题，和沿途遇见的书。</p></header>
     <div class="theme-grid">
       {bookThemes.map((theme, index) => (
         <section class="panel theme-shelf" data-theme={theme.id} aria-labelledby={`theme-${theme.id}`}>
-          <div class="theme-topline"><span class="theme-number">0{index + 1}</span><span class="theme-rule" aria-hidden="true"></span><span class="theme-star" aria-hidden="true">✧</span></div>
+          <div class="theme-topline"><span class="theme-number">0{index + 1}</span><span class="theme-rule" aria-hidden="true"></span><CelestialMotif variant={["orbit","leaf","eclipse","prism","arch","astrolabe"][index % 6]} size={58} /></div>
           <h3 id={`theme-${theme.id}`}>{theme.title}</h3>
           <p class="theme-description">{theme.description}</p>
           <ul class="shelf-books">
@@ -34,7 +38,7 @@ const dateText = (date: string) => date.replaceAll('-', '.');
               <li>{book.note ? <a class="shelf-book" href={`#note-${book.id}`} aria-label={`阅读《${book.title}》札记`}>
                 <span class="book-spine" aria-hidden="true"></span>
                 <span class="book-info"><span class="book-title">{book.title}</span><span class="book-author">{book.author}{book.series && ' · 系列'}</span></span>
-                <span class="book-arrow" aria-hidden="true">↘</span>
+                <span class="book-arrow" aria-hidden="true">✧</span>
               </a> : <div class="shelf-book">
                 <span class="book-spine" aria-hidden="true"></span>
                 <span class="book-info"><span class="book-title">{book.title}</span><span class="book-author">{book.author}{book.series && ' · 系列'}</span></span>
@@ -47,7 +51,7 @@ const dateText = (date: string) => date.replaceAll('-', '.');
     <aside class="shelf-aside"><h3>书架旁</h3><p>也为偶然相遇的好书留一处位置。</p>{books.filter((book) => book.theme === 'aside').map((book) => <p>{book.title}<span class="meta"> · {book.author}</span></p>)}</aside>
   </section>
   <section class="content-section" id="notes" aria-labelledby="notes-title">
-    <header class="shelf-heading"><p class="eyebrow">Reading notes</p><h2 id="notes-title">阅读札记</h2><p>保留当时的语气，记住读到这里的心情。部分札记涉及书中情节。</p></header>
+    <header class="shelf-heading"><FlowingLabel text="Reading Notes" /><h2 id="notes-title">阅读札记</h2><p>保留当时的语气，记住读到这里的心情。部分札记涉及书中情节。</p></header>
     <div class="reading-notes">
       {readingNotes.map((book) => (
         <article class="panel reading-note" id={`note-${book.id}`}>
@@ -58,7 +62,7 @@ const dateText = (date: string) => date.replaceAll('-', '.');
           </header>
           {book.note!.postSlug ? <>
             <blockquote>{book.note!.excerpt}</blockquote>
-            <a class="note-article" href={`/posts/${book.note!.postSlug}/`}>{articleTitles.get(book.note!.postSlug)} <span aria-hidden="true">→</span></a>
+            <a class="note-article" href={`/posts/${book.note!.postSlug}/`}>{articleTitles.get(book.note!.postSlug)} <span aria-hidden="true">✧</span></a>
           </> : <div class="note-text">{book.note!.paragraphs!.map((paragraph) => <p>{paragraph}</p>)}</div>}
           <a class="note-return" href="#themes">回到主题书架 ↑</a>
         </article>
@@ -113,4 +117,16 @@ const dateText = (date: string) => date.replaceAll('-', '.');
   .note-return { display: inline-block; margin-top: 28px; font-size: 13px; color: var(--asteroid); }
   #themes, #notes, .reading-note { scroll-margin-top: 110px; }
   @media (max-width: 680px) { .theme-grid { grid-template-columns: 1fr; } }
+</style>
+
+<style>
+.theme-shelf { border-radius: 28px 28px 10px 10px; background: radial-gradient(ellipse at 90% 0%, #b5a1d310, transparent 65%), linear-gradient(145deg,#191621e8,#100f18e8); }
+.theme-topline { margin-bottom: 14px; }
+.theme-shelf h3,.reading-note h3,.shelf-heading h2 { color:#e8dfc4; font-family:"Songti SC","IBM Plex Serif",serif; letter-spacing:.08em; }
+.reading-note { position:relative; border-radius:4px 28px 4px 4px; border-color:#bba4cc30; background:linear-gradient(125deg,#b19acc0a,transparent 60%),#13111ac9; }
+.reading-note::before { content:"✧"; position:absolute; right:24px; top:20px; color:#c7b59266; font-size:26px; }
+.shelf-heading { margin-bottom:36px; }
+.note-article { border-top:1px solid #bca5cc24; padding-top:20px; }
+.note-article span { margin-left:12px; color:#c7b592; }
+.shelf-nav a { display:inline-flex; align-items:center; gap:14px; padding:10px 0; border-bottom:1px solid #bda3cf40; }
 </style>

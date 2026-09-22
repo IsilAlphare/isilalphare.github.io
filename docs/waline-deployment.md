@@ -68,3 +68,13 @@ GitHub 仓库 Actions variable 同名 PUBLIC_WALINE_SERVER_URL 已设置为上�
 ## 后续约定
 - 用户已实际发送公共来信，并以管理员账号回复；浏览器确认嵌套显示。删除操作尚未执行验证。
 - 站长头像确定使用网站现有 logo；等博客发布后再准备稳定的图片直链并配置，当前暂缓。
+
+## Gmail 通知配置进度（2026-09-22）
+用户指定 shawyu2001@gmail.com。已配置 Production 环境变量 SMTP_HOST=smtp.gmail.com、SMTP_PORT=465、SMTP_SECURE=true、SMTP_USER、AUTHOR_EMAIL、SENDER_NAME。SMTP_PASS 等待用户在 Vercel 直接设置为 Secret（Gmail 应用专用密码）。DISABLE_AUTHOR_NOTIFY 仍为 true；待凭据就绪后改为 false、重新部署并验证邮件实际送达。不要把密码写进本文件或代码。
+
+## 通知验证及日志处理（2026-09-22）
+- 用户已在 Production 添加 SMTP_PASS。DISABLE_AUTHOR_NOTIFY 改为空字符串（该版本直接判断字符串真假，不能写 false）。通知服务已重新部署。
+- 独立路径 /__notification_check__/ 的测试记录 id 4 触发邮件；Gmail 返回 250 2.0.0 OK，rejected 为空，用户已确认邮箱收到测试邮件。该记录不在文章或 guestbook 列表中，未删除。
+- 调试日志发现 SQL 适配器会输出数据库连接串；index.cjs 将 think logger 级别设为 warn，修复部署 7Bz5NeNzyscZUUfJgGeWbYVs8BPw。旧日志曾包含凭据；用户于 17:01:12 在 Vercel Rotate Secrets 完成轮换，旧凭据失效。随后重新部署关闭日志输出的版本，部署 5S9rVDd5kBMZZsaxbwq1reGBMHGM 于 17:04 Ready。不要记录任何新旧密码。
+
+- 轮换后线上 guestbook 实际验证：星光计数 2，已有 2 条留言（含回复）正常显示，未额外写入测试数据。

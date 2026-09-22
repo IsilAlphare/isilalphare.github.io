@@ -3,7 +3,7 @@ import '../styles/global.css';
 import StarlightVisit from '../components/StarlightVisit.astro';
 import LetterBoard from '../components/LetterBoard.astro';
 import WalineThread from '../components/WalineThread.astro';
-import { commentsEnabled, interactionsVisible } from '../lib/comments';
+import { commentsEnabled, interactionsVisible, walineServerURL } from '../lib/comments';
 import { navItems, site } from '../data/site';
 
 interface Props {
@@ -24,9 +24,10 @@ const { title = site.title, description = site.description, noindex = false } = 
     {noindex && <meta name="robots" content="noindex, nofollow" />}
     <meta name="theme-color" content="#13111c" />
     <link rel="icon" type="image/svg+xml" href="/site-emblem.svg" />
+    {commentsEnabled && <link rel="preconnect" href={new URL(walineServerURL).origin} crossorigin />}
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=IBM+Plex+Serif:wght@400;500&family=Inter:wght@400;500;600;700&family=Great+Vibes&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=IBM+Plex+Serif:wght@400;500&family=Inter:wght@400;500;600;700&family=Great+Vibes&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
     <title>{title}</title>
   </head>
   <body>

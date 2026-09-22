@@ -41,6 +41,7 @@ const writeLabel=article?'给这篇文章留言':travel?'给这段旅途留言':
 </dialog>
 <script>
   import { starFaces } from '../lib/domeGeometry';
+  import { createDoubleTap } from '../lib/starTap.mjs';
   import { commentsEnabled, walineServerURL } from '../lib/comments';
   import { addComment } from '@waline/api';
   import { GUESTBOOK_PATH, markedMessage } from '../lib/commentIdentity.mjs';
@@ -57,13 +58,18 @@ const writeLabel=article?'给这篇文章留言':travel?'给这段旅途留言':
   let sending=false;
   let lighting=false;
   let lit=false;
+  const touchTap=createDoubleTap();
+  let lastTouch=-Infinity;
+  let hintTimer:ReturnType<typeof setTimeout>;
+  const touchDevice=matchMedia("(pointer: coarse)").matches;
+  if(commentsEnabled && touchDevice)widget.querySelector("#visit-demo-note")!.textContent="可拖动 · 双击点亮星光";
   let opener:HTMLElement|null=null;
   let timer:ReturnType<typeof setTimeout>;
   function read(){try {return JSON.parse(localStorage.getItem(key)||'{}');}catch{return {};}}
   function save(value:unknown){try{localStorage.setItem(key,JSON.stringify(value));return true;}catch{return false;}}
   const initial=read();
   lit=initial?.lit===true;
-  function renderStar(){star.setAttribute('aria-pressed',String(lit));widget.classList.toggle('is-lit',lit);star.setAttribute('aria-label',lit?'星光已点亮，'+widget.dataset.writeLabel:'留一点星光');widget.querySelector('.visit-label')!.textContent=lit?'星光已留下':'留一点星光';}
+  function renderStar(){star.setAttribute('aria-pressed',String(lit));widget.classList.toggle('is-lit',lit);star.setAttribute('aria-label',lit?'星光已点亮，'+widget.dataset.writeLabel:'留一点星光');widget.querySelector('.visit-label')!.textContent=lit?'星光已留下':touchDevice?'双击点亮星光':'留一点星光';}
   function renderLetter(nickname:string,mark:string,message:string){
     saved.querySelector('strong')!.textContent=nickname;
     saved.querySelector('.saved-mark')!.textContent=mark;
@@ -92,16 +98,16 @@ const writeLabel=article?'给这篇文章留言':travel?'给这段旅途留言':
     }
     opener=trigger;dialog.showModal();
   }
-  star.addEventListener('click',async event=>{
-    if(suppressClick && event.detail!==0){event.preventDefault();return;}
+  async function activateStar(){
     if(commentsEnabled && read()?.lit===true){lit=true;renderStar();}
     if(lit){openLetter(star);return;}
     if(lighting)return;
     lighting=true;star.setAttribute('aria-busy','true');
+    clearTimeout(hintTimer);widget.querySelector('.visit-label')!.textContent='正在送出星光…';
     if(commentsEnabled){
       try{await leaveStarlight();}
       catch{
-        lighting=false;star.removeAttribute('aria-busy');
+        lighting=false;star.removeAttribute('aria-busy');renderStar();
         positionFeedback();response.hidden=false;response.querySelector('p')!.textContent='暂未确认收到星光，请稍后再试';
         clearTimeout(timer);timer=setTimeout(()=>{response.hidden=true;},5000);
         return;
@@ -112,6 +118,13 @@ const writeLabel=article?'给这篇文章留言':travel?'给这段旅途留言':
     positionFeedback();response.hidden=false;response.querySelector('p')!.textContent=(commentsEnabled || persisted)?'收到了你的星光':'星光已点亮 · 本次预览有效';
     widget.classList.add('is-celebrating');
     clearTimeout(timer);timer=setTimeout(()=>{widget.classList.remove('is-celebrating');response.hidden=true;},3500);
+  }
+  star.addEventListener('keydown',event=>{
+    if(event.key==='Enter' || event.key===' ')lastTouch=-Infinity;
+  });
+  star.addEventListener('click',event=>{
+    if(suppressClick || performance.now()-lastTouch<700){event.preventDefault();return;}
+    void activateStar();
   });
   widget.querySelector<HTMLButtonElement>('.visit-write')!.addEventListener('click',event=>openLetter(event.currentTarget as HTMLElement));
   dialog.querySelector('.letter-close')!.addEventListener('click',()=>dialog.close());
@@ -180,7 +193,7 @@ const writeLabel=article?'给这篇文章留言':travel?'给这段旅途留言':
   star.addEventListener('pointermove',event=>{
     if(!drag || drag.id!==event.pointerId)return;
     const dx=event.clientX-drag.x,dy=event.clientY-drag.y;
-    if(Math.hypot(dx,dy)>6)drag.moved=true;
+    if(Math.hypot(dx,dy)>(event.pointerType==='touch'?12:6))drag.moved=true;
     if(!drag.moved)return;
     suppressClick=true;response.hidden=true;
     place(drag.left+dx,drag.top+dy);
@@ -189,6 +202,17 @@ const writeLabel=article?'给这篇文章留言':travel?'给这段旅途留言':
   function release(event:PointerEvent){
     if(!drag || drag.id!==event.pointerId)return;
     const moved=drag.moved;drag=null;
+    if(moved || event.type!=='pointerup')touchTap.reset();
+    if(event.pointerType==='touch'){
+      lastTouch=performance.now();
+      if(event.type==='pointerup' && !moved){
+        if(touchTap(lastTouch,event.clientX,event.clientY))void activateStar();
+        else {
+          clearTimeout(hintTimer);hintTimer=setTimeout(()=>{if(!lighting)renderStar();},1600);
+          widget.querySelector('.visit-label')!.textContent=lit?'再轻点一下，留个言吧':'再轻点一下，点亮星光';
+        }
+      }
+    }
     widget.classList.remove('is-held');widget.style.setProperty('--pet-tilt','0deg');
     if(star.hasPointerCapture(event.pointerId))star.releasePointerCapture(event.pointerId);
     if(moved && !reduced.matches)widget.querySelector('.pet-tilt')!.animate([
