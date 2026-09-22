@@ -1,0 +1,93 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import FlowingLabel from '../../components/FlowingLabel.astro';
+import { trips } from '../../data/travel';
+import type { ImageMetadata } from 'astro';
+export function getStaticPaths() {
+  return trips.map(trip=>({params:{slug:trip.slug},props:{trip}}));
+}
+const { trip } = Astro.props;
+const images = import.meta.glob<{default:ImageMetadata}>('../../assets/travel/*/*.{webp,jpg}', {eager:true});
+const src = (id:string,thumb=false) => images[`../../assets/travel/${trip.assetFolder}/${id}${thumb?'-thumb':''}.${trip.extension}`].default.src;
+const cover = trip.photos.find(photo=>photo.id===trip.coverId)!;
+const singles = trip.photos.filter(photo=>!photo.collage && photo.id!==trip.coverId);
+const collages = trip.photos.filter(photo=>photo.collage);
+---
+<BaseLayout title={`${trip.location} · ${trip.title} · Starry Dome`} description={trip.text}>
+  <section class="page-hero travel-header">
+    <a class="article-back" href="/travel/">← 回到旅途目录</a>
+    <div class="travel-label"><FlowingLabel text="Along the Trail" /></div>
+    <p class="travel-meta"><time datetime={trip.date}>{trip.date.replaceAll('-', ' · ')}</time><span aria-hidden="true">✧</span>{trip.location}</p>
+    <h1>{trip.title}</h1>
+    <div class:list={["travel-original", { "long-entry": trip.text.length > 180 }]}>{trip.text.split(/\n\s*\n/).map(paragraph=><p>{paragraph}</p>)}</div>
+  </section>
+  <article class="content-section travel-story" aria-label={`${trip.title}旅行照片`}>
+    <figure class="cover">
+      <a class="photo-open" href={src(cover.id)} data-full={src(cover.id)} data-alt={cover.alt} aria-label={`放大：${cover.alt}`}><img src={src(cover.id)} alt={cover.alt} width={cover.width} height={cover.height} fetchpriority="high" /></a>
+      <figcaption>{trip.coverCaption}<span>点击照片放大</span></figcaption>
+    </figure>
+    <div class="photo-grid">
+      {singles.map(photo=><figure><a class="photo-open" href={src(photo.id)} data-full={src(photo.id)} data-alt={photo.alt} aria-label={`放大：${photo.alt}`}><img src={src(photo.id)} alt={photo.alt} width={photo.width} height={photo.height} loading="lazy" /></a></figure>)}
+    </div>
+    {collages.length > 0 && <section class="travel-scrolls" aria-labelledby="scrolls-title">
+      <header><FlowingLabel text="Travel Scrolls" /><h2 id="scrolls-title">旅途长卷</h2><p>保留朋友圈里的拼图，展开慢慢看。</p></header>
+      <div class="scroll-grid">{collages.map((photo,index)=><figure><a class="photo-open scroll-open" href={src(photo.id)} data-full={src(photo.id)} data-alt={photo.alt} aria-label={`展开长卷 ${index+1}：${photo.alt}`}><img src={src(photo.id,true)} alt={photo.alt} loading="lazy" /><span>长卷 0{index+1}<b aria-hidden="true">✧</b></span></a></figure>)}</div>
+    </section>}
+    <p class="travel-end"><span aria-hidden="true">✧</span>{trip.endText}</p>
+  </article>
+  <dialog class="photo-dialog" aria-label="照片放大查看">
+    <div class="viewer-toolbar"><p class="viewer-caption"></p><button type="button" class="viewer-close" aria-label="关闭照片">关闭 ✕</button></div>
+    <div class="viewer-scroll"><img class="viewer-image" alt="" /></div>
+  </dialog>
+</BaseLayout>
+<script>
+  const dialog=document.querySelector<HTMLDialogElement>('.photo-dialog')!;
+  const image=dialog.querySelector<HTMLImageElement>('.viewer-image')!;
+  const caption=dialog.querySelector<HTMLElement>('.viewer-caption')!;
+  let trigger:HTMLElement|null=null;
+  document.querySelectorAll<HTMLAnchorElement>('.photo-open').forEach(link=>link.addEventListener('click',event=>{
+    event.preventDefault();trigger=link;
+    image.src=link.dataset.full!;image.alt=link.dataset.alt!;caption.textContent=image.alt;
+    dialog.showModal();dialog.querySelector('.viewer-scroll')!.scrollTop=0;
+  }));
+  dialog.querySelector('.viewer-close')!.addEventListener('click',()=>dialog.close());
+  dialog.addEventListener('click',event=>{if(event.target===dialog)dialog.close();});
+  dialog.addEventListener('close',()=>trigger?.focus());
+</script>
+<style>
+  .travel-header { max-width: 1040px; }
+  .travel-label { display: flex; align-items: center; flex-wrap: wrap; gap: 24px; margin-top: 40px; }
+  .travel-label > span { font-size: 11px; color: var(--comet); border: 1px solid var(--crater); padding: 3px 10px; border-radius: 16px; }
+  .page-hero .travel-meta { display:flex; flex-wrap:wrap; gap: 18px; font-size: 12px; letter-spacing: .1em; color: #b9b7a0; margin: 20px 0; }
+  .travel-header h1 { font-size: clamp(30px,4.7vw,58px); line-height: 1.5; letter-spacing: .025em; font-weight: 400; text-wrap: balance; }
+  .page-hero .travel-original { white-space: pre-wrap; font-family: 'IBM Plex Serif','Songti SC',serif; line-height: 2.1; margin: 30px 0 0; color: #cabecf; font-size: 18px; }
+  .page-hero .travel-original p { margin: 0 0 18px; font: inherit; color: inherit; max-width: none; }
+  .page-hero .long-entry { max-width: 760px; margin-top: 34px; font-size: 17px; line-height: 2.15; }
+  .travel-story { max-width: 1040px; }
+  figure { margin: 0; min-width: 0; }
+  .photo-open { display: block; border: 1px solid #c4b2c333; overflow: hidden; border-radius: 18px 4px; background: #19181e; cursor: zoom-in; }
+  .photo-open img { display: block; width: 100%; height: auto; }
+  .photo-open:focus-visible { outline: 2px solid var(--nebula-haze); outline-offset: 5px; }
+  figcaption { display: flex; justify-content: space-between; gap: 20px; font-size: 12px; color: var(--comet); padding: 16px 0; letter-spacing: .06em; }
+  figcaption span { color: var(--asteroid); }
+  .photo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 36px; align-items: start; }
+  .travel-scrolls { margin-top: 80px; }
+  .travel-scrolls header { margin-bottom: 28px; }
+  .travel-scrolls h2 { font-size: 30px; font-weight: 400; color: #e1d3ba; margin: 8px 0; letter-spacing: .12em; }
+  .travel-scrolls header p { font-size: 14px; color: var(--comet); }
+  .scroll-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 18px; }
+  .scroll-open { padding: 14px; }
+  .scroll-open img { height: 350px; object-fit: contain; }
+  .scroll-open > span { display: flex; justify-content: space-between; font-size: 12px; color: #baa9c0; padding-top: 14px; }
+  .scroll-open b { font-weight: 400; }
+  .travel-end { display: grid; justify-items: center; gap: 22px; margin: 70px 0 0; font-size: 13px; letter-spacing: .15em; color: #b6a38b; }
+  .travel-end span { font-size: 25px; }
+  .photo-dialog { width: min(960px,96vw); max-width: 96vw; max-height: 92vh; padding: 0; border: 1px solid #c4b2c355; border-radius: 12px; background:#13121a; color: var(--starlight); }
+  .photo-dialog::backdrop { background: #08070de8; }
+  .viewer-toolbar { display:flex; align-items:center; justify-content:space-between; gap:20px; padding: 10px 16px; }
+  .viewer-caption { font-size:12px; color:var(--comet); margin:0; }
+  .viewer-close { flex-shrink:0; min-height:44px; border:0; background:transparent; color:#dfc9de; cursor:pointer; }
+  .viewer-scroll { max-height: calc(92vh - 68px); overflow: auto; }
+  .viewer-image { display:block; width:100%; height:auto; }
+  @media (max-width:680px) { .photo-grid { gap:12px; } .scroll-grid { grid-template-columns:1fr 1fr; gap:12px; } .scroll-open { padding:10px; } .scroll-open img { height:270px; } .travel-header h1 { font-size:30px; } .viewer-caption { max-width:65%; } }
+</style>

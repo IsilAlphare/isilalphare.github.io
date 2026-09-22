@@ -1,0 +1,88 @@
+{
+  "slug": "2026-dunhuang",
+  "title": "2026暑期·青甘大环线",
+  "date": "2026-07-10",
+  "location": "甘肃敦煌",
+  "text": "​下一个千年，会是怎样？",
+  "status": "published",
+  "recordId": "recvvQZO1UJx3j",
+  "assetFolder": "2026-dunhuang",
+  "extension": "jpg",
+  "coverId": "09",
+  "coverCaption": "甘肃敦煌",
+  "endText": "​下一个千年，会是怎样？",
+  "photos": [
+    {
+      "id": "01",
+      "originalName": "20e36cda493e37653340bb99f5b3d4cf.jpg",
+      "alt": "敦煌旅途拼图",
+      "width": 1038,
+      "height": 9048,
+      "collage": true
+    },
+    {
+      "id": "02",
+      "originalName": "720aa41fbd9391e0f6dcc64bf30c5ed5.jpg",
+      "alt": "沙漠与湖泊拼图",
+      "width": 1358,
+      "height": 6400,
+      "collage": true
+    },
+    {
+      "id": "03",
+      "originalName": "31c6c51e3874c5d58527de63820dadfd.jpg",
+      "alt": "沙漠与艺术拼图",
+      "width": 1086,
+      "height": 9048,
+      "collage": true
+    },
+    {
+      "id": "04",
+      "originalName": "347cd440693a808a0af0485b2a3a2f19.jpg",
+      "alt": "壁画与佛像拼图",
+      "width": 970,
+      "height": 9594,
+      "collage": true
+    },
+    {
+      "id": "05",
+      "originalName": "b66a333c69ead77b413e1a0d470af476.jpg",
+      "alt": "室内与壁画拼图",
+      "width": 1054,
+      "height": 9048,
+      "collage": true
+    },
+    {
+      "id": "06",
+      "originalName": "f109a3da064b4127d57f3a2b0724c15a.jpg",
+      "alt": "壁画拼图",
+      "width": 1180,
+      "height": 7836,
+      "collage": true
+    },
+    {
+      "id": "07",
+      "originalName": "e70f68049aca954707a1dbb9f9a4872b.jpg",
+      "alt": "壁画与雕塑拼图",
+      "width": 1120,
+      "height": 7836,
+      "collage": true
+    },
+    {
+      "id": "08",
+      "originalName": "2760a5655306eced31bd84c75dcbadd3.jpg",
+      "alt": "雕塑与壁画拼图",
+      "width": 1162,
+      "height": 7836,
+      "collage": true
+    },
+    {
+      "id": "09",
+      "originalName": "ea387ad0e46fe8451e422514797b0300.jpg",
+      "alt": "莫高窟外景",
+      "width": 1440,
+      "height": 1158,
+      "collage": false
+    }
+  ]
+}

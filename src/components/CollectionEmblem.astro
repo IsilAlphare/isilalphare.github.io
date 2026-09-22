@@ -1,0 +1,22 @@
+---
+import FlowingLabel from './FlowingLabel.astro';
+import CelestialMotif from './CelestialMotif.astro';
+interface Props { type: string; }
+const { type } = Astro.props;
+const emblems: Record<string, { variant: string; color: string; label: string }> = {
+  '书': { label: 'Books', variant: 'arch', color: '#c6b594' },
+  '影': { label: 'Cinema', variant: 'eclipse', color: '#aaa6cc' },
+  '音': { label: 'Music', variant: 'halo', color: '#b4c4bd' },
+  '动': { label: 'Anime', variant: 'rose', color: '#c7a5be' },
+  '站': { label: 'Elsewhere', variant: 'orbit', color: '#a8bccd' },
+};
+const emblem = emblems[type] ?? emblems['站'];
+---
+<div class="collection-emblem" style={`--emblem-color: ${emblem.color}`}>
+  <CelestialMotif variant={emblem.variant} size={76} />
+  <FlowingLabel text={emblem.label} />
+</div>
+<style>
+  .collection-emblem { display: flex; align-items: center; gap: 4px; color: var(--emblem-color); margin: -6px 0 12px -12px; }
+  .collection-emblem { flex-wrap: wrap; }
+</style>

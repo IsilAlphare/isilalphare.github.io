@@ -1,0 +1,88 @@
+{
+  "slug": "2025-jiuzhaigou",
+  "title": "2025秋·川滇旅居",
+  "date": "2025-11-07",
+  "location": "九寨沟",
+  "text": "浮翠流金",
+  "status": "published",
+  "recordId": "recvvR3bwqH9eS",
+  "assetFolder": "2025-jiuzhaigou",
+  "extension": "jpg",
+  "coverId": "08",
+  "coverCaption": "九寨沟",
+  "endText": "浮翠流金",
+  "photos": [
+    {
+      "id": "01",
+      "originalName": "b5739260f3f2718d2d35127885d9a86a.jpg",
+      "alt": "九寨沟风景与人像拼图",
+      "width": 1080,
+      "height": 7381,
+      "collage": true
+    },
+    {
+      "id": "02",
+      "originalName": "afaa30bb16ea2532d743ffb9ebab9d16.jpg",
+      "alt": "秋色与湖泊拼图",
+      "width": 1080,
+      "height": 5683,
+      "collage": true
+    },
+    {
+      "id": "03",
+      "originalName": "4f8684bf10ef588082c36208eaf19b0c.jpg",
+      "alt": "湖畔人像拼图",
+      "width": 1080,
+      "height": 6443,
+      "collage": true
+    },
+    {
+      "id": "04",
+      "originalName": "e865cdd3d8053fc72a42b8b8a7114486.jpg",
+      "alt": "林间流水拼图",
+      "width": 932,
+      "height": 10110,
+      "collage": true
+    },
+    {
+      "id": "05",
+      "originalName": "3f76412f98ec1bf142f087c2a9f9f29a.jpg",
+      "alt": "彩色湖泊拼图",
+      "width": 1040,
+      "height": 9594,
+      "collage": true
+    },
+    {
+      "id": "06",
+      "originalName": "21bfc68752d23f7848429fb7ffc4e8fa.jpg",
+      "alt": "水面与山峦拼图",
+      "width": 1080,
+      "height": 8450,
+      "collage": true
+    },
+    {
+      "id": "07",
+      "originalName": "aef94aed768158c16e80b177319acc55.jpg",
+      "alt": "九寨沟湖景拼图",
+      "width": 1080,
+      "height": 7827,
+      "collage": true
+    },
+    {
+      "id": "08",
+      "originalName": "f2b3d7a84f1fd744c206c78f37e9f02a.jpg",
+      "alt": "蓝色湖面与群山",
+      "width": 1440,
+      "height": 1080,
+      "collage": false
+    },
+    {
+      "id": "09",
+      "originalName": "d796b3238364cdd347f8f40010659265.jpg",
+      "alt": "秋林间的碧水与芦苇",
+      "width": 2560,
+      "height": 1920,
+      "collage": false
+    }
+  ]
+}

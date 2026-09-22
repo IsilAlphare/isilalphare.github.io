@@ -1,0 +1,78 @@
+---
+interface Props { scene: 'meteor' | 'window' | 'dam' | 'forest' | 'sea' | 'planets' | 'dandelions' | 'galaxy' | 'road'; }
+const { scene } = Astro.props;
+---
+<div class={`memory-landscape scene-${scene}`} aria-hidden="true">
+<svg viewBox="0 0 600 260" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <g stroke="currentColor" stroke-width=".8" opacity=".28">
+    <path d="M35 220H565M80 238H520" />
+    <circle cx="300" cy="108" r="67" stroke-dasharray="1 10" />
+    <path d="M300 22V35M294 29H306M155 62V72M150 67H160M448 44V54M443 49H453" />
+  </g>
+  <g fill="currentColor" opacity=".6">{[[92,91],[180,37],[239,73],[369,35],[402,104],[505,77],[332,59],[122,139]].map(([cx,cy])=><circle cx={cx} cy={cy} r="1.3" />)}</g>
+  {scene === 'meteor' && <g stroke="currentColor" stroke-linecap="round">
+    <path d="M30 219L155 132L225 184L343 95L481 200L570 220" opacity=".7"/>
+    <path d="M112 162L156 145L183 159M295 131L340 114L381 145M30 235Q175 192 280 219T570 230" opacity=".25"/>
+    <path d="M410 31L341 69M456 73L413 96M253 24L209 50" opacity=".65"/>
+    <path d="M339 61L342 68L350 69L343 72L341 80L338 72L330 70L337 68Z" fill="currentColor" stroke="none"/>
+  </g>}
+  {scene === 'window' && <g stroke="currentColor">
+    <path d="M200 218V52Q300 15 400 52V218M215 218V63Q300 30 385 63V218M300 40V180M215 110H385M200 218H400" opacity=".5"/>
+    <path d="M225 210V168H255V145H283V211M322 211V156H350V174H379V211" opacity=".2"/>
+    <path d="M284 206V179Q300 170 316 179V206Q300 214 284 206ZM286 177V171H314V177" opacity=".8"/>
+    <path d="M300 181L302 188L309 190L302 192L300 199L298 192L291 190L298 188Z" fill="currentColor" stroke="none"/>
+  </g>}
+  {scene === 'dam' && <g stroke="currentColor">
+    <path d="M25 153L88 91L134 135L182 106M421 106L471 71L575 150" opacity=".25"/>
+    <path d="M120 213L166 95H435L480 213M159 111H441M146 143H453M134 178H466M167 95V79H435V95" opacity=".7"/>
+    {[195,237,279,321,363,405].map(x=><path d={`M${x} 112L${x-12} 211M${x+12} 112L${x+24} 211`} opacity=".35" />)}
+    <path d="M65 222Q126 208 187 222T310 222T433 222T555 222M104 239Q179 225 252 239T401 239T532 239" opacity=".4"/>
+  </g>}
+  {scene === 'forest' && <g stroke="currentColor">
+    <path d="M40 215L154 157L259 202L362 114L560 217" opacity=".23"/>
+    {[125,180,390,451,480].map((x,i)=><g opacity={.35+i*.08}><path d={`M${x} 219V${133+i*9}M${x-20} ${179+i*5}L${x} ${145+i*7}L${x+20} ${179+i*5}M${x-26} ${201+i*2}L${x} ${163+i*6}L${x+26} ${201+i*2}`} /></g>)}
+    <path d="M266 222L303 169L339 222ZM303 169V221M284 197H319" opacity=".7"/>
+    <path d="M309 67A18 18 0 1 1 290 43A21 21 0 0 0 309 67Z" opacity=".65"/>
+  </g>}
+  {scene === 'sea' && <g stroke="currentColor">
+    <path d="M46 157H554M72 181Q122 168 172 181T272 181T372 181T472 181T548 181M43 210Q118 192 193 210T343 210T493 210M138 235Q213 218 288 235T438 235" opacity=".4"/>
+    <path d="M285 130L293 141H334L343 130ZM308 130V109L328 130M308 109L295 129" opacity=".75"/>
+    <path d="M300 55L304 71L320 75L304 79L300 95L296 79L280 75L296 71Z" opacity=".65"/>
+    <path d="M300 160V165M295 174H305M289 190H311M280 213H320" opacity=".35"/>
+  </g>}
+  {scene === 'planets' && <g stroke="currentColor">
+    <path d="M42 184H558M78 204Q148 189 218 204T358 204T498 204M152 230Q230 214 308 230T465 230" opacity=".35"/>
+    <path d="M106 148Q277 6 493 136" stroke-dasharray="2 7" opacity=".3"/>
+    {[[130,130,3],[212,84,5],[301,65,6],[398,82,4],[479,126,3]].map(([x,y,r])=><g><circle cx={x} cy={y} r={r} opacity=".8"/><circle cx={x} cy={y} r={r+7} opacity=".12"/></g>)}
+    <path d="M278 184A22 22 0 0 1 322 184M287 196H313M280 212H320" opacity=".55"/>
+    <path d="M58 183L111 169L143 184M448 184L495 172L546 184" opacity=".4"/>
+  </g>}
+  {scene === 'dandelions' && <g stroke="currentColor">
+    <path d="M64 228Q295 196 544 228" opacity=".3"/>
+    {[[218,131,29],[297,101,35],[367,146,25]].map(([x,y,r])=><g>
+      <path d={`M${x} ${y}Q${x-15} 182 ${x+4} 217`} opacity=".6"/>
+      {Array.from({length:12},(_,i)=>{const a=i*Math.PI/6,ex=x+Math.cos(a)*r,ey=y+Math.sin(a)*r;return <g opacity=".5"><path d={`M${x} ${y}L${ex} ${ey}`}/><circle cx={ex} cy={ey} r="3" stroke-width=".6"/></g>;})}
+      <circle cx={x} cy={y} r="2" fill="currentColor"/>
+    </g>)}
+    {[[411,96],[455,64],[493,92]].map(([x,y])=><g opacity=".65"><path d={`M${x-9} ${y+15}L${x} ${y}M${x-8} ${y-3}Q${x} ${y+6} ${x+8} ${y-3}M${x} ${y}V${y-8}`}/></g>)}
+    <path d="M162 226L168 209M174 222L182 215M411 222L402 209" opacity=".3"/>
+  </g>}
+  {scene === 'galaxy' && <g stroke="currentColor">
+    <path d="M50 205L147 138L207 176L281 150L363 195L450 145L552 205M75 216Q285 201 529 216M127 236Q300 223 473 236" opacity=".4"/>
+    <path d="M147 41Q371 38 409 114T283 186M170 27Q400 25 428 111T309 194" opacity=".18"/>
+    {Array.from({length:38},(_,i)=>{const t=i/37,x=158+260*Math.sin(t*2.3),y=30+155*t;return <circle cx={x+Math.sin(i*8)*15} cy={y} r={i%5===0?1.7:.8} fill="currentColor" stroke="none" opacity={.25+(i%4)*.15}/>;})}
+    <path d="M280 213L313 213M285 223H306" opacity=".4"/>
+  </g>}
+  {scene === 'road' && <g stroke="currentColor">
+    <path d="M30 208L136 104L236 181L332 119L471 199L551 158M98 143L136 119L173 147" opacity=".45"/>
+    <path d="M275 258Q427 229 319 203T296 177M321 258Q459 226 343 201T307 177" opacity=".6"/>
+    <path d="M210 27Q310 67 301 142M226 23Q330 75 311 143" opacity=".22"/>
+    {Array.from({length:20},(_,i)=><circle cx={217+Math.sin(i*.12)*94+Math.sin(i*5)*9} cy={28+i*5.5} r={i%4===0?1.6:.7} fill="currentColor" stroke="none" opacity=".5"/>)}
+    <g transform="translate(353 219) rotate(-12)" opacity=".8"><rect x="-7" y="-10" width="14" height="22" rx="4"/><path d="M-5-4H5M-5 5H5"/><circle cx="-4" cy="-8" r=".8"/><circle cx="4" cy="-8" r=".8"/></g>
+  </g>}
+</svg>
+</div>
+<style>
+.memory-landscape { color:var(--node-accent); background:radial-gradient(ellipse at 50% 55%,var(--node-soft),transparent 68%),linear-gradient(160deg,#13111c80,#0d0c14); }
+svg { display:block; width:100%; height:auto; }
+</style>

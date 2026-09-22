@@ -25,6 +25,8 @@ jobs:
         uses: actions/configure-pages@v5
 
       - name: Build Astro site
+        env:
+          PUBLIC_WALINE_SERVER_URL: ${{ vars.PUBLIC_WALINE_SERVER_URL }}
         uses: withastro/action@v3
         with:
           path: .

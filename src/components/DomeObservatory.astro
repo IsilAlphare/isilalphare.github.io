@@ -1,0 +1,106 @@
+---
+import { starFaces } from '../lib/domeGeometry';
+interface Props { variant?: 'home' | 'starfall'; }
+const { variant = 'home' } = Astro.props;
+const isStarfall = variant === 'starfall';
+---
+<figure class:list={["dome-observatory", { "is-starfall": isStarfall }]} aria-label="星空穹庐的动态徽记：层叠穹顶围绕中央星芒，星辰沿倾斜轨道缓缓运行">
+  <div class="aureole" aria-hidden="true"></div>
+  <svg viewBox="0 0 520 600" fill="none" aria-hidden="true">
+    <defs>
+      <linearGradient id="dome-metal" x1="95" y1="85" x2="420" y2="500" gradientUnits="userSpaceOnUse"><stop stop-color="#ead6ad"/><stop offset=".35" stop-color="#bddcd4"/><stop offset=".65" stop-color="#b69bd6"/><stop offset="1" stop-color="#e4b3c2"/></linearGradient>
+      <radialGradient id="dome-heart"><stop stop-color="#eadccd" stop-opacity=".2"/><stop offset="1" stop-color="#c1a4df" stop-opacity="0"/></radialGradient>
+    </defs>
+    <circle cx="260" cy="287" r="170" fill="url(#dome-heart)"/>
+    <g stroke="url(#dome-metal)">
+      {isStarfall ? <g class="starfall-gates" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M107 470V221a153 153 0 0 1 306 0v249" stroke-width="3.2" opacity=".9"/>
+        <path d="M120 463V223a140 140 0 0 1 280 0v240" stroke-width=".8" opacity=".35"/>
+        <path d="M137 454V226a123 123 0 0 1 246 0v228" stroke-width="2.1" opacity=".7"/>
+        <path d="M150 445V229a110 110 0 0 1 220 0v216" stroke-width=".65" opacity=".3"/>
+        <path d="M163 436V231a97 97 0 0 1 194 0v205" stroke-width="1.2" opacity=".5"/>
+        <path d="M91 478H429" stroke-width="2.3" opacity=".72"/>
+        <path d="M107 470H413M137 454H383M163 436H357" stroke-width=".7" opacity=".3"/>
+        <path d="M120 486H400" stroke-width=".65" opacity=".4"/>
+        <path d="M260 55V81M250 68H270" stroke-width="1.1" opacity=".6"/>
+      </g> : <g>
+        <path d="M107 470V221a153 153 0 0 1 306 0v249" stroke-width="1.6"/>
+        <path d="M120 470V223a140 140 0 0 1 280 0v247" opacity=".25"/>
+        <path d="M137 463V226a123 123 0 0 1 246 0v237" stroke-width=".9" opacity=".65"/>
+        <path d="M163 448V231a97 97 0 0 1 194 0v217" stroke-width=".6" opacity=".4"/>
+        <path d="M91 478h338M120 486h280M260 55v31M248 69h24" stroke-width=".8" opacity=".7"/>
+      </g>}
+      {!isStarfall && <circle cx="260" cy="285" r="111" stroke-dasharray="1 11" opacity=".55"/>}
+      <g class="orbit-one"><ellipse cx="260" cy="337" rx="216" ry="58" transform="rotate(-24 260 337)" stroke-width={isStarfall ? 1.8 : 1.1}/><ellipse cx="260" cy="337" rx="225" ry="64" transform="rotate(-24 260 337)" stroke-width=".5" opacity=".25"/></g>
+      <g class="orbit-two"><ellipse cx="260" cy="302" rx="177" ry="72" transform="rotate(35 260 302)" stroke-width=".7" opacity=".55"/></g>
+      <path d="M205 284h110M260 220v128" stroke-width=".6" opacity=".4"/>
+    </g>
+    <g class="heart-star"><g class="solid-star">{starFaces(.35).map(face => <polygon points={face.points} fill={face.fill} />)}</g><path d="m260 183 3 11 11 4-11 4-3 11-4-11-10-4 10-4Z" fill="url(#dome-metal)" opacity=".6"/></g>
+    <g transform="translate(260 337) rotate(-24)"><circle class="planet" data-orbit="outer" cx="216" cy="0" r="4" fill="#c6dcd7"/><circle class="planet" data-orbit="companion" cx="-216" cy="0" r="2.5" fill="#e0bfd4"/></g>
+    <g transform="translate(260 302) rotate(35)"><circle class="planet" data-orbit="inner" cx="0" cy="72" r="3.5" fill="#dfc9a6"/></g>
+    <g class="distant-stars" fill="#d2c0db"><circle cx="80" cy="152" r="1.5"/><circle cx="434" cy="173" r="2"/><circle cx="461" cy="384" r="1.5"/><circle cx="166" cy="94" r="1"/><circle cx="62" cy="315" r="1"/><path d="m403 102 3 9 9 3-9 3-3 9-3-9-9-3 9-3Z"/></g>
+    {isStarfall ? <g stroke="url(#dome-metal)" stroke-linecap="round" opacity=".6"><path d="M182 518Q260 497 338 518" stroke-width="1.6"/><path d="M211 538Q260 523 309 538" stroke-width=".85"/><path d="M243 555H277" stroke-width=".5"/></g> : <g stroke="url(#dome-metal)"><path d="m260 517 4 11 11 4-11 4-4 11-4-11-11-4 11-4Z" stroke-width=".8"/><path d="M184 532h44m64 0h44" stroke-width=".6" opacity=".5"/></g>}
+  </svg>
+  {!isStarfall && <figcaption>STARRY DOME <span>✦</span> 星空穹庐</figcaption>}
+</figure>
+<style>
+  .dome-observatory { position: relative; isolation: isolate; overflow: clip; width: 100%; max-width: 540px; margin: 0 auto; }
+  .is-starfall .distant-stars { opacity: .45; }
+  .dome-observatory svg { position: relative; display: block; width: 100%; height: auto; overflow: visible; }
+  .aureole { position: absolute; inset: 10% 0 12%; z-index: -1; border-radius: 50%; background: conic-gradient(from 30deg,transparent,#a787c318,transparent,#74b5bb15,transparent,#d2b79010,transparent); filter: blur(32px); animation: aureole-turn 38s linear infinite; }
+  .heart-star { transform-origin: 260px 285px; animation: heart-light 9s ease-in-out infinite; }
+
+
+  .distant-stars { animation: distant-light 11s ease-in-out infinite alternate; }
+  figcaption { display: flex; align-items: center; justify-content: center; gap: 18px; margin-top: -24px; color: #9990a5; font-size: 9px; letter-spacing: .26em; }
+  figcaption span { color: #cdbb9c; font-size: 8px; }
+  @keyframes aureole-turn { to { transform: rotate(360deg); } }
+  @keyframes heart-light { 0%,100% { opacity: .72; filter: drop-shadow(0 0 8px #c6afd633); } 50% { opacity: 1; filter: drop-shadow(0 0 20px #c6afd677); } }
+  @keyframes orbit-sway { from { transform: rotate(-9deg); } to { transform: rotate(9deg); } }
+  @keyframes distant-light { from { opacity: .4; } to { opacity: .95; } }
+  @media (prefers-reduced-motion: reduce) { .aureole, .heart-star, .orbit-one, .orbit-two, .distant-stars { animation: none; } }
+</style>
+
+<script>
+  import { starFaces, orbitPosition } from '../lib/domeGeometry';
+  document.querySelectorAll<HTMLElement>('.dome-observatory').forEach(figure => {
+    const polygons = Array.from(figure.querySelectorAll<SVGPolygonElement>('.solid-star polygon'));
+    const planets = Array.from(figure.querySelectorAll<SVGCircleElement>('.planet'));
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+    let frame = 0, last = 0, elapsed = 0, visible = true;
+    function draw(seconds: number) {
+      starFaces(.35 + seconds * Math.PI * 2 / 18).forEach((face,i) => {
+        polygons[i].setAttribute('points', face.points);
+        polygons[i].setAttribute('fill', face.fill);
+      });
+      planets.forEach(planet => {
+        const orbit = planet.dataset.orbit;
+        const inner = orbit === 'inner';
+        const phase = orbit === 'companion' ? Math.PI : inner ? Math.PI/2 : 0;
+        const angle = seconds * Math.PI * 2 / (inner ? -23 : 32) + phase;
+        const point = orbitPosition(angle, inner ? 177 : 216, inner ? 72 : 58);
+        planet.setAttribute('cx', String(point.x));
+        planet.setAttribute('cy', String(point.y));
+        planet.setAttribute('opacity', String(.7 + .3*(Math.sin(angle)+1)/2));
+      });
+    }
+    function tick(now: number) {
+      if (last) elapsed += Math.min((now-last)/1000,.1);
+      last=now;
+      draw(elapsed);
+      frame=requestAnimationFrame(tick);
+    }
+    function sync() {
+      cancelAnimationFrame(frame); last=0;
+      if (reduced.matches) { elapsed=0; draw(0); }
+      else if (visible && !document.hidden) frame=requestAnimationFrame(tick);
+    }
+    const observer=new IntersectionObserver(entries=>{ visible=entries[0].isIntersecting; sync(); });
+    observer.observe(figure);
+    reduced.addEventListener('change',sync);
+    document.addEventListener('visibilitychange',sync);
+    window.addEventListener('pagehide',()=>{ cancelAnimationFrame(frame); observer.disconnect(); });
+    window.addEventListener('pageshow',()=>{ observer.observe(figure); sync(); });
+    sync();
+  });
+</script>

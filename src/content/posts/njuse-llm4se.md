@@ -9,61 +9,54 @@ sourceDoc: "https://bytedance.larkoffice.com/docx/KTtWd9M6Io3OIixveaFc8vlvncc"
 slug: "njuse-llm4se"
 ---
 
-# 24Fall-NJUSE 【LLM4SE】 实验文档
-
-**来源：**Notion　**原发布时间：**发布日期: 2025-10-17; 创建时间: 2025-10-17 03:47:06.528Z; 最后编辑时间: 2025-10-17 06:57:30.454Z　**标签：**NJU
-
-**原文：**[https://almond-oxygen-ceb.notion.site/24Fall-NJUSE-LLM4SE-28f8b1cc19aa80b194eac9735699de9a?pvs=25](https://almond-oxygen-ceb.notion.site/24Fall-NJUSE-LLM4SE-28f8b1cc19aa80b194eac9735699de9a?pvs=25)
-
----
-
 > 仅供参考。完整代码和文件：[https://github.com/IsilAlphare/NJUSE_24Fall_LLM4SE](https://github.com/IsilAlphare/NJUSE_24Fall_LLM4SE)
 
-## **RAG实验(必做)**
+## RAG实验(必做)
 
-### **题目要求**
+### 题目要求
 
-#### **基础要求**
+#### 基础要求
 
-- 构建一个针对arXiv的知识问答系统
-- 要求如下
-- 给定一个入口，用户可以输入提问
-- 不要求要求构建GUI界面
-- 用户通过对话进行交互
-- 系统寻找与问题相关的论文abstract
-- 使用用户的请求对向量数据库进行请求
-- 寻找与问题最为相关的abstract
-- 系统根据问题和论文abstract回答用户问题，并给出解答问题的信息来源
-- 示例
+构建一个针对 arXiv 的知识问答系统，要求如下：
 
-#### **进阶要求**
+- 给定一个入口，用户可以输入提问。
+  - 不要求构建 GUI 界面。
+  - 用户通过对话进行交互。
+- 系统寻找与问题相关的论文 abstract。
+  - 使用用户的请求对向量数据库进行请求。
+  - 寻找与问题最为相关的 abstract。
+- 系统根据问题和论文 abstract 回答用户问题，并给出解答问题的信息来源。
 
-- 提示优化
-- 用户给出的问题或陈述不一定能够匹配向量数据库的查询
-- 使用大模型对用户的输入进行润色，提高找到对应文档的概率
-- 思路提示(解决思路不唯一，提示仅作为可能的思路示例)
-- 观察不同输入后向量数据库找到对应文档的概率
-- 总结适用于查询的语句
-- 构建提示(prompt)实现对用户输入的润色
-- 查询迭代
-- 单次的查询可能无法寻找到用户所期望的答案
-- 需要通过多轮的搜索和尝试才能获得较为准确的答案
-- 思路提示
-- 如何将用户的需求拆解，变成可以拆解的逻辑步骤
-- 如何判断已经获得准确的答案并停止迭代
-- 如何再思路偏移后进行修正
+<!-- 原迁移稿在此留有“示例”条目，但没有对应内容，待回查原始课程材料。 -->
 
-### **资源简介**
+#### 进阶要求
+
+- **提示优化**
+  - 用户给出的问题或陈述不一定能够匹配向量数据库的查询。
+  - 使用大模型对用户的输入进行润色，提高找到对应文档的概率。
+  - 思路提示（解决思路不唯一，提示仅作为可能的思路示例）：
+    - 观察不同输入后向量数据库找到对应文档的概率。
+    - 总结适用于查询的语句。
+    - 构建提示（prompt）实现对用户输入的润色。
+- **查询迭代**
+  - 单次的查询可能无法寻找到用户所期望的答案。
+  - 需要通过多轮的搜索和尝试才能获得较为准确的答案。
+  - 思路提示：
+    - 如何将用户的需求拆解，变成可以拆解的逻辑步骤。
+    - 如何判断已经获得准确的答案并停止迭代。
+    - 如何在思路偏移后进行修正。
+
+### 资源简介
 
 向量数据库可按需自行部署，大模型可选择自有api，下列内容为能完成任务的所需资源。
 
-arxiv数据集可以从这里获取 [https://www.kaggle.com/datasets/Cornell-University/arxiv](https://www.kaggle.com/datasets/Cornell-University/arxiv)
+arxiv数据集可以从这里获取 [https://www.kaggle.com/datasets/Cornell-University/arxiv](https://www.kaggle.com/datasets/Cornell-University/arxiv)
 
-#### **大模型(Qwen2.5-14B)**
+#### 大模型(Qwen2.5-14B)
 
-```
+```python
 # Qwen2.5-14B模型已接入LangChain Openai API,调用示例如下
-from langchain.llmsimport OpenAI, OpenAIChat
+from langchain.llms import OpenAI, OpenAIChat
 import os
 os.environ["OPENAI_API_KEY"] ="None"
 os.environ["OPENAI_API_BASE"] ="http://10.58.0.2:8000/v1"
@@ -73,40 +66,40 @@ llm_chat = OpenAIChat(model_name="Qwen2.5-14B")
 
 ---
 
-openai包使用特定版本，避免与langchain不兼容 pip installopenai==0.28
+openai包使用特定版本，避免与langchain不兼容 `pip install openai==0.28`
 
-#### **嵌入模型(sentence-transformers/all-MiniLM-L12-v2)**
+#### 嵌入模型(sentence-transformers/all-MiniLM-L12-v2)
 
 - 嵌入模型使用huggingface中的all-MiniLM-L12-v2模型
 
-```
-from langchain.embeddingsimport HuggingFaceEmbeddings
+```python
+from langchain.embeddings import HuggingFaceEmbeddings
 embedding = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L12-v2")
 ```
 
 ---
 
-当前由于huggingface被墙，无梯子可以使用镜像，详见 [https://hf-mirror.com/](https://hf-mirror.com/)
+当前由于huggingface被墙，无梯子可以使用镜像，详见 [https://hf-mirror.com/](https://hf-mirror.com/)
 
-#### **向量数据库**
+#### 向量数据库
 
 arXiv数据存在Milvus中
 
-```
-from langchain.vectorstoresimport Milvus
+```python
+from langchain.vectorstores import Milvus
 db = Milvus(embedding_function=embedding, collection_name="arXiv",connection_args={"host":"10.58.0.2","port":"19530"})
 ```
 
 ---
 
-由于向量数据库与SDK存在强绑定关系，安装milvus包时请检查版本： pipinstall pymilvus==2.2.6
+由于向量数据库与SDK存在强绑定关系，安装milvus包时请检查版本： `pip install pymilvus==2.2.6`
 
-#### **数据项解释**
+#### 数据项解释
 
 - vector： 论文abstract的向量化表示
 - access_id：论文的唯一id
-- [https://arxiv.org/abs/](https://arxiv.org/abs/)[{access_id}](https://arxiv.org/abs/{access_id}) 论文的详情页
-- [https://arxiv.org/pdf/](https://arxiv.org/pdf/)[{access_id}](https://arxiv.org/pdf/{access_id}) 论文的pdf地址
+- `https://arxiv.org/abs/{access_id}` 论文的详情页
+- `https://arxiv.org/pdf/{access_id}` 论文的pdf地址
 - authors：论文的作者
 - title：论文的题目
 - comments：论文的评论，一般为作者的补充信息
@@ -115,43 +108,45 @@ db = Milvus(embedding_function=embedding, collection_name="arXiv",connection_arg
 - text：论文的abstract (为了兼容langchain必须命名为text)
 - categories：论文的分类
 
-#### **LangChain**
+#### LangChain
 
-- langchain官方文档 [https://python.langchain.com/](https://python.langchain.com/)
-- langchain官方课程 [https://learn.deeplearning.ai/langchain](https://learn.deeplearning.ai/langchain)
+- langchain官方文档 [https://python.langchain.com/](https://python.langchain.com/)
+- langchain官方课程 [https://learn.deeplearning.ai/langchain](https://learn.deeplearning.ai/langchain)
 
-### **提交内容**
+### 提交内容
 
 1. 代码实现
 2. 预置题目
-3. 预置由json文件构成，包含10个问题(question项目)
-4. 使用算法回答其中问题，答案存在answer项内
-5. 该文件存储为answer.json，单独提交
+   - 预置由json文件构成，包含10个问题(question项目)
+   - 使用算法回答其中问题，答案存在answer项内
+   - 该文件存储为answer.json，单独提交
 
-### **注意事项**
+### 注意事项
 
 1. Python版本要在3.8和3.11之间。（我使用了3.9.2rc1）因为要求ymilvus=2.2.6，这个库依赖1.49.1到1.53.0的grpcio，1.53.0的grpcio不支持python3.12。
-2. 因为网络原因，运行时无法自动下载sentence-transformers，需要手动下载：[sentence-transformers](https://hf-mirror.com/sentence-transformers/all-MiniLM-L12-v2/tree/main) 整个目录。对于根目录下 `pytorch_model.bin` 和 `model.safetensors` 两个文件，需要手动下载。
+2. 因为网络原因，运行时无法自动下载sentence-transformers，需要手动下载：[sentence-transformers](https://hf-mirror.com/sentence-transformers/all-MiniLM-L12-v2/tree/main) 整个目录。对于根目录下 `pytorch_model.bin` 和 `model.safetensors` 两个文件，需要手动下载。
 
 注：
 
-**sentence-transformers**是一个基于Python的库，它专门用于句子、文本和图像的嵌入。这个库可以计算100多种语言的文本嵌入，并且这些嵌入可以轻松地用于语义文本相似性、语义搜索和同义词挖掘等任务。sentence-transformers基于PyTorch和Transformers库构建，提供了大量针对各种自然语言处理任务的预训练模型。此外，用户还可以根据自己的需求对模型进行微调。
+**sentence-transformers** 是一个基于Python的库，它专门用于句子、文本和图像的嵌入。这个库可以计算100多种语言的文本嵌入，并且这些嵌入可以轻松地用于语义文本相似性、语义搜索和同义词挖掘等任务。sentence-transformers基于PyTorch和Transformers库构建，提供了大量针对各种自然语言处理任务的预训练模型。此外，用户还可以根据自己的需求对模型进行微调。
 
-a. 在项目根目录下git clone sentence-transformers目录
+**下载模型：**
 
-```
+在项目根目录下 git clone sentence-transformers 目录：
+
+```bash
 git clone https://hf-mirror.com/sentence-transformers/all-MiniLM-L12-v
 ```
 
 ---
 
-b再手动下载将网站中`pytorch_model.bin` 和 `model.safetensors`，将两个文件放入all-MiniLM-L12-v文件夹中。
+再手动下载网站中`pytorch_model.bin` 和 `model.safetensors`，将两个文件放入all-MiniLM-L12-v文件夹中。
 
-1. 安装正确版本的依赖：
+#### 安装依赖
 
 用管理员模式进行安装：
 
-```
+```bash
 pip install openai==0.28
 pip install pymilvus==2.2.6
 ```
@@ -160,18 +155,20 @@ pip install pymilvus==2.2.6
 
 其他依赖直接安装最新版即可。(pip install + 需要的包如langchain/langchain_openai)
 
-1. 如遇已安装pymilvus却无法import的报错，有可能是没有google模块
+#### 缺少 google 模块
 
-```
+如遇已安装 pymilvus 却无法 import 的报错，有可能是没有 google 模块。
+
+```bash
 pip install --upgrade google-api-python-client
 ```
 
 ---
 
-1. 记得在校园网环境下运行，否则milvus会超时
-2. 终端运行结果示例：
+> 记得在校园网环境下运行，否则 milvus 会超时。
+#### 终端运行结果示例
 
-```
+```text
 c:\Users\xiaoyu\Desktop\RAG-arVix\main.py:22: LangChainDeprecationWarning: The class `Milvus` was deprecatedin LangChain 0.2.0 and will be removedin 1.0. An updated version of the class existsin the :class:`~langchain-milvus package and should be used instead. To use it run `pip install -U :class:`~langchain-milvus` and import as `from :class:`~langchain_milvus import MilvusVectorStore``.
   db = Milvus(embedding_function=embedding, collection_name="arXiv_Back",
 2024-12-27 22:32:33,121 - INFO - Answering question: 什么是大语言模型？
@@ -203,13 +200,13 @@ c:\Users\xiaoyu\Desktop\RAG-arVix\main.py:22: LangChainDeprecationWarning: The c
 
 ---
 
-## **Agent实验**
+## Agent实验
 
-### **题目要求**
+### 题目要求
 
 实现一个只需要使用语言即可使用的选课系统，不包含任何GUI。被调用的函数可以使用copilot生成，不需要使用数据库，只需要能够模拟对应功能。
 
-### **功能简介**
+### 功能简介
 
 查询：带有筛选的查询，可以筛选必修或选修。
 
@@ -221,7 +218,7 @@ c:\Users\xiaoyu\Desktop\RAG-arVix\main.py:22: LangChainDeprecationWarning: The c
 
 删除：删除选择的课程，智能返回结果
 
-### **进阶要求**
+### 进阶要求
 
 查询增强，根据描述返回用户最为感兴趣的课程
 
@@ -229,13 +226,13 @@ c:\Users\xiaoyu\Desktop\RAG-arVix\main.py:22: LangChainDeprecationWarning: The c
 
 选择增强：当用户在选课和删除时提供的课程不准确时，智能提供可能用户想提的课程
 
-### **实验资源**
+### 实验资源
 
-1.python库：[https://github.com/QwenLM/Qwen-Agent](https://github.com/QwenLM/Qwen-Agent)
+1. Python 库：[https://github.com/QwenLM/Qwen-Agent](https://github.com/QwenLM/Qwen-Agent)
 
-2.调用模型的设置可以参考如下：
+2. 调用模型的设置可以参考如下：
 
-```
+```text
 'model':'Qwen2.5-14B',
 
 'model_server':'http://10.58.0.2:8000/v1', ;
@@ -245,13 +242,13 @@ c:\Users\xiaoyu\Desktop\RAG-arVix\main.py:22: LangChainDeprecationWarning: The c
 
 ---
 
-### **提交方法**
+### 提交方法
 
 将所有代码(不包含库文件)实现打包压缩上传。
 
-### **运行结果**
+### 运行结果
 
-```
+```text
 Type"clear" to clear the content, and"exit" to close this session.
 AI智能选课助手: 你好！我是一个AI智能选课助手，可以帮助你完成以下操作：
 
@@ -423,3 +420,7 @@ AI智能选课助手: 您当前选修的课程包括以下这些：
 ```
 
 ---
+
+---
+
+原文存档：[Notion 原文](<https://almond-oxygen-ceb.notion.site/24Fall-NJUSE-LLM4SE-28f8b1cc19aa80b194eac9735699de9a?pvs=25>)

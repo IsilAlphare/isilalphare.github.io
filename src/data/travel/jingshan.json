@@ -1,0 +1,88 @@
+{
+  "slug": "2026-jingshan",
+  "title": "2026早秋·径山古道徒步",
+  "date": "2026-09-06",
+  "location": "杭州市径山古道",
+  "text": "径山古道环线🏞️\n阳光·竹林·水系·禅寺",
+  "status": "published",
+  "recordId": "rec28eayLmSoD5",
+  "photos": [
+    {
+      "id": "01",
+      "originalName": "MEITU_20260906_222008842.jpg",
+      "alt": "寺院建筑与庭院拼图",
+      "width": 1400,
+      "height": 3729,
+      "collage": true
+    },
+    {
+      "id": "02",
+      "originalName": "MEITU_20260906_221726498.jpg",
+      "alt": "古道、山水与竹林长幅拼图",
+      "width": 1400,
+      "height": 10681,
+      "collage": true
+    },
+    {
+      "id": "03",
+      "originalName": "MEITU_20260906_221400833.jpg",
+      "alt": "蓝天、湖水与远山拼图",
+      "width": 1400,
+      "height": 4637,
+      "collage": true
+    },
+    {
+      "id": "04",
+      "originalName": "MEITU_20260906_221219496.jpg",
+      "alt": "徒步影子与路线记录拼图",
+      "width": 1400,
+      "height": 4687,
+      "collage": true
+    },
+    {
+      "id": "05",
+      "originalName": "IMG_20260906_144931.jpg",
+      "alt": "树荫下的径山寺院墙",
+      "width": 1920,
+      "height": 1440,
+      "collage": false
+    },
+    {
+      "id": "06",
+      "originalName": "IMG_20260906_131941.jpg",
+      "alt": "蓝天下的山坡与茶园",
+      "width": 1920,
+      "height": 2560,
+      "collage": false
+    },
+    {
+      "id": "07",
+      "originalName": "IMG_20260906_125429.jpg",
+      "alt": "竹林环抱的碧绿水面",
+      "width": 1920,
+      "height": 2560,
+      "collage": false
+    },
+    {
+      "id": "08",
+      "originalName": "IMG_20260906_124142.jpg",
+      "alt": "林间古道牌坊",
+      "width": 1920,
+      "height": 1440,
+      "collage": false
+    },
+    {
+      "id": "09",
+      "originalName": "IMG_20260906_125143.jpg",
+      "alt": "竹林中的石阶与栏杆",
+      "width": 1920,
+      "height": 2560,
+      "collage": false
+    }
+  ],
+  "assetFolder": "jingshan",
+  "extension": "webp",
+  "coverId": "05",
+  "coverCaption": "径山古道 · 早秋",
+  "endText": "阳光 · 竹林 · 水系 · 禅寺"
+}

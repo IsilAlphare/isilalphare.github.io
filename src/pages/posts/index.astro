@@ -1,5 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
+import FlowingLabel from '../../components/FlowingLabel.astro';
+import CelestialMotif from '../../components/CelestialMotif.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { postCategories } from '../../data/posts';
 
@@ -18,20 +20,20 @@ const formatDate = (date: Date) => date.toLocaleDateString('zh-CN', {
   day: '2-digit',
 });
 ---
-<BaseLayout title="文章 · Starry Dome" description="技术札记、生活切片与拾光摘录。">
+<BaseLayout title="星轨，天空的道路 · Starry Dome" description="每一次回望都能沿着微光抵达来处。">
   <section class="page-hero">
-    <p class="eyebrow">Archive</p>
-    <h1>文章</h1>
-    <p>技术、生活与阅读留下的回声，沿着时间的星轨，在这里重新相逢。</p>
+    <FlowingLabel text="Stellar Paths" />
+    <h1>星轨，天空的道路</h1>
+    <p>每一次回望都能沿着微光抵达来处。</p>
   </section>
   <section class="content-section">
     <div class="article-category-list">
       {categoryGroups.map((category, index) => (
-        <section class="article-category panel">
+        <section class="article-category panel" id={category.key} style="scroll-margin-top: 110px;">
           <header class="article-category-header">
-            <div class="index">0{index + 1}</div>
+            <div class="archive-motif"><CelestialMotif variant={["astrolabe", "leaf", "prism"][index]} size={90} /></div>
             <div>
-              <p class="eyebrow">{category.key} · {category.posts.length} 篇</p>
+              <div class="archive-label"><FlowingLabel text={["Craft", "Living", "Echoes"][index]} /><span>{category.posts.length} 篇</span></div>
               <h2>{category.title}</h2>
               <p>{category.subtitle}</p>
             </div>
@@ -44,7 +46,7 @@ const formatDate = (date: Date) => date.toLocaleDateString('zh-CN', {
                   <h3>{post.data.title}</h3>
                   <p>{post.data.tags.join(' · ') || category.title}</p>
                 </div>
-                <span aria-hidden="true">↗</span>
+                <span class="archive-star" aria-hidden="true">✧</span>
               </a>
             ))}
           </div>
@@ -53,3 +55,24 @@ const formatDate = (date: Date) => date.toLocaleDateString('zh-CN', {
     </div>
   </section>
 </BaseLayout>
+
+<style>
+.page-hero { padding-top: 80px; }
+.page-hero h1 { font-family: 'IBM Plex Serif','Songti SC',serif; font-weight:400; font-size:clamp(32px,5vw,64px); letter-spacing:.035em; margin:26px 0 20px; }
+.article-category { border-radius:28px 8px; padding:32px; background:radial-gradient(ellipse at 0 0,#9b7fd410,transparent 60%),#13111c99; border-color:#baacd32c; }
+.article-category-header { gap:22px; padding-bottom:30px; border-bottom:1px solid #c5b5d023; }
+.archive-motif { color:#bba7d0; flex-shrink:0; }
+#life .archive-motif { color:#a6b9b4; } #echo .archive-motif { color:#d0b895; }
+.archive-label { display:flex; align-items:center; gap:22px; margin-bottom:12px; }
+.archive-label > span { color:var(--comet); font-size:11px; letter-spacing:.12em; }
+.article-category-header h2 { font-family:'IBM Plex Serif','Songti SC',serif; font-size:29px; font-weight:400; color:#e8dfc4; letter-spacing:.08em; }
+.article-category-header p { margin-top:12px; line-height:1.9; }
+.archive-row { padding:25px 14px; gap:24px; border-color:#c5b5d01b; border-radius:8px; transition:background .25s; }
+.archive-row:hover { background:#9b7fd409; }
+.archive-row h3 { font-weight:400; line-height:1.8; color:#e1d9e6; }
+.archive-row p { font-size:12px; letter-spacing:.04em; margin-top:7px; }
+.archive-row time { color:#a69ab1; font-size:12px; letter-spacing:.06em; }
+.archive-row .archive-star { font-size:26px; color:#cbb9d2; text-shadow:0 0 16px #9b7fd445; }
+.archive-row:focus-visible { outline:1px solid #baa7d0; outline-offset:3px; }
+@media(max-width:600px) { .article-category { padding:22px 18px; } .article-category-header { gap:10px; } .archive-motif { margin-left:-15px; } .archive-row { padding:23px 3px; gap:10px; } .archive-row .archive-star { display:none; } .archive-label { flex-wrap:wrap; gap:8px; } }
+</style>

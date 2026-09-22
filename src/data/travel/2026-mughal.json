@@ -1,0 +1,88 @@
+{
+  "slug": "2026-mughal",
+  "title": "2026南京博物院·莫卧儿艺术特展",
+  "date": "2026-05-19",
+  "location": "南京市南京博物院",
+  "text": "华丽与死亡",
+  "status": "published",
+  "recordId": "recvvR0fSomx3v",
+  "assetFolder": "2026-mughal",
+  "extension": "jpg",
+  "coverId": "01",
+  "coverCaption": "南京市南京博物院",
+  "endText": "华丽与死亡",
+  "photos": [
+    {
+      "id": "01",
+      "originalName": "6743a9adf1972fb260e70c1dee1c611b.jpg",
+      "alt": "装饰匕首陈列",
+      "width": 1440,
+      "height": 2024,
+      "collage": false
+    },
+    {
+      "id": "02",
+      "originalName": "8c10e15847a156f29cbed6fd68eeaa84.jpg",
+      "alt": "武器与器物拼图",
+      "width": 1396,
+      "height": 7156,
+      "collage": true
+    },
+    {
+      "id": "03",
+      "originalName": "1769553ad0c8c594f9231af6eab9ed02.jpg",
+      "alt": "雕玉柄拼图",
+      "width": 1208,
+      "height": 7836,
+      "collage": true
+    },
+    {
+      "id": "04",
+      "originalName": "1d49c0637d40ec66876a92b62777bec9.jpg",
+      "alt": "绘画与窗饰拼图",
+      "width": 1440,
+      "height": 5900,
+      "collage": true
+    },
+    {
+      "id": "05",
+      "originalName": "f3df11ba013e3dcbebad0b3c8345e84a.jpg",
+      "alt": "珠宝与钟表拼图",
+      "width": 1428,
+      "height": 5542,
+      "collage": true
+    },
+    {
+      "id": "06",
+      "originalName": "5af2460f2ad58ad955d426a04e00fa11.jpg",
+      "alt": "装饰器物拼图",
+      "width": 1440,
+      "height": 4739,
+      "collage": true
+    },
+    {
+      "id": "07",
+      "originalName": "c0c891edbc4373bd0611333d691f12ac.jpg",
+      "alt": "武器与盾牌拼图",
+      "width": 1440,
+      "height": 4113,
+      "collage": true
+    },
+    {
+      "id": "08",
+      "originalName": "8b90b1b50b48d2c8e346190bcd023e75.jpg",
+      "alt": "镶嵌宝石的白色器皿",
+      "width": 1440,
+      "height": 1920,
+      "collage": false
+    },
+    {
+      "id": "09",
+      "originalName": "a6ff00a829022b9b50e6d1778393d62b.jpg",
+      "alt": "珠宝陈列拼图",
+      "width": 1440,
+      "height": 4745,
+      "collage": true
+    }
+  ]
+}

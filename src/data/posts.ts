@@ -2,7 +2,7 @@ export const postCategories = [
   {
     key: 'tech',
     title: '技术札记',
-    subtitle: '把工程、工具与学习路径写成可回头看的星图。',
+    subtitle: '在科学的海洋中拾珠作图',
     count: 7,
     tone: 'violet',
     posts: [
@@ -26,7 +26,7 @@ export const postCategories = [
   {
     key: 'echo',
     title: '拾光摘录',
-    subtitle: '阅读、观看和听见之后，留下的一点回声。',
+    subtitle: '万物流过我身，如拂叶穿林，终有回荡',
     count: 19,
     tone: 'forest',
     posts: [

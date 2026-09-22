@@ -1,0 +1,64 @@
+{
+  "slug": "2026-danxia",
+  "title": "2026暑期·青甘大环线",
+  "date": "2026-07-11",
+  "location": "张掖丹霞国家地质公园-七彩丹霞景区",
+  "text": "亿年慢浪，烧作七彩丹霞",
+  "status": "published",
+  "recordId": "rec28eaJJktlHI",
+  "assetFolder": "danxia",
+  "extension": "jpg",
+  "coverId": "01",
+  "coverCaption": "张掖 · 七彩丹霞",
+  "endText": "亿年慢浪，烧作七彩丹霞",
+  "photos": [
+    {
+      "id": "01",
+      "originalName": "72b471db4401917169df5cba7b0af55b.jpg",
+      "alt": "七彩丹霞的彩色岩层与山间公路",
+      "width": 1440,
+      "height": 1159,
+      "collage": false
+    },
+    {
+      "id": "02",
+      "originalName": "9420c518fbaee4fb53fe5a9bd1a26eeb.jpg",
+      "alt": "丹霞山前弯道上的观光车",
+      "width": 1440,
+      "height": 1920,
+      "collage": false
+    },
+    {
+      "id": "03",
+      "originalName": "cecd6257b01e860e2b59c4a9a5ef5b70.jpg",
+      "alt": "云下层叠的红色山脊",
+      "width": 1440,
+      "height": 1159,
+      "collage": false
+    },
+    {
+      "id": "04",
+      "originalName": "eba28866e8861fee6bcb8c2f316acb53.jpg",
+      "alt": "七彩山峦全景",
+      "width": 1440,
+      "height": 1080,
+      "collage": false
+    },
+    {
+      "id": "05",
+      "originalName": "f6fb2a6805b59d392ca02dbe4e0e855f.jpg",
+      "alt": "以丹霞为背景的英语教材封面图片",
+      "width": 1440,
+      "height": 2160,
+      "collage": false
+    },
+    {
+      "id": "06",
+      "originalName": "e7003319d55f18419a5c3eaab9f3c3d4.jpg",
+      "alt": "云隙光照下的丹霞山岭",
+      "width": 1440,
+      "height": 1080,
+      "collage": false
+    }
+  ]
+}

@@ -1,0 +1,120 @@
+---
+interface Props { kind?: 'guestbook' | 'article' | 'travel'; }
+const {kind='guestbook'}=Astro.props;
+const publicBook=kind==='guestbook';
+const Heading=publicBook?'h1':'h2';
+const title=publicBook?'星间来信':kind==='travel'?'旅途回声':'星下回声';
+const examples=publicBook?[
+  {mark:'☾',name:'借一盏月光',text:'来踩踩。这里像一处可以暂时放慢脚步的小小角落，下次还会来看你。',reply:'留一盏星光，等你下次路过。'},
+  {mark:'❧',name:'沿途的风',text:'把今天遇见的一点好心情留在这里。愿你继续写，也继续走向喜欢的山海。',reply:''}
+]:[{mark:'✧',name:'路过的读者',text:kind==='travel'?'跟着照片走了一小段路，也想起了自己的某次远行。':'读到这里，想留下一点回声。很喜欢这样慢慢讲述的文字。',reply:'谢谢你读到这里。'}];
+---
+<section class:list={['letter-board',{'public-book':publicBook}]} id="comments" data-scope={publicBook?'guestbook':Astro.url.pathname} aria-labelledby="comments-title">
+  <header class="board-heading">
+    <span class="board-star" aria-hidden="true">✧</span>
+    <div><p class="board-script">{publicBook?'Letters among the stars':'A little echo'}</p><div class="board-title-row"><Heading id="comments-title">{title}</Heading>{publicBook && <span class="meteor-count">已有 <em>128</em> 颗流星划过天幕 <small>示例</small></span>}</div>
+    <p>{publicBook?'不必郑重，一句问候就好。':kind==='travel'?'在这段旅途的末尾，留下你的声音。':'读到这里，也留下你的声音。'}</p></div>
+  </header>
+  <p class="board-notice">交互预览：下方来信{publicBook?'与流星计数':''}为示例。你写的内容仅保存在此浏览器，尚未发送，也不会公开。</p>
+  <form class="board-form">
+    <div class="board-fields">
+      <label>怎么称呼你<input name="nickname" maxlength="24" autocomplete="nickname" placeholder="路过的朋友" /></label>
+      <label>随信的小印记<select name="mark" aria-label="随信的小印记"><option value="✧">✧ 星光</option><option value="☾">☾ 月牙</option><option value="❧">❧ 叶子</option><option value="≈">≈ 海风</option></select></label>
+    </div>
+    <label class="message-label">想留下的话<textarea id="comment-message" name="message" maxlength="500" required rows="3" placeholder={publicBook?'来踩踩，或者分享此刻想到的事……':'写下读到这里时想到的事……'}></textarea></label>
+    <div class="board-submit"><span>此刻的问候，也值得被收藏。</span><button type="submit">收好这封信 <span aria-hidden="true">✧</span></button></div>
+    <p class="board-status" role="status" aria-live="polite"></p>
+  </form>
+  <div class="letters-heading"><span>过往的信件</span><i aria-hidden="true"></i><span>✧</span></div>
+  <div class="local-letters" aria-label="我的本地来信"></div>
+  <div class="example-letters">{examples.map(letter=><article class="echo-letter">
+    <header><span class="letter-seal" aria-hidden="true">{letter.mark}</span><strong>{letter.name}</strong><small>示例来信</small></header>
+    <p>{letter.text}</p>
+    {letter.reply && <aside class="letter-reply"><span>穹庐主人 · 示例附言</span><p>{letter.reply}</p></aside>}
+  </article>)}</div>
+</section>
+<script>
+  document.querySelectorAll<HTMLElement>('.letter-board').forEach(board=>{
+    const scope=board.dataset.scope!;
+    const key='starry-dome:letters-preview:v1:'+scope;
+    const form=board.querySelector<HTMLFormElement>('form')!;
+    const output=board.querySelector<HTMLElement>('.local-letters')!;
+    const status=board.querySelector<HTMLElement>('.board-status')!;
+    type Letter={nickname:string;mark:string;message:string;date:string};
+    function read():Letter[]{
+      try{
+        const raw=JSON.parse(localStorage.getItem(key)||'[]');
+        return Array.isArray(raw)?raw.filter(item=>item && typeof item.message==='string' && item.message.length<=500 && typeof item.nickname==='string' && typeof item.date==='string').slice(0,100):[];
+      }catch{return [];}
+    }
+    let letters=read();
+    function render(){
+      output.replaceChildren();
+      const visible=[...letters];
+      if(scope==='guestbook'){
+        try{
+          const legacy=JSON.parse(localStorage.getItem('starry-dome:visit-prototype:v1')||'{}');
+          if(typeof legacy.message==='string' && legacy.message.trim() && legacy.message.length<=500)
+            visible.push({nickname:typeof legacy.nickname==='string'?legacy.nickname:'路过的朋友',mark:legacy.mark,message:legacy.message,date:''});
+        }catch{}
+      }
+      for(const letter of visible){
+        const card=document.createElement('article');card.className='echo-letter';
+        const head=document.createElement('header');
+        const mark=document.createElement('span');mark.className='letter-seal';mark.setAttribute('aria-hidden','true');mark.textContent=['✧','☾','❧','≈'].includes(letter.mark)?letter.mark:'✧';
+        const name=document.createElement('strong');name.textContent=letter.nickname.slice(0,24);
+        const meta=document.createElement('small');meta.textContent='仅自己可见'+(letter.date?' · '+letter.date:'');
+        const text=document.createElement('p');text.textContent=letter.message;
+        head.append(mark,name,meta);card.append(head,text);output.append(card);
+      }
+    }
+    form.addEventListener('submit',event=>{
+      event.preventDefault();
+      const data=new FormData(form),message=String(data.get('message')||'').trim();
+      if(!message){status.textContent='写下一点什么，再收好这封信。';return;}
+      const letter={nickname:String(data.get('nickname')||'').trim().slice(0,24)||'路过的朋友',mark:String(data.get('mark')||'✧'),message:message.slice(0,500),date:new Date().toLocaleDateString('zh-CN')};
+      letters=[letter,...letters].slice(0,100);
+      try{localStorage.setItem(key,JSON.stringify(letters));status.textContent='已收好在此浏览器，尚未发送。';}
+      catch{status.textContent='本次预览已展示；浏览器无法保存，关闭页面后会丢失。';}
+      render();(form.elements.namedItem('message') as HTMLTextAreaElement).value='';
+    });
+    window.addEventListener('starlight-letter-saved',render);
+    render();
+  });
+</script>
+<style>
+.letter-board{max-width:860px;margin:100px auto 50px;padding:0 24px;scroll-margin-top:32px;color:#cec3d6;}
+.board-heading{display:flex;align-items:center;gap:25px;margin-bottom:28px;}
+.board-star{font-size:62px;color:#c5b4d3;text-shadow:0 0 30px #b395d54a;font-weight:200;}
+.board-script{font-family:'Great Vibes',cursive;font-size:33px;color:#c6b5d8;margin:0;}
+.board-heading :is(h1,h2){font-family:'Songti SC',serif;font-weight:400;font-size:32px;letter-spacing:.18em;color:#e8dfc4;margin:8px 0 16px;}
+.board-heading div>p:last-child{font-size:13px;color:#a99eb5;}
+.board-title-row{display:flex;align-items:baseline;gap:6px 24px;flex-wrap:wrap;}
+.meteor-count{font-size:12px;color:#b8aac5;letter-spacing:.05em;text-shadow:0 0 14px #c3a5e070,0 0 28px #a98bd640;}
+.meteor-count em{font-family:'Cormorant Garamond',serif;font-size:23px;font-style:normal;color:#d4c8b7;margin:0 3px;}
+.meteor-count small{font-size:9px;color:#93829f;margin-left:6px;text-shadow:none;}
+.board-notice{font-size:11px;line-height:1.9;color:#a497af;max-width:650px;}
+.board-form{padding:28px;background:linear-gradient(130deg,#a989bf0b,transparent),#13101a80;border:1px solid #c1a6cf36;outline:1px solid #c1a6cf15;outline-offset:-7px;border-radius:3px 24px 3px 3px;}
+.board-fields{display:grid;grid-template-columns:1fr 160px;gap:20px;}
+.board-form label{display:grid;gap:10px;font-size:12px;color:#c1b1cc;}
+.board-form input,.board-form select,.board-form textarea{font:inherit;background:#0d0b1366;border:1px solid #bca5cc30;color:#e3dbe8;border-radius:8px;padding:12px;width:100%;min-width:0;font-size:14px;}
+.board-form textarea{line-height:1.9;resize:vertical;min-height:120px;}
+.message-label{margin-top:20px;}
+.board-submit{display:flex;justify-content:space-between;gap:15px;align-items:center;margin-top:20px;}
+.board-submit>span{font-size:11px;color:#a094aa;}
+.board-submit button{border:1px solid #bba1cd60;border-radius:18px 5px;padding:12px 16px;background:#9b7fd414;color:#e2d3bc;cursor:pointer;font-size:12px;flex-shrink:0;}
+.board-submit button span{padding-left:12px;}
+.board-status{font-size:12px;color:#d5c8a9;line-height:1.8;margin-bottom:0;}
+.letters-heading{display:flex;align-items:center;gap:20px;margin:40px 0 18px;font-size:12px;color:#baa9c4;letter-spacing:.12em;}
+.letters-heading i{flex:1;height:1px;background:linear-gradient(90deg,#bca5cc30,transparent);}
+.letter-board :global(.echo-letter){padding:25px 28px;margin-bottom:18px;border:1px solid #c5b3cd25;border-radius:3px 16px 3px 3px;background:linear-gradient(135deg,#be9ed20b,#0e0c1566);}
+.letter-board :global(.echo-letter header){display:flex;gap:14px;align-items:center;flex-wrap:wrap;}
+.letter-board :global(.letter-seal){font-size:27px;color:#d9c9a6;}
+.letter-board :global(.echo-letter strong){font-size:13px;font-weight:400;color:#ded2e5;overflow-wrap:anywhere;}
+.letter-board :global(.echo-letter small){font-size:10px;color:#998ba3;margin-left:auto;}
+.letter-board :global(.echo-letter>p){font-size:14px;line-height:2.1;white-space:pre-wrap;overflow-wrap:anywhere;margin:18px 0 0;}
+.letter-reply{border-left:1px solid #c8b59650;padding-left:18px;margin:22px 0 0 6px;}
+.letter-reply span{font-size:10px;color:#c1ad91;}.letter-reply p{font-size:13px;line-height:1.9;margin:8px 0 0;color:#b9afc1;}
+.board-form :is(input,textarea,select,button):focus-visible{outline:2px solid #bfa1dc;outline-offset:4px;}
+@media(max-width:600px){.letter-board{margin-top:65px;padding:0 12px;}.board-fields{grid-template-columns:minmax(0,1fr) 115px;gap:12px;}.board-form{padding:23px 18px;}.board-submit>span{max-width:130px;line-height:1.8;}.board-heading{gap:16px;}.board-script{font-size:29px;}.board-title-row{gap:0;}.meteor-count{font-size:10px;}.letter-board :global(.echo-letter){padding:22px 18px;}}
+</style>

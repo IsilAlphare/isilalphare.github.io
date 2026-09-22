@@ -1,0 +1,72 @@
+{
+  "slug": "2026-cruise-sunset",
+  "title": "2026夏·海洋光谱号邮轮旅行",
+  "date": "2026-05-07",
+  "location": "皇家加勒比·海洋光谱号邮轮",
+  "text": "落日，坠入大海",
+  "status": "published",
+  "recordId": "recvvR0GTVJybG",
+  "assetFolder": "2026-cruise-sunset",
+  "extension": "jpg",
+  "coverId": "01",
+  "coverCaption": "皇家加勒比·海洋光谱号邮轮",
+  "endText": "落日，坠入大海",
+  "photos": [
+    {
+      "id": "01",
+      "originalName": "76ca04b2f2cf15051a6b23705e578861.jpg",
+      "alt": "甲板外的海上落日",
+      "width": 1440,
+      "height": 1080,
+      "collage": false
+    },
+    {
+      "id": "02",
+      "originalName": "0da43348b13a8bdb4921c0d0090afdca.jpg",
+      "alt": "橙色晚霞",
+      "width": 1080,
+      "height": 1440,
+      "collage": false
+    },
+    {
+      "id": "03",
+      "originalName": "eee9fc40381b140cafbfdec61bc95ce5.jpg",
+      "alt": "栏杆外地平线上的夕阳",
+      "width": 1080,
+      "height": 1517,
+      "collage": false
+    },
+    {
+      "id": "04",
+      "originalName": "91d6f7b1baf9e9d53640c03966f7df68.jpg",
+      "alt": "窗内所见的落日",
+      "width": 1343,
+      "height": 1080,
+      "collage": false
+    },
+    {
+      "id": "05",
+      "originalName": "b2259da9ca2e2a649fafcf54ec7da4de.jpg",
+      "alt": "暮色中的船舷与海面",
+      "width": 1440,
+      "height": 1080,
+      "collage": false
+    },
+    {
+      "id": "06",
+      "originalName": "eeb30fc72a26b2720610267f8085e40a.jpg",
+      "alt": "夕阳下的邮轮",
+      "width": 1080,
+      "height": 1299,
+      "collage": false
+    },
+    {
+      "id": "07",
+      "originalName": "77d0c828d20aff36bb2eb9844bf0e57b.jpg",
+      "alt": "海上的船尾浪迹",
+      "width": 1080,
+      "height": 1440,
+      "collage": false
+    }
+  ]
+}

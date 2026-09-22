@@ -1,0 +1,5 @@
+---
+import { trips } from '../../../data/travel';
+export function getStaticPaths() { return trips.map(trip => ({ params: { slug: trip.slug } })); }
+return Astro.redirect(`/travel/${Astro.params.slug}/`, 301);
+---

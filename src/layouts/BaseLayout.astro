@@ -1,13 +1,19 @@
 ---
 import '../styles/global.css';
+import StarlightVisit from '../components/StarlightVisit.astro';
+import LetterBoard from '../components/LetterBoard.astro';
+import WalineThread from '../components/WalineThread.astro';
+import { commentsEnabled, interactionsVisible } from '../lib/comments';
 import { navItems, site } from '../data/site';
 
 interface Props {
   title?: string;
   description?: string;
+  noindex?: boolean;
 }
 
-const { title = site.title, description = site.description } = Astro.props;
+const detailKind = /^\/posts\/[^/]+\/?$/.test(Astro.url.pathname) ? 'article' : /^\/travel\/[^/]+\/?$/.test(Astro.url.pathname) ? 'travel' : undefined;
+const { title = site.title, description = site.description, noindex = false } = Astro.props;
 ---
 <!doctype html>
 <html lang="zh-CN">
@@ -15,10 +21,12 @@ const { title = site.title, description = site.description } = Astro.props;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
     <meta name="theme-color" content="#13111c" />
+    <link rel="icon" type="image/svg+xml" href="/site-emblem.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=IBM+Plex+Serif:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=IBM+Plex+Serif:wght@400;500&family=Inter:wght@400;500;600;700&family=Great+Vibes&display=swap" rel="stylesheet" />
     <title>{title}</title>
   </head>
   <body>
@@ -31,7 +39,7 @@ const { title = site.title, description = site.description } = Astro.props;
       </div>
       <header class="site-header">
         <a class="brand" href="/" aria-label="Starry Dome 首页">
-          <span class="brand-mark">✦</span>
+          <img class="brand-mark" src="/site-emblem.svg" width="52" height="52" alt="" />
           <span>
             <strong>{site.name}</strong>
             <small>{site.cnName}</small>
@@ -43,8 +51,11 @@ const { title = site.title, description = site.description } = Astro.props;
       </header>
       <main>
         <slot />
+        {detailKind && (commentsEnabled ? <WalineThread kind={detailKind} /> : import.meta.env.DEV && <LetterBoard kind={detailKind} />)}
       </main>
+      {interactionsVisible && <StarlightVisit />}
       <footer class="site-footer">
+        {interactionsVisible && <p><a href="/guestbook/">✧ 星间来信</a></p>}
         <p>{site.tagline}</p>
         <p class="footer-quote">{site.quenya}</p>
       </footer>

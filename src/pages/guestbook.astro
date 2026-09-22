@@ -1,0 +1,9 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import LetterBoard from '../components/LetterBoard.astro';
+import WalineThread from '../components/WalineThread.astro';
+import { commentsEnabled } from '../lib/comments';
+---
+<BaseLayout title="星间来信 · Starry Dome" description="一颗流星曾路过这里" noindex={!commentsEnabled}>
+  {commentsEnabled ? <WalineThread kind="guestbook" /> : import.meta.env.DEV ? <LetterBoard kind="guestbook" /> : <section class="page-hero"><h1>星间来信</h1><p>信笺尚在准备，待星光捎来问候。</p><a href="/">回到穹庐</a></section>}
+</BaseLayout>

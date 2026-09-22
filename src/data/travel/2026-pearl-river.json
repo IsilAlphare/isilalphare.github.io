@@ -1,0 +1,88 @@
+{
+  "slug": "2026-pearl-river",
+  "title": "2026南京之春",
+  "date": "2026-03-21",
+  "location": "南京市·珍珠河",
+  "text": "爱上南京的春分就像呼吸一样简单",
+  "status": "published",
+  "recordId": "recvvR2ay7ZTcy",
+  "assetFolder": "2026-pearl-river",
+  "extension": "jpg",
+  "coverId": "07",
+  "coverCaption": "南京市·珍珠河",
+  "endText": "爱上南京的春分就像呼吸一样简单",
+  "photos": [
+    {
+      "id": "01",
+      "originalName": "e602d15d102e40883c6b9958bea6ec5f.jpg",
+      "alt": "南京街景拼图",
+      "width": 1292,
+      "height": 7156,
+      "collage": true
+    },
+    {
+      "id": "02",
+      "originalName": "e51f28a2e510b2dcb411105036f1d15d.jpg",
+      "alt": "旅途与餐食拼图",
+      "width": 1288,
+      "height": 7156,
+      "collage": true
+    },
+    {
+      "id": "03",
+      "originalName": "bf2d3458f4e9d485b9a6f156750a8706.jpg",
+      "alt": "河畔春色拼图",
+      "width": 1206,
+      "height": 7156,
+      "collage": true
+    },
+    {
+      "id": "04",
+      "originalName": "f0d9aec817b40b73b27031aaf9a1026f.jpg",
+      "alt": "河流与街道拼图",
+      "width": 1032,
+      "height": 9048,
+      "collage": true
+    },
+    {
+      "id": "05",
+      "originalName": "03cbd77ceb24b9fc31ccbad677455df8.jpg",
+      "alt": "春花拼图",
+      "width": 390,
+      "height": 1920,
+      "collage": true
+    },
+    {
+      "id": "06",
+      "originalName": "34f17bb0a9a1359a91e6e5fe0907bba5.jpg",
+      "alt": "花枝拼图",
+      "width": 1258,
+      "height": 7156,
+      "collage": true
+    },
+    {
+      "id": "07",
+      "originalName": "19126646a41d89a7a3f2d17c1d841d22.jpg",
+      "alt": "粉色花枝",
+      "width": 2560,
+      "height": 1920,
+      "collage": false
+    },
+    {
+      "id": "08",
+      "originalName": "e0600d4e8de254e892eb936b95e88e89.jpg",
+      "alt": "玉兰花枝",
+      "width": 1920,
+      "height": 2560,
+      "collage": false
+    },
+    {
+      "id": "09",
+      "originalName": "686d3c284fbf535d02ec1b80ee026a34.jpg",
+      "alt": "春日繁花",
+      "width": 1440,
+      "height": 1920,
+      "collage": false
+    }
+  ]
+}

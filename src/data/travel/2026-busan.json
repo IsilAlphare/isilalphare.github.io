@@ -1,0 +1,88 @@
+{
+  "slug": "2026-busan",
+  "title": "2026夏·海洋光谱号邮轮旅行",
+  "date": "2026-05-08",
+  "location": "韩国釜山",
+  "text": "釜山行🚶🏻‍♀️\n再见了，阳光下的翡翠海",
+  "status": "published",
+  "recordId": "recvvR1A1Jadx7",
+  "assetFolder": "2026-busan",
+  "extension": "jpg",
+  "coverId": "07",
+  "coverCaption": "韩国釜山",
+  "endText": "釜山行🚶🏻‍♀️\n再见了，阳光下的翡翠海",
+  "photos": [
+    {
+      "id": "01",
+      "originalName": "07c35f1e6fb7656e61e4cff9961b587e.jpg",
+      "alt": "釜山旅途拼图",
+      "width": 382,
+      "height": 1920,
+      "collage": true
+    },
+    {
+      "id": "02",
+      "originalName": "2a5bfb4eb8f7f2715ebc1fead7c3d69a.jpg",
+      "alt": "街景与人像拼图",
+      "width": 1593,
+      "height": 6400,
+      "collage": true
+    },
+    {
+      "id": "03",
+      "originalName": "878e25629068d0cddf48cbc8a5f8d628.jpg",
+      "alt": "海边列车车厢",
+      "width": 1440,
+      "height": 1080,
+      "collage": false
+    },
+    {
+      "id": "04",
+      "originalName": "8e5b8ee75bc56f751240ff855107fb88.jpg",
+      "alt": "鲜花与海岸拼图",
+      "width": 1562,
+      "height": 5541,
+      "collage": true
+    },
+    {
+      "id": "05",
+      "originalName": "543ea5d53b19e7feedbdf3b6baf5442d.jpg",
+      "alt": "街头人像拼图",
+      "width": 1948,
+      "height": 4524,
+      "collage": true
+    },
+    {
+      "id": "06",
+      "originalName": "393c5a7d488596f0509f0e212c913371.jpg",
+      "alt": "山坡民居拼图",
+      "width": 674,
+      "height": 1920,
+      "collage": true
+    },
+    {
+      "id": "07",
+      "originalName": "efb52328114268f4e125deb1d4cead04.jpg",
+      "alt": "礁石与碧海",
+      "width": 1343,
+      "height": 1080,
+      "collage": false
+    },
+    {
+      "id": "08",
+      "originalName": "d8000726ac21a7dad8b4b3239b372ea7.jpg",
+      "alt": "海面与桥梁",
+      "width": 1343,
+      "height": 1080,
+      "collage": false
+    },
+    {
+      "id": "09",
+      "originalName": "1e6c0dec8aa7634ddc8267a524c5321c.jpg",
+      "alt": "海边岩岸",
+      "width": 1080,
+      "height": 1440,
+      "collage": false
+    }
+  ]
+}

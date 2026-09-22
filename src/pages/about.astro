@@ -1,4 +1,5 @@
 ---
+import CelestialMotif from '../components/CelestialMotif.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
@@ -6,16 +7,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   <section class="page-hero">
     <p class="eyebrow">About Isil Alphare</p>
     <h1>关于</h1>
-    <div class="quote-block">
-      <p>Elen síla lúmenn' omentielvo.</p>
-      <span>愿星光，洒在我们相逢的时刻。</span>
+    <div class="greeting">
+      <div class="greeting-motif"><CelestialMotif variant="arch" size={88} /></div>
+      <div class="greeting-words"><p class="elvish">Elen síla lúmenn' omentielvo.</p><p class="translation">愿星光，洒在我们相逢的时刻。</p></div>
+      <div class="greeting-rule" aria-hidden="true"><span></span>✧</div>
     </div>
   </section>
 
   <section class="content-section">
     <div class="about-grid">
       <aside class="about-sidebar">
-        <div class="avatar-placeholder" aria-label="头像占位"></div>
+        <div class="avatar-placeholder" aria-label="星穹装饰头像"></div>
         <div class="sidebar-info">
           <strong>Isil Alphare</strong>
           <p>XiaoYu / Frontend Engineer</p>
@@ -80,4 +82,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       margin-bottom: 0;
     }
   }
+</style>
+
+<style>
+  .greeting { position: relative; display: flex; align-items: center; flex-wrap: wrap; gap: 12px 24px; padding: 32px 0 12px; margin-top: 12px; }
+  .greeting-motif { color: #c1aecb; flex-shrink: 0; }
+  .greeting-words { min-width: 0; }
+  .page-hero .elvish { margin: 0; padding: 8px 8px 14px 0; max-width: none; font: 400 clamp(28px,3.7vw,46px)/1.5 'Great Vibes','Apple Chancery',cursive; color: #dccdc0; background: linear-gradient(110deg,#e7cfaa,#b9dcd5,#cbb5e5,#e3b7c6,#e7cfaa); background-size: 220% 100%; background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: greeting-light 18s ease-in-out infinite alternate; }
+  .page-hero .translation { margin: 0; font: 400 15px/2 'IBM Plex Serif','Songti SC',serif; letter-spacing: .12em; color: #b6a8bd; }
+  .greeting-rule { flex-basis: 100%; display: flex; align-items: center; gap: 20px; max-width: 680px; margin-top: 14px; color: #c2b092; }
+  .greeting-rule span { height: 1px; flex: 1; background: linear-gradient(90deg,transparent,#b49ac653); }
+  @keyframes greeting-light { from { background-position: 0% 50%; } to { background-position: 100% 50%; } }
+  @media (max-width: 680px) { .greeting { gap: 6px; padding-top: 18px; } .greeting-motif { flex-basis: 100%; } .page-hero .translation { font-size: 13px; letter-spacing: .06em; } }
+  @media (prefers-reduced-motion: reduce) { .page-hero .elvish { animation: none; } }
 </style>

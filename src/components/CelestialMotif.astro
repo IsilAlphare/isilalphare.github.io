@@ -1,0 +1,29 @@
+---
+interface Props { variant?: string; size?: number; }
+const { variant = 'orbit', size = 120 } = Astro.props;
+---
+<div class="motif-frame" style={`width: ${size}px; height: ${size}px`} aria-hidden="true"><div class:list={['celestial-motif', variant]} style={`--motif-size: ${size}px`} aria-hidden="true"><i></i><b></b><span>✧</span></div></div>
+<style>
+  .celestial-motif { position: relative; width: 120px; height: 120px; color: inherit; transform: scale(calc(var(--motif-size) / 120px)); transform-origin: top left; }
+  .celestial-motif i, .celestial-motif b { position: absolute; inset: 16px; border: 1px solid currentColor; border-radius: 50%; font-weight: normal; }
+  .celestial-motif b { inset: 27px; opacity: .45; }
+  .celestial-motif span { position: absolute; inset: 0; display: grid; place-items: center; font-size: 30px; font-weight: 400; text-shadow: 0 0 25px currentColor; }
+  .rose i { border-radius: 30% 70% 30% 70%; transform: rotate(45deg); }
+  .rose b { border-radius: 30% 70% 30% 70%; transform: rotate(-15deg); }
+  .arch i { border-radius: 50% 50% 0 0; inset: 10px 27px; }
+  .arch b { border-radius: 50% 50% 0 0; inset: 20px 36px 10px; }
+  .halo i { transform: scaleY(.45) rotate(-35deg); }
+  .halo b { transform: scaleY(.65) rotate(35deg); }
+  .eclipse i { border-right-color: transparent; transform: rotate(-30deg); }
+  .eclipse b { border-left-color: transparent; }
+  .orbit i { transform: rotate(25deg) scaleX(.55); }
+  .orbit b { transform: rotate(-40deg) scaleX(.6); }
+  .cross i { border-radius: 0; transform: rotate(45deg) scale(.7); }
+  .cross b { border-radius: 0; transform: scale(.7); }
+  .astrolabe i { border-radius: 50%; border-style: dashed; transform: rotate(22deg); }
+  .astrolabe b { inset: 23px; border-radius: 0; transform: rotate(45deg); }
+  .leaf i { border-radius: 0 75% 0 75%; transform: rotate(-45deg); }
+  .leaf b { border-radius: 75% 0 75% 0; transform: rotate(45deg); }
+  .prism i { inset: 15px 29px; border-radius: 45% 45% 5% 5%; transform: rotate(35deg); }
+  .prism b { inset: 15px 29px; border-radius: 45% 45% 5% 5%; transform: rotate(-35deg); }
+</style>

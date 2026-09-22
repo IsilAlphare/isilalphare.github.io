@@ -13,5 +13,5 @@ export const navItems = [
   { label: '逐星记', href: '/starfall-log/' },
   { label: '文章', href: '/posts/' },
   { label: '收藏馆', href: '/collections/' },
-  { label: '照片墙', href: '/photos/' },
+  { label: '旅途拾光', href: '/travel/' },
 ];

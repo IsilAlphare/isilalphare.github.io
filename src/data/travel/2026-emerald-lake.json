@@ -1,0 +1,80 @@
+{
+  "slug": "2026-emerald-lake",
+  "title": "2026暑期·青甘大环线",
+  "date": "2026-07-09",
+  "location": "青海省海西蒙古族藏族自治州·大柴旦翡翠湖",
+  "text": "突发勘探消息：\n本地质学家在火星荒原发现巨型翡翠矿脉",
+  "status": "published",
+  "recordId": "recvvQYIEZ2Cg0",
+  "assetFolder": "2026-emerald-lake",
+  "extension": "jpg",
+  "coverId": "03",
+  "coverCaption": "青海省海西蒙古族藏族自治州·大柴旦翡翠湖",
+  "endText": "突发勘探消息：\n本地质学家在火星荒原发现巨型翡翠矿脉",
+  "photos": [
+    {
+      "id": "01",
+      "originalName": "deb61150a37f6d3326c16ae216ba575c.jpg",
+      "alt": "翡翠湖与红色塔楼",
+      "width": 1440,
+      "height": 2025,
+      "collage": false
+    },
+    {
+      "id": "02",
+      "originalName": "cde1488f1c6eace5ee1568c44c445e80.jpg",
+      "alt": "盐湖边的人像",
+      "width": 1440,
+      "height": 2025,
+      "collage": false
+    },
+    {
+      "id": "03",
+      "originalName": "5ff3869b2bd1c8fe12536610acc25558.jpg",
+      "alt": "黄色与绿色盐池航拍",
+      "width": 1440,
+      "height": 1158,
+      "collage": false
+    },
+    {
+      "id": "04",
+      "originalName": "7c74ac14a6c77edb3a86a402c2413524.jpg",
+      "alt": "湖畔坐像",
+      "width": 1440,
+      "height": 1920,
+      "collage": false
+    },
+    {
+      "id": "05",
+      "originalName": "4882ef98bbb7020264337b6f1daeaec2.jpg",
+      "alt": "碧色盐池与步道",
+      "width": 1440,
+      "height": 1158,
+      "collage": false
+    },
+    {
+      "id": "06",
+      "originalName": "e5c37577f652a6a22e5d7dc5b417ebdf.jpg",
+      "alt": "翡翠湖边的人像",
+      "width": 1440,
+      "height": 2024,
+      "collage": false
+    },
+    {
+      "id": "07",
+      "originalName": "01b093b81af9e72335d278ec17c5faae.jpg",
+      "alt": "盐池与远山",
+      "width": 1440,
+      "height": 1158,
+      "collage": false
+    },
+    {
+      "id": "08",
+      "originalName": "84d199fea255b35c1b3eaa033f4adce9.jpg",
+      "alt": "荒原中的盐池",
+      "width": 1440,
+      "height": 1158,
+      "collage": false
+    }
+  ]
+}

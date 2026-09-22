@@ -1,5 +1,6 @@
 ---
 import { getCollection, render } from 'astro:content';
+import { books } from '../../data/books';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
 export async function getStaticPaths() {
@@ -11,6 +12,9 @@ export async function getStaticPaths() {
 }
 
 const { post } = Astro.props;
+const shelfBook = books.find((book) => book.note?.postSlug === post.data.slug);
+const backHref = post.data.screen ? '/collections/screen/' : shelfBook ? `/collections/books/#note-${shelfBook.id}` : '/posts/';
+const backText = post.data.screen ? '← 回到银幕潮汐' : shelfBook ? '← 回到书架微光' : '← 回到文章';
 const { Content } = await render(post);
 const dateText = post.data.date.toLocaleDateString('zh-CN', {
   year: 'numeric',
@@ -22,8 +26,8 @@ const dateText = post.data.date.toLocaleDateString('zh-CN', {
 <BaseLayout title={`${post.data.title} · Starry Dome`} description={`${post.data.category}：${post.data.title}`}>
   <article class="article-page migrated-post">
     <header class="article-hero">
-      <a class="article-back" href="/posts/">← 回到文章</a>
-      <p class="eyebrow">{post.data.category} · {dateText}</p>
+      <a class="article-back" href={backHref}>{backText}</a>
+      <p class="eyebrow">{post.data.screen ? `${post.data.screen.type} · ${post.data.screen.work} · 写于` : post.data.category} · {dateText}</p>
       <h1>{post.data.title}</h1>
       <div class="article-tags" aria-label="文章标签">
         {post.data.tags.map((tag: string) => <span>{tag}</span>)}
@@ -31,6 +35,7 @@ const dateText = post.data.date.toLocaleDateString('zh-CN', {
     </header>
 
     <section class="article-body article-prose panel">
+      {post.data.screen && <p class="screen-spoiler">本文包含剧情讨论，可能涉及剧透。</p>}
       <Content />
     </section>
   </article>

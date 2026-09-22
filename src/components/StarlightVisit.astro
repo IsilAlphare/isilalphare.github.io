@@ -1,0 +1,326 @@
+---
+import { starFaces } from '../lib/domeGeometry';
+import { commentsEnabled, walineServerURL } from '../lib/comments';
+const article=/^\/posts\/[^/]+\/?$/.test(Astro.url.pathname);
+const travel=/^\/travel\/[^/]+\/?$/.test(Astro.url.pathname);
+const contextual=article||travel||Astro.url.pathname==='/guestbook/';
+const writeLabel=article?'给这篇文章留言':travel?'给这段旅途留言':'留个言吧';
+---
+<aside class="starlight-visit" aria-label="留下星光" data-contextual={contextual} data-write-label={writeLabel} hidden>
+  <div class="visit-response" hidden>
+    <p role="status" aria-live="polite"></p>
+    <button class="visit-write" type="button">{writeLabel} <span aria-hidden="true">✧</span></button>
+  </div>
+  <button class="visit-star" type="button" aria-label="留一点星光" aria-pressed="false" aria-describedby="visit-demo-note">
+    <span class="visit-ripple ripple-one" aria-hidden="true"></span><span class="visit-ripple ripple-two" aria-hidden="true"></span>
+    <span class="pet-float" aria-hidden="true"><span class="pet-tilt"><svg class="pet-body" viewBox="175 200 170 170"><g class="pet-facets">{starFaces(.45).map(face=><polygon points={face.points} fill={face.fill} />)}</g></svg></span></span>
+    <span class="visit-dust" aria-hidden="true">{Array.from({length:7},(_,i)=><i style={`--angle:${i*51}deg;--distance:${65+i%3*16}px;--delay:${i*45}ms`}>✧</i>)}</span>
+    <span class="visit-label">留一点星光</span>
+  </button>
+  <small id="visit-demo-note" class:list={{"live-note":commentsEnabled}}>{commentsEnabled?"拖动星星，或点击留下星光":"本地预览"}</small>
+</aside>
+<dialog class="visit-letter" aria-labelledby="visit-letter-title" aria-describedby="visit-letter-note">
+  <button type="button" class="letter-close" aria-label="关闭留言面板">×</button>
+  <div class="letter-script">A little starlight</div>
+  <div class="letter-title-row"><h2 id="visit-letter-title">星间来信</h2><span class="visit-meteors">已有 <em data-starlight-count={commentsEnabled}>{commentsEnabled?"…":"128"}</em> 颗流星划过天幕{!commentsEnabled && <span class="count-demo">示例</span>}</span></div>
+  <p class="letter-intro">一颗流星曾路过这里</p>
+  <p id="visit-letter-note" class="letter-demo">{commentsEnabled ? "寄出的文字会公开展示。不必郑重，一句问候就好。" : "样式与交互预览 · 内容仅保存在此浏览器，不会发送或公开。"}</p>
+
+  <a class="guestbook-link" href="/guestbook/"><span class="entry-comet" aria-hidden="true">✧</span><span class="entry-text"><span class="entry-script" aria-hidden="true">Traces of other stars</span><span>关于其他流星的记载……</span></span><span class="entry-glint" aria-hidden="true">✦</span></a>
+  <form class="letter-form">
+    <label>怎么称呼你<input name="nickname" autocomplete="nickname" maxlength="24" placeholder="路过的朋友" /></label>
+    <fieldset><legend>带来一枚小印记</legend><div class="letter-marks">
+      {[['✧','星光'],['☾','月牙'],['❧','叶子'],['≈','海风']].map(([mark,label],i)=><label><input type="radio" name="mark" value={mark} checked={i===0} /><span data-seal={i}><b aria-hidden="true">{mark}</b>{label}</span></label>)}
+    </div></fieldset>
+    <label>想留下的话<textarea name="message" required maxlength="500" rows="4" placeholder="来踩踩，或者分享此刻想到的事……"></textarea></label>
+    <div class="letter-actions"><span>不必郑重，一句问候就好。</span><button type="submit">{commentsEnabled?"寄出这封信":"收好这封信"} <span aria-hidden="true">✧</span></button></div>
+  </form>
+  <section class="letter-saved" hidden aria-label={commentsEnabled?"已寄出的来信":"本地留言预览"}><div class="saved-meta"><span class="saved-mark" aria-hidden="true"></span><strong></strong><small>{commentsEnabled?"来信已寄出":"仅自己可见"}</small></div><p class="saved-text"></p><button type="button" class="letter-edit">{commentsEnabled?"再写一封":"再改一改"}</button></section>
+  <p class="letter-status" role="status" aria-live="polite"></p>
+  {!commentsEnabled && <button type="button" class="preview-reset">重置本地体验</button>}
+</dialog>
+<script>
+  import { starFaces } from '../lib/domeGeometry';
+  import { commentsEnabled, walineServerURL } from '../lib/comments';
+  import { addComment } from '@waline/api';
+  import { GUESTBOOK_PATH, markedMessage } from '../lib/commentIdentity.mjs';
+  import { refreshStarlightCount, leaveStarlight } from '../lib/starlight';
+  const widget=document.querySelector<HTMLElement>('.starlight-visit');
+  if (widget) {
+  const star=widget.querySelector<HTMLButtonElement>('.visit-star')!;
+  const response=widget.querySelector<HTMLElement>('.visit-response')!;
+  const dialog=document.querySelector<HTMLDialogElement>('.visit-letter')!;
+  const form=dialog.querySelector<HTMLFormElement>('form')!;
+  const saved=dialog.querySelector<HTMLElement>('.letter-saved')!;
+  const status=dialog.querySelector<HTMLElement>('.letter-status')!;
+  const key=commentsEnabled?'starry-dome:starlight:v1:'+walineServerURL:'starry-dome:visit-prototype:v1';
+  let sending=false;
+  let lighting=false;
+  let lit=false;
+  let opener:HTMLElement|null=null;
+  let timer:ReturnType<typeof setTimeout>;
+  function read(){try {return JSON.parse(localStorage.getItem(key)||'{}');}catch{return {};}}
+  function save(value:unknown){try{localStorage.setItem(key,JSON.stringify(value));return true;}catch{return false;}}
+  const initial=read();
+  lit=initial?.lit===true;
+  function renderStar(){star.setAttribute('aria-pressed',String(lit));widget.classList.toggle('is-lit',lit);star.setAttribute('aria-label',lit?'星光已点亮，'+widget.dataset.writeLabel:'留一点星光');widget.querySelector('.visit-label')!.textContent=lit?'星光已留下':'留一点星光';}
+  function renderLetter(nickname:string,mark:string,message:string){
+    saved.querySelector('strong')!.textContent=nickname;
+    saved.querySelector('.saved-mark')!.textContent=mark;
+    saved.querySelector('.saved-text')!.textContent=message;
+    saved.hidden=false;form.hidden=true;
+  }
+  if(!commentsEnabled && initial && typeof initial.message==='string' && initial.message.length<=500){
+    const nickname=typeof initial.nickname==='string'?initial.nickname.slice(0,24):'路过的朋友';
+    const mark=['✧','☾','❧','≈'].includes(initial.mark)?initial.mark:'✧';
+    (form.elements.namedItem('nickname') as HTMLInputElement).value=nickname;
+    (form.elements.namedItem('message') as HTMLTextAreaElement).value=initial.message;
+    (form.elements.namedItem('mark') as RadioNodeList).value=mark;
+    renderLetter(nickname,mark,initial.message);
+  }
+  function openLetter(trigger:HTMLElement){
+    response.hidden=true;
+    if(widget.dataset.contextual==='true'){
+      const input=document.querySelector<HTMLTextAreaElement>('#comment-message');
+      const board=document.querySelector<HTMLElement>('#comments');
+      if(board){
+        input?.focus({preventScroll:true});
+        window.dispatchEvent(new Event('focus-comment'));
+        board.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth',block:'start'});
+        return;
+      }
+    }
+    opener=trigger;dialog.showModal();
+  }
+  star.addEventListener('click',async event=>{
+    if(suppressClick && event.detail!==0){event.preventDefault();return;}
+    if(commentsEnabled && read()?.lit===true){lit=true;renderStar();}
+    if(lit){openLetter(star);return;}
+    if(lighting)return;
+    lighting=true;star.setAttribute('aria-busy','true');
+    if(commentsEnabled){
+      try{await leaveStarlight();}
+      catch{
+        lighting=false;star.removeAttribute('aria-busy');
+        positionFeedback();response.hidden=false;response.querySelector('p')!.textContent='暂未确认收到星光，请稍后再试';
+        clearTimeout(timer);timer=setTimeout(()=>{response.hidden=true;},5000);
+        return;
+      }
+    }
+    lighting=false;star.removeAttribute('aria-busy');
+    lit=true;const persisted=save({...read(),lit:true});renderStar();
+    positionFeedback();response.hidden=false;response.querySelector('p')!.textContent=(commentsEnabled || persisted)?'收到了你的星光':'星光已点亮 · 本次预览有效';
+    widget.classList.add('is-celebrating');
+    clearTimeout(timer);timer=setTimeout(()=>{widget.classList.remove('is-celebrating');response.hidden=true;},3500);
+  });
+  widget.querySelector<HTMLButtonElement>('.visit-write')!.addEventListener('click',event=>openLetter(event.currentTarget as HTMLElement));
+  dialog.querySelector('.letter-close')!.addEventListener('click',()=>dialog.close());
+  dialog.addEventListener('click',event=>{if(event.target!==dialog)return;const r=dialog.getBoundingClientRect();if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)dialog.close();});
+  dialog.addEventListener('close',()=>{(opener?.getClientRects().length?opener:star)?.focus();});
+  dialog.querySelector('.letter-edit')!.addEventListener('click',()=>{if(commentsEnabled)(form.elements.namedItem('message') as HTMLTextAreaElement).value='';saved.hidden=true;form.hidden=false;status.textContent='';(form.elements.namedItem('message') as HTMLTextAreaElement).focus();});
+  form.addEventListener('submit',async event=>{
+    event.preventDefault();const data=new FormData(form);const message=String(data.get('message')||'').trim();
+    if(!message){status.textContent='写下一点什么，再收好这封信。';return;}
+    const nickname=String(data.get('nickname')||'').trim()||'路过的朋友';const mark=String(data.get('mark')||'✧');
+    if(commentsEnabled){
+      if(sending)return;
+      sending=true;const submit=form.querySelector<HTMLButtonElement>('button[type=submit]')!;
+      submit.disabled=true;status.textContent='正在寄出……';
+      try{
+        const result=await addComment({serverURL:walineServerURL,lang:'zh-CN',comment:{
+          nick:nickname,comment:markedMessage(message,mark),url:GUESTBOOK_PATH,ua:navigator.userAgent
+        }});
+        if(result.errno || !result.data)throw new Error(result.errmsg || '来信未能寄出，请稍后重试。');
+        renderLetter(nickname,mark,message);
+        const waiting=result.data.status==='waiting' || result.data.status==='spam';
+        saved.querySelector('small')!.textContent=waiting?'待展示':'来信已寄出';
+        status.textContent=waiting?'来信已收到，等待展示。':'来信已寄出，可以在星间来信中查看。';
+        window.dispatchEvent(new Event('starlight-letter-saved'));
+      }catch(error){status.textContent=error instanceof Error?error.message:'来信未能寄出，文字仍为你保留。';}
+      finally{sending=false;submit.disabled=false;}
+      return;
+    }
+    const persisted=save({lit,nickname,mark,message});renderLetter(nickname,mark,message);window.dispatchEvent(new Event('starlight-letter-saved'));
+    status.textContent=persisted?'已收好在此浏览器，尚未发送。':'此浏览器无法保存，关闭页面后内容将丢失。';
+  });
+  dialog.querySelector('.preview-reset')?.addEventListener('click',()=>{
+    try{localStorage.removeItem(key);}catch{}
+    lit=false;renderStar();form.reset();saved.hidden=true;form.hidden=false;status.textContent='';
+    clearTimeout(timer);widget.classList.remove('is-celebrating');response.hidden=true;dialog.close();
+  });
+  // Pointer capture keeps dragging stable when the pointer leaves the star.
+  let suppressClick=false;
+  let drag:{id:number;x:number;y:number;left:number;top:number;moved:boolean}|null=null;
+  let clickTimer:ReturnType<typeof setTimeout>;
+  const reduced=matchMedia('(prefers-reduced-motion: reduce)');
+  function positionFeedback(){
+    const r=widget.getBoundingClientRect();
+    const width=Math.min(172,innerWidth-24);
+    const preferred=r.left+r.width/2<innerWidth/2?r.right+10:r.left-width-10;
+    const left=Math.max(12,Math.min(innerWidth-width-12,preferred));
+    response.style.left=(left-r.left)+'px';response.style.right='auto';
+    response.style.width=width+'px';response.style.minWidth='0';
+  }
+  function place(left:number,top:number){
+    const r=widget.getBoundingClientRect();
+    const x=Math.max(12,Math.min(innerWidth-r.width-12,left));
+    const y=Math.max(12,Math.min(innerHeight-r.height-12,top));
+    widget.style.left=x+'px';widget.style.top=y+'px';
+    widget.style.right='auto';widget.style.bottom='auto';
+    widget.classList.toggle('on-left',x+r.width/2<innerWidth/2);
+    widget.classList.toggle('near-top',y<100);
+  }
+  star.addEventListener('pointerdown',event=>{
+    if(!event.isPrimary || event.button!==0)return;
+    clearTimeout(clickTimer);suppressClick=false;
+    const r=widget.getBoundingClientRect();
+    drag={id:event.pointerId,x:event.clientX,y:event.clientY,left:r.left,top:r.top,moved:false};
+    star.setPointerCapture(event.pointerId);widget.classList.add('is-held');
+  });
+  star.addEventListener('pointermove',event=>{
+    if(!drag || drag.id!==event.pointerId)return;
+    const dx=event.clientX-drag.x,dy=event.clientY-drag.y;
+    if(Math.hypot(dx,dy)>6)drag.moved=true;
+    if(!drag.moved)return;
+    suppressClick=true;response.hidden=true;
+    place(drag.left+dx,drag.top+dy);
+    widget.style.setProperty('--pet-tilt',Math.max(-18,Math.min(18,dx/7))+'deg');
+  });
+  function release(event:PointerEvent){
+    if(!drag || drag.id!==event.pointerId)return;
+    const moved=drag.moved;drag=null;
+    widget.classList.remove('is-held');widget.style.setProperty('--pet-tilt','0deg');
+    if(star.hasPointerCapture(event.pointerId))star.releasePointerCapture(event.pointerId);
+    if(moved && !reduced.matches)widget.querySelector('.pet-tilt')!.animate([
+      {transform:'rotate(-12deg)'},{transform:'rotate(9deg)'},{transform:'rotate(-4deg)'},{transform:'rotate(0deg)'}
+    ],{duration:650,easing:'ease-out'});
+    clickTimer=setTimeout(()=>{suppressClick=false;},100);
+  }
+  star.addEventListener('pointerup',release);
+  star.addEventListener('pointercancel',release);
+  star.addEventListener('lostpointercapture',release);
+  window.addEventListener('resize',()=>{
+    if(widget.style.left){const r=widget.getBoundingClientRect();place(r.left,r.top);}
+  });
+  // Keep the mobile companion clear of comment actions, including after dragging.
+  let avoidanceFrame=0;
+  function avoidCommentActions(){
+    cancelAnimationFrame(avoidanceFrame);
+    avoidanceFrame=requestAnimationFrame(()=>{
+      if(innerWidth>600 || drag || dialog.open)return;
+      const buttons=document.querySelectorAll<HTMLElement>('#comments .wl-btn');
+      for(const button of buttons){
+        const b=button.getBoundingClientRect(),r=widget.getBoundingClientRect();
+        if(b.width && b.top<innerHeight && b.bottom>0 &&
+          r.left<b.right+8 && r.right>b.left-8 && r.top<b.bottom+8 && r.bottom>b.top-8){
+          place(r.left,b.top-r.height-16);
+        }
+      }
+    });
+  }
+  window.addEventListener('scroll',avoidCommentActions,{passive:true});
+  window.addEventListener('resize',avoidCommentActions);
+  star.addEventListener('pointerup',avoidCommentActions);
+  const commentBoard=document.querySelector('#comments');
+  if(commentBoard)new MutationObserver(avoidCommentActions).observe(commentBoard,{childList:true,subtree:true});
+  const sealFrames:Keyframe[][]=[
+    [{transform:'scale(.75)',filter:'brightness(1)'},{transform:'scale(1.4) rotate(90deg)',filter:'brightness(2.2)'},{transform:'scale(1) rotate(180deg)',filter:'brightness(1)'}],
+    [{transform:'rotate(-25deg)'},{transform:'rotate(20deg)',filter:'drop-shadow(0 0 8px #e8dfc4)'},{transform:'rotate(-8deg)'},{transform:'rotate(0)'}],
+    [{transform:'translateY(0) rotate(0)'},{transform:'translateY(-7px) rotateY(150deg) rotate(-25deg)'},{transform:'translateY(2px) rotate(15deg)'},{transform:'translateY(0) rotate(0)'}],
+    [{transform:'translateX(-5px) scaleX(.8)',opacity:.5},{transform:'translateX(5px) scaleX(1.25)',opacity:1},{transform:'translateX(-3px)',opacity:.7},{transform:'translateX(0)',opacity:1}]
+  ];
+  form.querySelectorAll<HTMLInputElement>('input[name="mark"]').forEach((input,index)=>{
+    input.addEventListener('click',()=>{
+      if(reduced.matches)return;
+      const icon=input.nextElementSibling!.querySelector('b')!;
+      icon.getAnimations().forEach(animation=>animation.cancel());
+      icon.animate(sealFrames[index],{duration:index===2?1100:900,easing:'ease-in-out'});
+    });
+  });
+  const facets=Array.from(widget.querySelectorAll<SVGPolygonElement>('.pet-facets polygon'));
+  let frame=0;
+  function paint(time:number){
+    starFaces(.45+Math.sin(time/2200)*.32).forEach((face,i)=>{
+      facets[i].setAttribute('points',face.points);facets[i].setAttribute('fill',face.fill);
+    });
+    frame=requestAnimationFrame(paint);
+  }
+  function motion(){
+    cancelAnimationFrame(frame);
+    if(!reduced.matches && !document.hidden)frame=requestAnimationFrame(paint);
+  }
+  reduced.addEventListener('change',motion);document.addEventListener('visibilitychange',motion);
+  renderStar();widget.hidden=false;motion();
+  if(commentsEnabled)void refreshStarlightCount();
+  }
+</script>
+<style>
+.starlight-visit[hidden],.visit-response[hidden],.letter-form[hidden],.letter-saved[hidden]{display:none;}
+.starlight-visit{position:fixed;right:max(22px,env(safe-area-inset-right));bottom:calc(54px + env(safe-area-inset-bottom));z-index:30;display:grid;justify-items:center;isolation:isolate;}
+.visit-star{position:relative;width:80px;height:92px;padding:0 0 12px;border:0;background:transparent;color:#bbaacb;cursor:pointer;border-radius:50%;-webkit-tap-highlight-color:transparent;}
+.visit-star::before{content:'';position:absolute;inset:6px 0 12px;border-radius:50%;background:radial-gradient(#13111ce8 30%,#13111c66 60%,transparent 72%);z-index:-1;}
+.visit-star svg{display:block;width:80px;height:80px;filter:drop-shadow(0 0 8px #b69bd630);transition:filter .8s;}
+.visit-gem{transition:fill-opacity 1.2s;}.is-lit .visit-gem{fill-opacity:.9;}.is-lit .visit-star svg{filter:drop-shadow(0 0 10px #ead6ad66);}
+.visit-label{display:block;font-size:10px;letter-spacing:.08em;white-space:nowrap;color:#d1c4d8;}.starlight-visit>small{font-size:9px;margin-top:5px;color:#99909e;}
+.visit-response{position:absolute;right:90px;bottom:35px;min-width:160px;padding:12px 0;text-align:right;text-shadow:0 2px 10px #080611,0 0 18px #080611;}
+.visit-response p{font-size:13px;color:#e8dfc4;margin:0 0 8px;}.visit-write{border:0;padding:5px 0;background:none;color:#bca8d4;font-size:12px;cursor:pointer;}.visit-write span{padding-left:13px;}
+.visit-ripple{position:absolute;inset:9px 3px 17px;border:1px solid #c3afd4;border-radius:50%;pointer-events:none;opacity:0;}
+.is-celebrating .visit-ripple{animation:visit-ripple 2.6s ease-out both;}.is-celebrating .ripple-two{animation-delay:.38s;border-color:#e8dfc4;}
+.visit-dust{position:absolute;inset:0;pointer-events:none;}.visit-dust i{position:absolute;left:36px;top:36px;font-size:11px;color:#dfd0b4;opacity:0;font-style:normal;}
+.is-celebrating .visit-dust i{animation:visit-dust 2.3s ease-out var(--delay) both;}
+@keyframes visit-ripple{0%{opacity:.65;transform:scale(.65);}100%{opacity:0;transform:scale(2.8);}}
+@keyframes visit-dust{0%{opacity:0;transform:rotate(var(--angle)) translateX(15px);}25%{opacity:.8;}100%{opacity:0;transform:rotate(var(--angle)) translateX(var(--distance));}}
+.visit-letter{width:min(520px,calc(100vw - 32px));max-height:calc(100dvh - 40px);overflow:auto;padding:38px;border:1px solid #bca5cc50;border-radius:3px 24px 3px 3px;background:radial-gradient(ellipse at 100% 0,#553f8329,transparent 60%),#15121d;color:#d6cedd;box-shadow:0 25px 100px #0008;}
+.visit-letter::backdrop{background:#07060cab;backdrop-filter:blur(5px);}.letter-close{position:absolute;top:12px;right:14px;width:40px;height:40px;border:0;border-radius:50%;font-size:27px;background:transparent;color:#b2a7bd;cursor:pointer;}
+.letter-script{font-family:'Great Vibes',cursive;font-size:33px;color:#c3b3d8;}.visit-letter h2{font-family:'Songti SC','IBM Plex Serif',serif;font-size:30px;letter-spacing:.12em;font-weight:400;color:#e8dfc4;margin:18px 0 12px;}.letter-intro{font-size:14px;color:#bbb0c4;}.letter-demo{font-size:11px;line-height:1.9;color:#9b91a5;padding-bottom:18px;border-bottom:1px solid #bca5cc26;}
+.letter-form>label{display:grid;gap:9px;font-size:12px;margin-top:22px;color:#c5b9cc;}input,textarea{font:inherit;}input[name=nickname],textarea{width:100%;border:1px solid #bca5cc30;border-radius:10px;padding:12px 14px;background:#0d0b1366;color:#e3dbe8;font-size:14px;line-height:1.8;}textarea{resize:vertical;min-height:110px;}::placeholder{color:#82788f;}
+fieldset{border:0;padding:0;margin:22px 0;}legend{font-size:12px;margin-bottom:12px;}.letter-marks{display:flex;gap:8px;}.letter-marks label{flex:1;position:relative;cursor:pointer;}.letter-marks input{position:absolute;opacity:0;width:1px;height:1px;}.letter-marks span{display:grid;justify-items:center;gap:5px;padding:9px;border:1px solid #bca5cc20;border-radius:12px;font-size:11px;color:#afa1bc;}.letter-marks b{font-size:24px;font-weight:400;}.letter-marks input:checked+span{border-color:#baa0cc90;color:#e2d3bc;background:#bca5cc12;}.letter-marks input:focus-visible+span{outline:2px solid #bfa1dc;outline-offset:3px;}
+.letter-actions{display:flex;gap:15px;align-items:center;justify-content:space-between;margin-top:22px;}.letter-actions>span{font-size:11px;color:#9a8fa5;}.letter-actions button{flex-shrink:0;border:1px solid #bba1cd60;border-radius:18px 5px;padding:12px 15px;background:#9b7fd414;color:#e2d3bc;cursor:pointer;font-size:12px;}.letter-actions button span{padding-left:12px;}
+.letter-saved{margin-top:25px;border:1px solid #bca5cc30;border-radius:15px 5px;padding:23px;background:#0d0b1355;}.saved-meta{display:flex;gap:12px;align-items:center;}.saved-meta strong{font-size:13px;font-weight:400;overflow-wrap:anywhere;}.saved-meta small{font-size:10px;color:#95899f;margin-left:auto;flex-shrink:0;}.saved-mark{font-size:26px;color:#d4c19b;}.saved-text{white-space:pre-wrap;overflow-wrap:anywhere;font-size:14px;line-height:2;color:#d8cedf;}.letter-edit{border:0;padding:8px 0;background:none;color:#b7a2ce;font-size:12px;cursor:pointer;}.preview-reset{display:block;margin:22px auto 0;border:0;border-bottom:1px dotted #8c7d9a60;background:none;color:#9b8aa9;font-size:11px;padding:6px;cursor:pointer;}
+.letter-status{font-size:12px;line-height:1.8;color:#c7b89f;margin:18px 0 0;}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid #bfa1dc;outline-offset:4px;}
+@media(max-width:600px){.starlight-visit{right:12px;bottom:calc(24px + env(safe-area-inset-bottom));}.visit-star{width:62px;height:76px;}.visit-star svg{width:62px;height:62px;}.visit-label{font-size:9px;}.visit-response{right:70px;bottom:25px;min-width:172px;}.visit-letter{padding:30px 22px;}.letter-actions{align-items:flex-end;}.letter-actions>span{max-width:100px;line-height:1.8;}.visit-dust i{left:28px;top:28px;}}
+@media(prefers-reduced-motion:reduce){.is-celebrating .visit-ripple,.is-celebrating .visit-dust i{animation:none;}.visit-gem,.visit-star svg{transition:none;}}
+/* A small faceted companion, with independent float and drag transforms. */
+.visit-star{touch-action:none;user-select:none;cursor:grab;}
+.is-held .visit-star{cursor:grabbing;}
+.pet-float,.pet-tilt{display:block;}
+.pet-float{animation:pet-float 5s ease-in-out infinite;}
+.pet-tilt{transform:rotate(var(--pet-tilt,0deg));transition:transform .3s ease;}
+.pet-facets{opacity:.42;transition:opacity 1.1s;}
+.is-lit .pet-facets{opacity:1;}
+.visit-star:hover .pet-body{filter:drop-shadow(0 0 13px #bdacd47a);}
+.is-held .pet-float{animation-play-state:paused;}
+.is-held .pet-body{transform:scale(.94);}
+.pet-body{transition:transform .25s,filter .8s;}
+.is-lit .visit-label{opacity:0;transition:opacity .7s;}
+.is-lit.is-celebrating .visit-label{opacity:1;}
+.on-left .visit-response{left:calc(100% + 10px);right:auto;text-align:left;}
+.near-top .visit-response{top:15px;bottom:auto;}
+.visit-letter{outline:1px solid #cbb99328;outline-offset:-9px;
+ background:linear-gradient(135deg,#c7b38805,transparent 45%),radial-gradient(ellipse at 100% 0,#553f8329,transparent 60%),#15121d;}
+.visit-letter::before{content:'';position:absolute;top:14px;left:15px;width:46px;height:29px;border:1px solid #c9b78d45;transform:rotate(-9deg);pointer-events:none;
+ background:linear-gradient(32deg,transparent 48%,#c9b78d35 49%,#c9b78d35 50%,transparent 51%) left/50% 100% no-repeat,linear-gradient(-32deg,transparent 48%,#c9b78d35 49%,#c9b78d35 50%,transparent 51%) right/50% 100% no-repeat;}
+.letter-script{margin-top:20px;}
+.letter-marks b{display:block;min-width:27px;text-align:center;text-shadow:0 0 12px #c5afd740;}
+.letter-marks [data-seal="1"]{color:#d9c8a1;}
+.letter-marks [data-seal="2"]{color:#a8c7b3;}
+.letter-marks [data-seal="3"]{color:#9cbfcf;}
+@keyframes pet-float{0%,100%{transform:translateY(0) rotate(-3deg);}50%{transform:translateY(-5px) rotate(3deg);}}
+@media(prefers-reduced-motion:reduce){.pet-float{animation:none;}.pet-tilt,.pet-facets,.pet-body,.is-lit .visit-label{transition:none;}}
+ .letter-title-row{display:flex;align-items:baseline;gap:8px 16px;flex-wrap:wrap;margin:18px 0 12px;}
+.letter-title-row h2{margin:0;flex-shrink:0;}
+.visit-meteors{font-size:10px;line-height:1.8;letter-spacing:.03em;color:#b8a9c7;text-shadow:0 0 12px #cfb5ea70,0 0 24px #ad8ac945;}
+.visit-meteors em{font-size:17px;font-family:'Cormorant Garamond',serif;color:#d0c3b3;font-style:normal;}
+.count-demo{font-size:9px;color:#94859f;margin-left:6px;text-shadow:none;}
+.guestbook-link{position:relative;display:flex;align-items:center;gap:17px;margin:22px 0 28px;padding:19px 20px;overflow:hidden;border:1px solid #c7b0d13b;border-radius:3px 20px 3px 3px;background:linear-gradient(110deg,#ae8ecd16,#86b6c20b 65%,#d2ba8e0a);color:#e0d2df;text-decoration:none;transition:border-color .3s,background .3s;}
+.guestbook-link::after{content:'';position:absolute;left:20px;right:20px;bottom:0;height:1px;background:linear-gradient(90deg,transparent,#ddc7a877,#a3b6d45c,transparent);}
+.entry-text{display:grid;gap:8px;font-size:14px;letter-spacing:.05em;}
+.entry-script{font-family:'Great Vibes',cursive;font-size:23px;letter-spacing:0;color:#bba7cd;}
+.entry-comet{font-size:35px;color:#d3c5e2;text-shadow:0 0 18px #bea6d380;}
+.entry-glint{margin-left:auto;font-size:14px;color:#cdb993;}
+.guestbook-link:hover{border-color:#d2b9e074;background:linear-gradient(110deg,#ae8ecd24,#86b6c214 65%,#d2ba8e12);}
+@media(max-width:600px){.letter-title-row{gap:4px 12px;}.visit-meteors{font-size:9px;}.guestbook-link{padding:17px 14px;gap:12px;}.entry-text{font-size:13px;}.entry-script{font-size:22px;}}
+.live-note{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;}
+.letter-actions button:disabled{opacity:.5;cursor:wait;}
+</style>

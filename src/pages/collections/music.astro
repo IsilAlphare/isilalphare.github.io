@@ -1,0 +1,147 @@
+---
+import ArtistConstellation from '../../components/ArtistConstellation.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { musicGroups, musicArtists, themeTrackCount } from '../../data/music';
+---
+<BaseLayout title="夜航歌单 · Starry Dome" description="偏爱 R&B、术力口与音乐剧，也收下摇滚、说唱和故事里的声音。">
+  <section class="page-hero music-hero" id="top">
+    <div class="night-orbit" aria-hidden="true"><span class="orbit-star">✧</span><span class="orbit-spark spark-one">✦</span><span class="orbit-spark spark-two">✧</span><span class="orbit-spark spark-three">✦</span></div>
+    <a class="article-back" href="/collections/">← 回到收藏馆</a>
+    <h1>夜航歌单</h1>
+    <p class="music-intro">在喜欢的声音里漫游。</p>
+    <div class="listening-paths"><a href="#artists">循着名字听 <span aria-hidden="true">✧</span></a><a href="#themes">循着主题听 <span aria-hidden="true">✧</span></a></div>
+
+  </section>
+  <section class="content-section" id="artists" aria-labelledby="artists-title">
+    <header class="music-section-heading"><p class="eyebrow">By artist</p><h2 id="artists-title">反复听见的名字</h2><p>有些喜欢，沿着一个名字不断延伸。</p></header>
+    <div class="theme-deck panel">
+      <div class="theme-tabs" role="tablist" aria-label="音乐人">
+        {musicArtists.map((artist, index) => <button type="button" role="tab" id={`tab-artist-${artist.id}`} aria-controls={`artist-${artist.id}`} aria-selected={index === 0 ? 'true' : 'false'} tabindex={index === 0 ? 0 : -1}>{artist.name}<span aria-hidden="true"> ✧</span></button>)}
+      </div>
+      {musicArtists.map((artist, index) => <div id={`artist-${artist.id}`} role="tabpanel" aria-labelledby={`tab-artist-${artist.id}`} tabindex="0" hidden={index !== 0}><ArtistConstellation artist={artist} index={index} embedded /></div>)}
+    </div>
+  </section>  <section class="content-section" id="themes" aria-labelledby="themes-title">
+    <header class="music-section-heading"><p class="eyebrow">By atmosphere · {themeTrackCount} 首</p><h2 id="themes-title">循着主题听</h2></header>
+    <div class="theme-deck panel">
+    <div class="theme-tabs" role="tablist" aria-label="音乐主题">
+      {musicGroups.map((group, index) => <button type="button" role="tab" id={`tab-${group.id}`} aria-controls={group.id} aria-selected={index === 0 ? 'true' : 'false'} tabindex={index === 0 ? 0 : -1}>{group.title}<span aria-hidden="true"> ✧</span></button>)}
+    </div>
+    <div class="music-grid">
+    {musicGroups.map((group, index) => (
+      <section class="music-group" id={group.id} role="tabpanel" aria-labelledby={`tab-${group.id}`} tabindex="0" hidden={index !== 0}>
+        <div class="music-topline"><span class="section-star" aria-hidden="true">✧</span><span class="section-index">0{index + 1}</span><span class="music-line" aria-hidden="true"></span>{group.favorite ? <span class="favorite">偏爱</span> : <span aria-hidden="true">✧</span>}</div>
+        <p class="eyebrow">{group.subtitle}</p>
+        <h2 id={`title-${group.id}`}>{group.title}</h2>
+        <p class="group-description">{group.description}</p>
+        <ol class="track-list">
+          {group.tracks.map((track) => (
+            <li><span class="track-number" aria-hidden="true">✦</span><div><h3>{track.title}</h3><p>{track.artists}</p></div></li>
+          ))}
+        </ol>
+        {group.id === 'stage' && <a class="music-essay" href="/posts/mozart-lopera-rock/">舞台之外的文字 ·《睡玫瑰》 →</a>}
+        <a class="music-return" href="#top">回到歌单入口 ↑</a>
+      </section>
+    ))}
+    </div>
+    </div>
+  </section>
+
+</BaseLayout>
+<style>
+  .music-hero { position: relative; isolation: isolate; }
+  .music-hero > :not(.night-orbit) { position: relative; z-index: 1; }
+  .night-orbit { position: absolute; width: min(38vw, 420px); aspect-ratio: 1; right: 0; top: 40px; pointer-events: none; opacity: .65; }
+  .night-orbit::before, .night-orbit::after { content: ''; position: absolute; inset: 8%; border: 1px solid rgba(190,166,221,.14); border-radius: 50%; transform: rotate(-25deg) scaleY(.46); }
+  .night-orbit::after { transform: rotate(38deg) scaleY(.7); border-color: rgba(130,190,210,.12); }
+  .orbit-star { position: absolute; top: 25%; left: 30%; font-size: clamp(90px, 16vw, 200px); line-height: 1; color: transparent; background: linear-gradient(120deg, #e6cf9e, #b1dcda, #bb9fdc, #e7b5a1, #e6cf9e); background-size: 250% 250%; background-clip: text; animation: star-fire 18s ease-in-out infinite alternate; filter: drop-shadow(0 0 24px rgba(182,147,210,.16)); }
+  .orbit-spark { position: absolute; color: #b5bfd4; font-size: 20px; }
+  .spark-one { left: 8%; top: 57%; }
+  .spark-two { right: 7%; top: 22%; font-size: 30px; }
+  .spark-three { right: 18%; bottom: 10%; font-size: 12px; }
+  @keyframes star-fire { from { background-position: 0% 30%; } to { background-position: 100% 70%; } }
+  @keyframes prism-drift { from { transform: translate3d(-4%, -3%, 0) rotate(-12deg); } to { transform: translate3d(5%, 5%, 0) rotate(15deg); } }
+  .page-hero .music-intro { font-size: 14px; margin-top: 14px; color: var(--asteroid); }
+  .listening-paths { display: flex; flex-wrap: wrap; gap: 24px; margin-top: 28px; }
+  .listening-paths a { font-size: 14px; color: var(--elf-starlight); border-bottom: 1px solid rgba(198,175,212,.3); padding: 8px 0; }
+  .listening-paths span { margin-left: 12px; color: var(--nebula-haze); }
+  .music-section-heading { margin-bottom: 32px; }
+  .music-section-heading h2 { font-size: 30px; font-weight: 400; margin: 12px 0; }
+  .music-section-heading > p:last-child { color: var(--comet); }
+  #themes, #artists { scroll-margin-top: 110px; }
+  .theme-deck { padding: 0; overflow: hidden; background: #17151e; }
+  .theme-tabs { display: flex; flex-wrap: wrap; gap: 8px; padding: 24px; border-bottom: 1px solid var(--crater-soft); }
+  .theme-tabs button { border: 1px solid transparent; border-radius: 24px; padding: 10px 16px; background: transparent; font: inherit; font-size: 13px; color: var(--comet); cursor: pointer; }
+  .theme-tabs button[aria-selected="true"] { color: var(--elf-starlight); border-color: rgba(192,166,222,.4); background: rgba(163,137,194,.12); }
+  .theme-tabs button:hover { color: var(--elf-starlight); }
+  .theme-tabs button:focus-visible, .music-group:focus-visible { outline: 1px solid var(--nebula-haze); outline-offset: -3px; }
+  .theme-tabs span { color: var(--nebula-haze); margin-left: 6px; }
+  [role="tabpanel"][hidden] { display: none; }
+  [role="tabpanel"]:focus-visible { outline: 1px solid var(--nebula-haze); outline-offset: -3px; }
+  .track-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 40px; }
+  @media (max-width: 680px) { .track-list { grid-template-columns: 1fr; } .theme-tabs { padding: 16px; gap: 4px; } .theme-tabs button { padding: 10px; } }
+  .music-group { position: relative; isolation: isolate; overflow: hidden; --music-accent: #baa7cf; min-width: 0; padding: clamp(24px, 3vw, 38px); background: radial-gradient(ellipse at 100% 0, rgba(150,120,180,.09), transparent 65%), #17151e; scroll-margin-top: 110px; }
+  .music-group::before { content: ''; position: absolute; z-index: -1; pointer-events: none; inset: -20%; background: conic-gradient(from 40deg at 85% 15%, transparent 0deg, rgba(109,177,187,.08) 55deg, transparent 115deg, rgba(198,134,165,.07) 210deg, rgba(198,171,118,.05) 280deg, transparent 360deg); animation: prism-drift 24s ease-in-out infinite alternate; }
+  .music-group:nth-child(even)::before { animation-delay: -12s; }
+  .music-group::after { content: ''; position: absolute; pointer-events: none; inset: 0; border-radius: inherit; box-shadow: inset 1px 1px 0 rgba(208,185,226,.13), inset -1px -1px 0 rgba(121,184,195,.08); }
+  .section-star { font-size: 27px; line-height: 1; text-shadow: 0 0 14px rgba(193,171,217,.25); }
+  .section-index { font-size: 11px; opacity: .65; letter-spacing: .12em; }
+  #rhythm { --music-accent: #d1ab9e; }
+  #vocal { --music-accent: #96c4c5; }
+  #stage { --music-accent: #d1bd93; }
+  .music-topline { display: flex; align-items: center; gap: 18px; color: var(--music-accent); font-family: Georgia, serif; margin-bottom: 24px; font-size: 14px; }
+  .music-line { height: 1px; flex: 1; opacity: .3; background: linear-gradient(90deg, var(--music-accent), transparent); }
+  .favorite { font-family: inherit; font-size: 12px; letter-spacing: .16em; }
+  .music-group .eyebrow { font-size: 11px; color: var(--music-accent); }
+  .music-group h2 { margin: 10px 0; font-family: "IBM Plex Serif", Georgia, serif; font-size: clamp(24px, 3vw, 30px); font-weight: 400; line-height: 1.5; }
+  .group-description { color: var(--comet); font-size: 14px; line-height: 1.8; margin-bottom: 26px; }
+  .track-list { list-style: none; margin: 0; padding: 0; }
+  .track-list li { display: flex; gap: 16px; padding: 18px 0; border-top: 1px solid rgba(180,170,200,.1); }
+  .track-list li > div { min-width: 0; }
+  .track-number { font-size: 11px; padding-top: 4px; color: var(--music-accent); opacity: .8; font-variant-numeric: tabular-nums; }
+  .track-list h3, .track-list h4 { margin: 0; color: var(--starlight-dim); font-size: 16px; line-height: 1.65; font-weight: 400; overflow-wrap: anywhere; }
+  .track-list p { color: var(--comet); margin: 5px 0 0; font-size: 12px; line-height: 1.8; overflow-wrap: anywhere; }
+  .music-essay { display: block; color: var(--elf-starlight); font-size: 14px; margin-top: 20px; }
+  .music-return { display: inline-block; color: var(--asteroid); font-size: 12px; margin-top: 24px; }
+  a:focus-visible { outline: 1px solid var(--nebula-haze); outline-offset: 4px; }
+  @media (max-width: 680px) { .music-grid { grid-template-columns: 1fr; } .night-orbit { width: 180px; top: 28px; right: -10px; opacity: .25; } }
+  @media (prefers-reduced-motion: reduce) { .orbit-star, .music-group::before { animation: none; } }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('.theme-tabs').forEach((tablist) => {
+    const tabs = Array.from(tablist.querySelectorAll<HTMLButtonElement>('[role="tab"]'));
+    function selectTab(tab: HTMLButtonElement, updateHash = false) {
+      tabs.forEach((item) => {
+        const selected = item === tab;
+        item.setAttribute('aria-selected', String(selected));
+        item.tabIndex = selected ? 0 : -1;
+        const panel = document.getElementById(item.getAttribute('aria-controls')!);
+        if (panel) panel.hidden = !selected;
+      });
+      if (updateHash) history.replaceState(null, '', `#${tab.getAttribute('aria-controls')}`);
+    }
+    function fromHash() {
+      const tab = tabs.find((item) => `#${item.getAttribute('aria-controls')}` === location.hash);
+      if (tab) {
+        selectTab(tab);
+        tablist.closest('.content-section')?.scrollIntoView();
+      }
+    }
+    tabs.forEach((tab, index) => {
+      tab.addEventListener('click', () => selectTab(tab, true));
+      tab.addEventListener('keydown', (event) => {
+        let next = index;
+        if (event.key === 'ArrowRight') next = (index + 1) % tabs.length;
+        else if (event.key === 'ArrowLeft') next = (index - 1 + tabs.length) % tabs.length;
+        else if (event.key === 'Home') next = 0;
+        else if (event.key === 'End') next = tabs.length - 1;
+        else return;
+        event.preventDefault();
+        selectTab(tabs[next], true);
+        tabs[next].focus();
+      });
+    });
+    fromHash();
+    window.addEventListener('hashchange', fromHash);
+  });
+</script>

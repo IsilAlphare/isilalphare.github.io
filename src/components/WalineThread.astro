@@ -1,0 +1,70 @@
+---
+import { walineServerURL } from '../lib/comments';
+import '@waline/client/style';
+import '../styles/waline.css';
+interface Props { kind?: 'guestbook'|'article'|'travel' }
+const { kind='guestbook' }=Astro.props;
+const publicBook=kind==='guestbook';
+const Heading=publicBook?'h1':'h2';
+---
+<section class="live-letter-board" id="comments" data-path={publicBook?'/guestbook/':Astro.url.pathname} aria-labelledby="comments-title">
+  <header class="live-board-heading">
+    <span class="live-board-star" aria-hidden="true">✧</span>
+    <div><p class="live-board-script">{publicBook?'Letters among the stars':'A little echo'}</p>
+      <div class="live-title-row"><Heading id="comments-title">{publicBook?'星间来信':kind==='travel'?'旅途回声':'星下回声'}</Heading>
+      {publicBook && <span class="live-count">已有 <em data-starlight-count>…</em> 颗流星划过天幕</span>}</div>
+      <p>{publicBook?'一颗流星曾路过这里':kind==='travel'?'在这段旅途的末尾，留下你的声音。':'读到这里，也留下你的声音。'}</p>
+    </div>
+  </header>
+  <p class="live-notice">寄出的文字会公开展示。可以不登录直接留言；登录后可管理自己的来信。</p>
+  <div class="live-marks" role="group" aria-label="带来一枚小印记">
+    <span>随信带来</span>
+    {[['✧','星光'],['☾','月牙'],['❧','叶子'],['≈','海风']].map(([mark,label])=><button type="button" data-mark={mark} aria-label={'带来'+label}><b aria-hidden="true">{mark}</b>{label}</button>)}
+  </div>
+  <div class="waline-thread"><p>正在展开信笺……</p></div>
+  <noscript>请启用 JavaScript 查看与发送留言。</noscript>
+  <a class="live-manage" href={walineServerURL+'/ui'} target="_blank" rel="noopener noreferrer">管理来信</a>
+</section>
+<script>
+  import { walineServerURL } from '../lib/comments';
+  import { commentPath } from '../lib/commentIdentity.mjs';
+  const board=document.querySelector<HTMLElement>('.live-letter-board');
+  if(board){
+    const mount=board.querySelector<HTMLElement>('.waline-thread')!;
+    const ready=import('@waline/client').then(({init})=>{
+      const instance=init({
+        el:mount,serverURL:walineServerURL,path:commentPath(board.dataset.path!),
+        lang:'zh-CN',dark:true,meta:['nick'],requiredMeta:[],login:'enable',
+        wordLimit:520,pageSize:10,emoji:false,search:false,imageUploader:false,
+        texRenderer:false,highlighter:false,reaction:false,pageview:false,
+        locale:{nick:'怎么称呼你',anonymous:'路过的朋友',placeholder:'留下此刻想到的事……',
+          submit:'寄出这封信',comment:'过往的信件',sofa:'第一封来信，正等着你。',
+          admin:'穹庐主人',reply:'回复',login:'登录',commentUnderReview:'来信已收到，等待展示。'}
+      });
+      return instance;
+    }).catch(()=>{mount.textContent='信笺暂时未能展开，请刷新页面重试。';});
+    function editor(){return mount.querySelector<HTMLTextAreaElement>('textarea');}
+    const observer=new MutationObserver(()=>{
+      const input=editor();
+      if(input){input.id='comment-message';input.setAttribute('aria-label','想留下的话');}
+    });
+    observer.observe(mount,{childList:true,subtree:true});
+    board.querySelectorAll<HTMLButtonElement>('[data-mark]').forEach(button=>{
+      button.addEventListener('click',()=>{
+        const input=editor();if(!input)return;
+        input.value=button.dataset.mark+'\n\n'+input.value.replace(/^[✧☾❧≈]\s*/u,'');
+        input.dispatchEvent(new Event('input',{bubbles:true}));
+        input.focus({preventScroll:true});
+        if(!matchMedia('(prefers-reduced-motion: reduce)').matches)
+          button.animate([{transform:'translateY(0)'},{transform:'translateY(-4px) rotate(-8deg)'},{transform:'translateY(0)'}],{duration:500});
+      });
+    });
+    window.addEventListener('starlight-letter-saved',async()=>{
+      const instance=await ready;instance?.update({path:commentPath(board.dataset.path!)});
+    });
+    window.addEventListener('focus-comment',async()=>{
+      await ready;
+      requestAnimationFrame(()=>editor()?.focus({preventScroll:true}));
+    });
+  }
+</script>

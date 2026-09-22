@@ -1,28 +1,55 @@
 ---
+import { getCollection } from 'astro:content';
+import CollectionLink from '../components/CollectionLink.astro';
+import CollectionEmblem from '../components/CollectionEmblem.astro';
+import FlowingLabel from '../components/FlowingLabel.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { collections } from '../data/collections';
+import { animeWorks } from '../data/anime';
+import { books, readingNotes } from '../data/books';
+import { musicGroups, musicTrackCount } from '../data/music';
+const reviews = (await getCollection('posts', ({ data }) => Boolean(data.screen))).sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+const collectionSummaries: Record<string, { preview: string; count: string }> = {
+  '书': { preview: '月亮与六便士 · 基地边缘 · 彼得·卡门青', count: `${books.length} 部作品 · ${readingNotes.length} 篇札记` },
+  '影': { preview: reviews.map((post) => post.data.screen!.work).join(' · '), count: `${reviews.length} 篇影评` },
+  '动': { preview: '蔷薇少女 · GOSICK · LoveLive!', count: `${animeWorks.length} 部作品` },
+  '音': { preview: 'The Weeknd · 初音ミク · 音乐剧选曲', count: `${musicGroups.length} 组 · ${musicTrackCount} 首收藏` },
+};
 ---
-<BaseLayout title="收藏馆 · Starry Dome" description="书、影、音和有趣网站的私人收藏馆。">
+<BaseLayout title="我的收集罐 · Starry Dome" description="星光，萤火，落叶，干花，在我处一并珍藏">
   <section class="page-hero">
-    <p class="eyebrow">Collection jars</p>
-    <h1>收藏馆</h1>
-    <p>这里统一放书、影、音和有趣网站。第一版先像收集罐一样展示标签和少量精选，后续再接入评分、短评、外链与多维表格。</p>
+    <FlowingLabel text="Treasured Worlds" />
+    <h1>我的收集罐</h1>
+    <p>星光，萤火，落叶，干花，在我处一并珍藏</p>
   </section>
   <section class="content-section">
     <div class="collections-grid">
       {collections.map((collection) => (
-        <article class="panel jar">
+        <article class="panel jar collection-jar">
           <div>
-            <div class="jar-type">{collection.type}</div>
-            <h3>{collection.title}</h3>
+            <CollectionEmblem type={collection.type} />
+            <h3>{collection.href ? <a href={collection.href}>{collection.title}</a> : collection.title}</h3>
             <p>{collection.description}</p>
             <div class="tags">
               {collection.tags.map((tag) => <span>{tag}</span>)}
             </div>
           </div>
-          <p class="meta">{collection.items.join(' · ')}</p>
+          {collection.href ? <div class="jar-details">
+            <p class="meta">{collectionSummaries[collection.type].preview}</p>
+            <div class="jar-footer"><p class="collection-count">{collectionSummaries[collection.type].count}</p><CollectionLink href={collection.href} title={collection.title} /></div>
+          </div> : <p class="meta">{collection.items.join(' · ')}</p>}
         </article>
       ))}
     </div>
   </section>
 </BaseLayout>
+
+<style>
+  .collection-jar { gap: 32px; border-radius: 28px 28px 12px 12px; border-color: #b9a6ce30; }
+  .collection-jar .tags { margin-top: 24px; gap: 8px; }
+  .collection-jar .tags span { font-size: 11px; border-color: #baa8ce26; background: transparent; color: #b3a8bd; }
+  .jar-details { display: grid; gap: 22px; }
+  .jar-details .meta { line-height: 1.95; font-size: 12px; color: #a69aaf; }
+  .jar-footer { display: grid; justify-items: start; gap: 10px; border-top: 1px solid #b5a3c426; padding-top: 18px; }
+  .jar-footer .collection-count { font-size: 11px; letter-spacing: .06em; color: #94899f; }
+</style>

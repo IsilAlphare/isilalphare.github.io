@@ -1,0 +1,116 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { books, bookThemes, readingNotes } from '../../data/books';
+const posts = await getCollection('posts');
+const articleTitles = new Map(posts.map((post) => [post.data.slug, post.data.title]));
+for (const book of readingNotes) {
+  if (book.note?.postSlug && !articleTitles.has(book.note.postSlug)) {
+    throw new Error(`书架文章不存在：${book.note.postSlug}`);
+  }
+}
+const dateText = (date: string) => date.replaceAll('-', '.');
+---
+<BaseLayout title="书架微光 · Starry Dome" description="沿着阅读的主题，收起书名，也留下读过之后的回声。">
+  <section class="page-hero">
+    <a class="article-back" href="/collections/">← 回到收藏馆</a>
+    <p class="eyebrow">Bookshelf glimmers · {books.length} 部作品 · {readingNotes.length} 篇札记</p>
+    <h1>书架微光</h1>
+    <p>沿着阅读的主题，收起书名，也留下读过之后的回声。</p>
+    <nav class="shelf-nav" aria-label="书架页内导航">
+      <a href="#themes">主题书架 ↓</a><a href="#notes">阅读札记 ↓</a>
+    </nav>
+  </section>
+  <section class="content-section" id="themes" aria-labelledby="themes-title">
+    <header class="shelf-heading"><p class="eyebrow">Reading paths</p><h2 id="themes-title">主题书架</h2><p>一些反复走近的主题，和沿途遇见的书。</p></header>
+    <div class="theme-grid">
+      {bookThemes.map((theme, index) => (
+        <section class="panel theme-shelf" data-theme={theme.id} aria-labelledby={`theme-${theme.id}`}>
+          <div class="theme-topline"><span class="theme-number">0{index + 1}</span><span class="theme-rule" aria-hidden="true"></span><span class="theme-star" aria-hidden="true">✧</span></div>
+          <h3 id={`theme-${theme.id}`}>{theme.title}</h3>
+          <p class="theme-description">{theme.description}</p>
+          <ul class="shelf-books">
+            {books.filter((book) => book.theme === theme.id).map((book) => (
+              <li>{book.note ? <a class="shelf-book" href={`#note-${book.id}`} aria-label={`阅读《${book.title}》札记`}>
+                <span class="book-spine" aria-hidden="true"></span>
+                <span class="book-info"><span class="book-title">{book.title}</span><span class="book-author">{book.author}{book.series && ' · 系列'}</span></span>
+                <span class="book-arrow" aria-hidden="true">↘</span>
+              </a> : <div class="shelf-book">
+                <span class="book-spine" aria-hidden="true"></span>
+                <span class="book-info"><span class="book-title">{book.title}</span><span class="book-author">{book.author}{book.series && ' · 系列'}</span></span>
+              </div>}</li>
+            ))}
+          </ul>
+        </section>
+      ))}
+    </div>
+    <aside class="shelf-aside"><h3>书架旁</h3><p>也为偶然相遇的好书留一处位置。</p>{books.filter((book) => book.theme === 'aside').map((book) => <p>{book.title}<span class="meta"> · {book.author}</span></p>)}</aside>
+  </section>
+  <section class="content-section" id="notes" aria-labelledby="notes-title">
+    <header class="shelf-heading"><p class="eyebrow">Reading notes</p><h2 id="notes-title">阅读札记</h2><p>保留当时的语气，记住读到这里的心情。部分札记涉及书中情节。</p></header>
+    <div class="reading-notes">
+      {readingNotes.map((book) => (
+        <article class="panel reading-note" id={`note-${book.id}`}>
+          <header>
+            <p class="eyebrow">{book.note!.postSlug ? '长评' : '短记'} · {book.author}</p>
+            <h3>{book.title}</h3>
+            <p class="note-meta"><span>记录于 <time datetime={book.note!.date}>{dateText(book.note!.date)}</time></span>{book.note!.rating && <span>我的评分 <span aria-label={`${book.note!.rating} 星，满分 5 星`}>{'★'.repeat(book.note!.rating)}{'☆'.repeat(5 - book.note!.rating)}</span></span>}</p>
+          </header>
+          {book.note!.postSlug ? <>
+            <blockquote>{book.note!.excerpt}</blockquote>
+            <a class="note-article" href={`/posts/${book.note!.postSlug}/`}>{articleTitles.get(book.note!.postSlug)} <span aria-hidden="true">→</span></a>
+          </> : <div class="note-text">{book.note!.paragraphs!.map((paragraph) => <p>{paragraph}</p>)}</div>}
+          <a class="note-return" href="#themes">回到主题书架 ↑</a>
+        </article>
+      ))}
+    </div>
+  </section>
+</BaseLayout>
+<style>
+  .shelf-nav { display: flex; flex-wrap: wrap; gap: 24px; margin-top: 28px; font-size: 14px; }
+  .shelf-nav a, .note-article { color: var(--elf-starlight); }
+  .shelf-heading { margin-bottom: 28px; }
+  .shelf-heading h2 { font-size: 30px; font-weight: 400; margin: 12px 0; }
+  .shelf-heading > p:last-child, .theme-description, .shelf-aside > p:first-of-type { color: var(--asteroid); line-height: 1.8; }
+  .theme-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+  .theme-shelf { --shelf-accent: #b5a1d3; position: relative; overflow: hidden; padding: clamp(24px, 3vw, 38px); border-color: rgba(181,161,211,.18); background: radial-gradient(ellipse at 100% 0%, rgba(181,161,211,.07), transparent 65%), linear-gradient(145deg, #1b1923, #15141b); box-shadow: inset 0 1px 0 rgba(255,255,255,.035); }
+  .theme-shelf[data-theme="cosmos"] { --shelf-accent: #94b9d2; }
+  .theme-shelf[data-theme="self"] { --shelf-accent: #b5c5a6; }
+  .theme-shelf[data-theme="time"] { --shelf-accent: #c8a7b5; }
+  .theme-shelf[data-theme="web"] { --shelf-accent: #b8a0d8; }
+  .theme-shelf[data-theme="myth"] { --shelf-accent: #cbb68d; }
+  .theme-shelf[data-theme="society"] { --shelf-accent: #a5b9b3; }
+  .theme-topline { display: flex; align-items: center; gap: 18px; color: var(--shelf-accent); margin-bottom: 26px; }
+  .theme-number { font-family: Georgia, serif; font-size: 15px; letter-spacing: .12em; }
+  .theme-rule { flex: 1; height: 1px; background: linear-gradient(90deg, var(--shelf-accent), transparent); opacity: .25; }
+  .theme-star { font-size: 22px; line-height: 1; opacity: .7; }
+  .theme-shelf h3 { font-family: "IBM Plex Serif", Georgia, serif; font-size: clamp(22px, 2.4vw, 27px); font-weight: 400; line-height: 1.5; margin: 0 0 12px; letter-spacing: .025em; }
+  .theme-description { font-size: 14px; max-width: 30em; margin: 0; }
+  .shelf-books { list-style: none; padding: 0; margin: 28px 0 0; }
+  .shelf-books li + li { border-top: 1px solid rgba(180,170,200,.09); }
+  .shelf-book { display: flex; align-items: center; gap: 16px; min-height: 82px; padding: 16px 8px; border-radius: 6px; }
+  .book-spine { flex: 0 0 3px; height: 35px; border-radius: 2px; background: var(--shelf-accent); opacity: .38; }
+  .book-info { flex: 1; min-width: 0; }
+  .book-title { display: block; color: var(--starlight-dim); line-height: 1.6; font-size: 16px; }
+  .book-author { display: block; margin-top: 5px; color: var(--comet); font-size: 12px; line-height: 1.6; }
+  .book-arrow { color: var(--shelf-accent); font-size: 19px; padding: 0 4px; }
+  a.shelf-book { transition: background .2s ease; }
+  a.shelf-book:hover, a.shelf-book:focus-visible { background: rgba(190,175,215,.06); }
+  a.shelf-book:hover .book-title, a.shelf-book:focus-visible .book-title { color: var(--shelf-accent); }
+  a.shelf-book:hover .book-spine { opacity: .9; }
+  a.shelf-book:focus-visible { outline: 1px solid var(--shelf-accent); outline-offset: 3px; }
+  @media (prefers-reduced-motion: reduce) { a.shelf-book { transition: none; } }
+  .shelf-aside { margin-top: 28px; padding: 8px 24px; border-left: 2px solid var(--elf-violet); }
+  .shelf-aside h3 { font-weight: 400; }
+  .reading-notes { display: grid; gap: 28px; max-width: 880px; margin-inline: auto; }
+  .reading-note { min-width: 0; padding: clamp(24px, 5vw, 48px); overflow-wrap: anywhere; }
+  .reading-note h3 { font-size: clamp(24px, 3vw, 30px); font-weight: 400; line-height: 1.6; margin: 14px 0; }
+  .note-meta { display: flex; flex-wrap: wrap; gap: 10px 24px; color: var(--asteroid); font-size: 13px; }
+  .note-text { line-height: 1.95; margin-top: 28px; }
+  .note-text p { margin: 0 0 16px; }
+  .reading-note blockquote { margin: 28px 0; padding-left: 20px; border-left: 2px solid var(--elf-violet); line-height: 1.9; color: var(--asteroid); }
+  .note-article { display: block; line-height: 1.8; }
+  .note-return { display: inline-block; margin-top: 28px; font-size: 13px; color: var(--asteroid); }
+  #themes, #notes, .reading-note { scroll-margin-top: 110px; }
+  @media (max-width: 680px) { .theme-grid { grid-template-columns: 1fr; } }
+</style>

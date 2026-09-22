@@ -9,8 +9,9 @@
     "preview": "astro preview --host 0.0.0.0"
   },
   "dependencies": {
-    "@astrojs/sitemap": "latest",
-    "astro": "latest"
-  },
-  "devDependencies": {}
+    "@astrojs/sitemap": "3.7.3",
+    "@waline/api": "^1.1.2",
+    "@waline/client": "^3.15.2",
+    "astro": "7.1.6"
+  }
 }

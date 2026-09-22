@@ -9,13 +9,6 @@ tags:
 sourceDoc: "https://bytedance.larkoffice.com/docx/I86VdspHxoBmrNxhbg3czbRdnDd"
 slug: blog-building-1
 ---
-# 博客搭建（一） 初始化
-
-**来源：**博客　**原发布时间：**2025-09-14 13:53:50　**标签：**tech、兴趣、博客
-
-**原文：**[https://starrydome.top/2025/09/14/%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/](https://starrydome.top/2025/09/14/博客搭建/)
-
----
 
 > 最近收到了阿里云的域名续费通知，发现这个心血来潮网站也快一年了。本意是想分享一些生活和技术相关的东西，但并未勤快地更新（特别是技术相关）。  
 > 那么，就先从本博客的搭建开始说起吧\~
@@ -48,9 +41,9 @@ slug: blog-building-1
 - 在非管理员模式下执行脚本的方法可参考这篇：（其他的也适用）  
 `https://blog.csdn.net/JONE_WUQINGJIANG/article/details/103044919`
 
-​ 另，文中gitee的下载镜像已经失效。github的命令为：
+ 另，文中gitee的下载镜像已经失效。github的命令为：
 
-```
+```bash
 git clone -b master https://github.com/jerryc127/hexo-theme-butterfly.git themes/butterfly
 ```
 
@@ -64,16 +57,16 @@ git clone -b master https://github.com/jerryc127/hexo-theme-butterfly.git themes
 怎么写文章呢？hello-world.md里面其实就说了  
 Create a new post
 
-```
+```bash
 hexo new "My New Post"
 ```
 
 更新完一个页面后，三条命令
 
-```
-hexo g //生成静态页面
-hexo s //在4000端口查看当前页面
-hexo d //将当前更改部署到网页上
+```bash
+hexo g # 生成静态页面
+hexo s # 在4000端口查看当前页面
+hexo d # 将当前更改部署到网页上
 ```
 
 ### 可能的问题
@@ -82,7 +75,7 @@ hexo d //将当前更改部署到网页上
 
 在确保node.js安装正常的情况下，在所有hexo命令前加上nxp即可
 
-```
+```bash
 nmx hexo g
 ```
 
@@ -94,7 +87,7 @@ nmx hexo g
 
 尽量不要使用相对路径/本地路径
 
-最好还是尽量采用**全外链**的方式
+最好还是尽量采用 **全外链** 的方式
 
 [Image Upload - SM.MS - Simple Free ImageHosting](https://sm.ms/)
 
@@ -102,7 +95,7 @@ sm.ms是个图床上传网站，相当于个人的云图库。上传之后会自
 
 #### 本地部署和线上不一致的问题
 
-1. 需要先`hexo clean`，删除**public文件夹（即hexo的缓存）**
+1. 需要先`hexo clean`，删除 **public文件夹（即hexo的缓存）**
 2. 然后重新`hexo ghexo d`
 3. 打开域名网站后，记得`shft + f5`强制再刷新一次
 
@@ -111,3 +104,7 @@ sm.ms是个图床上传网站，相当于个人的云图库。上传之后会自
 想固定存放应该放`source/img`里这样就不会每次清缓存都丢失
 
 source/img中的图片都是可以直接在文章中以/img/…来引用的
+
+---
+
+原文存档：[博客 原文](<https://starrydome.top/2025/09/14/博客搭建/>)

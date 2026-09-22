@@ -1,5 +1,9 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import MemoryLandscape from '../components/MemoryLandscape.astro';
+import StarfallEmblem from '../components/StarfallEmblem.astro';
+import FlowingLabel from '../components/FlowingLabel.astro';
+import '../styles/starfall.css';
 import { starfallNodes } from '../data/starfallLog';
 
 const formatWhisper = (text = '') => text
@@ -26,43 +30,25 @@ const getTemperatureClass = (node: { theme: string }) => {
   <section class="starfall-hero">
     <div class="starfall-hero-image" aria-hidden="true"></div>
     <div class="starfall-hero-content">
-      <div class="starfall-hero-star" aria-hidden="true"></div>
-      <h1><span class="title-zh">逐星記</span><span class="title-en">Starfall Log</span></h1>
+      <div class="starfall-totem"><StarfallEmblem /></div>
+      <h1><span class="title-zh">逐星記</span><FlowingLabel text="Starfall Log" /></h1>
       <p class="starfall-subtitle">我在群星之下学会谦卑,又在人类垒起的高峰前重新长出骨骼。</p>
     </div>
   </section>
 
-  <section class="starfall-timeline" aria-label="逐星记时间轴">
+  <section class="starfall-timeline" aria-label="逐星记忆航道">
+    <div class="memory-boat" aria-hidden="true"><svg viewBox="0 0 32 76" fill="none"><path class="boat-wake" d="M6 3Q16 9 26 3M9 10Q16 14 23 10"/><path d="M7 24Q16 19 25 24L26 49Q24 63 16 71Q8 63 6 49Z" fill="#13111c"/><path d="M11 24V56L16 65L21 56V24M7 39H25"/><rect x="11" y="28" width="10" height="8" rx="1"/><path d="M13 43H19V53H13Z" fill="currentColor" fill-opacity=".25"/><circle cx="16" cy="60" r="1.5" fill="currentColor"/></svg></div>
     {starfallNodes.map((node, index) => {
-      const photos = node.photos.length > 0 ? node.photos : [''];
       return (
         <article class={`timeline-node theme-${node.theme} ${getTemperatureClass(node)} ${index % 2 === 1 ? 'is-alt' : ''}`} data-reveal>
           <div class="timeline-dot" aria-hidden="true"></div>
           <div class="timeline-card">
             <div class="timeline-media">
-              <details class="photo-cluster">
-                <summary>
-                  {photos[0] ? (
-                    <div class="star-photo" style={`background-image: url('${photos[0]}')`}>
-                      <span>{node.year}</span>
-                    </div>
-                  ) : (
-                    <div class="star-photo is-placeholder">
-                      <span>深色星空占位图</span>
-                    </div>
-                  )}
-                </summary>
-                {photos.length > 1 && (
-                  <div class="photo-strip">
-                    {photos.map((photo, photoIndex) => (
-                      <div class="photo-thumb" style={`background-image: url('${photo}')`} aria-label={`${node.title} 照片 ${photoIndex + 1}`}></div>
-                    ))}
-                  </div>
-                )}
-              </details>
+              <MemoryLandscape scene={node.illustration} />
             </div>
 
             <div class="timeline-copy">
+              <p class="memory-date"><span aria-hidden="true">✧</span> {node.year.split(" ")[0]}</p>
               <h2>
                 {node.articleUrl ? <a class="timeline-title-link" href={node.articleUrl}>{node.title}</a> : node.title}
               </h2>
@@ -71,18 +57,7 @@ const getTemperatureClass = (node: { theme: string }) => {
               {node.footnote && <p class="timeline-footnote">{node.footnote}</p>}
             </div>
           </div>
-          {index < starfallNodes.length - 1 && (
-            <div class="timeline-boat-run" aria-hidden="true">
-              <div class="timeline-cargo-ship">
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-              </div>
-            </div>
-          )}
+
         </article>
       );
     })}
@@ -90,6 +65,9 @@ const getTemperatureClass = (node: { theme: string }) => {
 
   <section class="starfall-ending">
     <p>我终究没能成为天文学家,只做了一个爱好者;可正因如此,星空于我永远是热爱,而非生计。</p>
+    <div class="ending-star" aria-hidden="true">✧</div>
+    <h2>寻我于万千繁星之中</h2>
+    <div class="ending-quenya">Elen síla lúmenn’ omentielvo.</div>
     <div class="hero-actions">
       <a class="btn primary" href="/">返回主站</a>
       <a class="btn" href="/about/">回到关于页</a>
@@ -98,65 +76,39 @@ const getTemperatureClass = (node: { theme: string }) => {
 </BaseLayout>
 
 <script>
-  const revealNodes = document.querySelectorAll('[data-reveal]');
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('is-visible');
-        observer.unobserve(entry.target);
-      }
-    });
-  }, { rootMargin: '45% 0px 45% 0px', threshold: 0.08 });
-
-  revealNodes.forEach((node) => observer.observe(node));
-  window.setTimeout(() => {
-    revealNodes.forEach((node) => node.classList.add('is-visible'));
-  }, 1200);
-
-  const boatRuns = Array.from(document.querySelectorAll('.timeline-boat-run'));
-  const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
-
-  const updateBoatRuns = () => {
-    const markerY = window.innerHeight * 0.52;
-
-    boatRuns.forEach((run) => {
-      const node = run.closest('.timeline-node');
-      const nextNode = node?.nextElementSibling;
-      const currentDot = node?.querySelector('.timeline-dot');
-      const nextDot = nextNode?.querySelector('.timeline-dot');
-      const ship = run.querySelector('.timeline-cargo-ship');
-
-      if (!(node instanceof HTMLElement) || !(nextNode instanceof HTMLElement) || !(run instanceof HTMLElement) || !(currentDot instanceof HTMLElement) || !(nextDot instanceof HTMLElement) || !(ship instanceof HTMLElement)) return;
-
-      const nodeRect = node.getBoundingClientRect();
-      const currentDotRect = currentDot.getBoundingClientRect();
-      const nextDotRect = nextDot.getBoundingClientRect();
-      const runTop = currentDotRect.bottom;
-      const runBottom = nextDotRect.top;
-      const runHeight = Math.max(72, runBottom - runTop);
-      const shipHeight = ship.offsetHeight;
-      const travel = Math.max(0, runHeight - shipHeight);
-      const rawProgress = (markerY - runTop) / Math.max(1, runBottom - runTop);
-      const progress = clamp(rawProgress, 0, 1);
-
-      run.style.setProperty('--boat-run-top', `${currentDotRect.bottom - nodeRect.top}px`);
-      run.style.setProperty('--boat-run-height', `${runHeight}px`);
-      ship.style.setProperty('--ship-y', `${progress * travel}px`);
-      ship.style.setProperty('--ship-opacity', rawProgress < -0.16 || rawProgress > 1.16 ? '0.42' : '1');
+  import { readingPosition } from '../lib/starfallProgress.mjs';
+  const river = document.querySelector<HTMLElement>('.starfall-timeline')!;
+  const boat = river.querySelector<HTMLElement>('.memory-boat')!;
+  const nodes = Array.from(river.querySelectorAll<HTMLElement>('.timeline-node'));
+  let stops: number[] = [];
+  let colors: string[] = [];
+  let frame = 0;
+  const update = () => {
+    frame = 0;
+    const marker = window.innerHeight * .52 - river.getBoundingClientRect().top;
+    const { y, index } = readingPosition(marker, stops);
+    boat.style.transform = `translate(-50%, -50%) translateY(${y}px)`;
+    boat.style.color = colors[index];
+    nodes.forEach((node, i) => {
+      node.classList.toggle('is-current', i === index);
+      node.classList.toggle('is-past', stops[i] <= y);
     });
   };
-
-  let boatFrame = 0;
-  const requestBoatUpdate = () => {
-    if (boatFrame) return;
-    boatFrame = window.requestAnimationFrame(() => {
-      boatFrame = 0;
-      updateBoatRuns();
+  const measure = () => {
+    const top = river.getBoundingClientRect().top;
+    stops = nodes.map(node => {
+      const rect = node.querySelector('.timeline-dot')!.getBoundingClientRect();
+      return rect.top + rect.height / 2 - top;
     });
+    colors = nodes.map(node => getComputedStyle(node).getPropertyValue('--node-accent').trim());
+    river.style.setProperty('--river-start', `${stops[0]}px`);
+    river.style.setProperty('--river-end', `${river.offsetHeight - stops[stops.length - 1]}px`);
+    update();
   };
-
-  updateBoatRuns();
-  window.addEventListener('scroll', requestBoatUpdate, { passive: true });
-  window.addEventListener('resize', requestBoatUpdate);
-  window.setTimeout(updateBoatRuns, 300);
+  const requestUpdate = () => { if (!frame) frame = requestAnimationFrame(update); };
+  window.addEventListener('scroll', requestUpdate, { passive: true });
+  window.addEventListener('resize', measure);
+  new ResizeObserver(measure).observe(river);
+  document.fonts.ready.then(measure);
+  measure();
 </script>

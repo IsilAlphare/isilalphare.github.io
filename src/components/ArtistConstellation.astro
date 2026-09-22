@@ -1,0 +1,83 @@
+---
+interface Props {
+  artist: { id: string; name: string; role: string; tracks: { title: string; artists: string }[] };
+  index: number;
+  embedded?: boolean;
+}
+const { artist, index, embedded = false } = Astro.props;
+const visibleCount = artist.tracks.length > 5 ? 4 : artist.tracks.length;
+const visibleTracks = artist.tracks.slice(0, visibleCount);
+const moreTracks = artist.tracks.slice(visibleCount);
+const accents = ['#d2b6c9', '#a9c9c3', '#b9acd9', '#b2bfd9', '#d0b6a4'];
+---
+<article class:list={["constellation", { panel: !embedded, embedded }]} id={embedded ? undefined : `artist-${artist.id}`} aria-labelledby={`name-${artist.id}`} style={`--star-color: ${accents[index % accents.length]}`}>
+  <div class="constellation-top"><span>{String(index + 1).padStart(2, '0')}</span><span>{artist.tracks.length} 首收藏</span></div>
+  <div class:list={["star-map", { "five-stars": visibleTracks.length === 5 }]}>
+    <svg class="star-paths" viewBox="0 0 500 400" preserveAspectRatio="none" aria-hidden="true">
+      <ellipse cx="250" cy="200" rx="182" ry="132" />
+      <path d="M95 60 L250 200 L400 75 M110 320 L250 200 L395 325" />
+      <circle cx="95" cy="60" r="3"/><circle cx="400" cy="75" r="3"/><circle cx="110" cy="320" r="3"/><circle cx="395" cy="325" r="3"/>
+    </svg>
+    <header class="artist-center"><span class="center-star" aria-hidden="true">✧</span><p>{artist.role}</p><h3 id={`name-${artist.id}`}>{artist.name}</h3></header>
+    <ul class="orbit-tracks">
+      {visibleTracks.map((track, i) => <li class={`song-star position-${i}`}><span class="song-spark" aria-hidden="true">✦</span><h4 title={track.artists}>{track.title}</h4><p class="song-credit">{track.artists}</p></li>)}
+    </ul>
+  </div>
+  {moreTracks.length > 0 && <details class="more-tracks"><summary>星轨继续 · 还有 {moreTracks.length} 首<span aria-hidden="true">＋</span></summary><ul>{moreTracks.map((track) => <li><h4>{track.title}</h4><p>{track.artists}</p></li>)}</ul></details>}
+</article>
+<style>
+  .constellation { position: relative; isolation: isolate; min-width: 0; overflow: hidden; padding: 24px; background: radial-gradient(ellipse at center, rgba(152,125,184,.075), transparent 68%), #15141d; scroll-margin-top: 110px; }
+  .embedded { border: 0; border-radius: 0; }
+  .embedded .star-map { max-width: 720px; margin-inline: auto; }
+  .embedded .more-tracks { max-width: 720px; margin-inline: auto; }
+  .constellation::before { content: ''; position: absolute; z-index: -1; pointer-events: none; inset: -20%; background: conic-gradient(from 30deg at 50% 50%, transparent, rgba(115,169,179,.06), transparent, rgba(193,141,181,.06), transparent); animation: fire-drift 25s ease-in-out infinite alternate; }
+  .constellation:nth-child(even)::before { animation-delay: -12s; }
+  .constellation-top { display: flex; justify-content: space-between; color: var(--comet); font-size: 11px; letter-spacing: .1em; }
+  .star-map { position: relative; padding: 22px 0 8px; }
+  .star-paths { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; fill: none; stroke: var(--star-color); stroke-width: .7; opacity: .2; }
+  .star-paths ellipse { stroke-dasharray: 2 9; }
+  .star-paths circle { fill: var(--star-color); }
+  .artist-center { position: relative; text-align: center; padding: 28px 8px; margin: 0; }
+  .center-star { color: var(--star-color); font-size: 40px; line-height: 1; text-shadow: 0 0 26px rgba(178,149,216,.35); }
+  .artist-center p { color: var(--comet); font-size: 11px; margin: 8px 0; }
+  .artist-center h3 { margin: 0; font: 400 clamp(23px, 2.5vw, 30px)/1.5 "IBM Plex Serif", Georgia, serif; color: var(--elf-starlight); overflow-wrap: anywhere; }
+  .star-map { height: 350px; padding: 0; }
+  .artist-center { position: absolute; inset: 50% auto auto 50%; transform: translate(-50%, -50%); width: 75%; padding: 0; }
+  .artist-center p { margin: 6px 0; }
+  .orbit-tracks { list-style: none; margin: 0; padding: 0; }
+  .song-star { position: absolute; width: 44%; text-align: center; transform: translate(-50%, -50%); }
+  .position-0 { left: 24%; top: 17%; --song-size: 18px; }
+  .position-1 { left: 76%; top: 23%; --song-size: 14px; }
+  .position-2 { left: 22%; top: 79%; --song-size: 15px; }
+  .position-3 { left: 75%; top: 85%; --song-size: 18px; }
+  .position-4 { left: 50%; top: 91%; --song-size: 15px; }
+  .five-stars { height: 400px; }
+  .five-stars .artist-center { top: 44%; }
+  .five-stars .position-2 { top: 68%; }
+  .five-stars .position-3 { top: 73%; }
+  .song-star:nth-child(2n) { color: var(--star-color); }
+  .song-credit { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .song-spark { color: var(--star-color); font-size: 12px; }
+  .song-star h4, .more-tracks h4 { margin: 7px 0 4px; font-size: 14px; font-weight: 400; line-height: 1.7; overflow-wrap: anywhere; }
+  .more-tracks p { margin: 0; color: var(--comet); font-size: 11px; line-height: 1.7; overflow-wrap: anywhere; }
+  .song-star h4 { font-size: var(--song-size); line-height: 1.55; text-wrap: balance; text-shadow: 0 0 20px color-mix(in srgb, var(--star-color) 22%, transparent); }
+  .more-tracks { border-top: 1px solid var(--crater-soft); margin-top: 18px; padding-top: 12px; }
+  .more-tracks summary { cursor: pointer; list-style: none; padding: 10px 0; font-size: 13px; color: var(--star-color); }
+  .more-tracks summary::-webkit-details-marker { display: none; }
+  .more-tracks summary span { float: right; }
+  .more-tracks[open] summary span { transform: rotate(45deg); }
+  .more-tracks summary:focus-visible { outline: 1px solid var(--star-color); outline-offset: 4px; }
+  .more-tracks ul { list-style: none; padding: 0; margin: 4px 0 0; display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 18px; }
+  @keyframes fire-drift { from { transform: rotate(-15deg); } to { transform: rotate(20deg); } }
+  @media (max-width: 520px) {
+    .constellation { padding: 18px 12px; }
+    .star-map { height: 370px; }
+    .five-stars { height: 400px; }
+    .artist-center h3 { font-size: 23px; }
+    .artist-center p { font-size: 10px; }
+    .song-star h4 { font-size: clamp(12px, 3.7vw, var(--song-size)); }
+    .song-spark { font-size: 10px; }
+    .more-tracks ul { grid-template-columns: 1fr; }
+  }
+  @media (prefers-reduced-motion: reduce) { .constellation::before { animation: none; } }
+</style>

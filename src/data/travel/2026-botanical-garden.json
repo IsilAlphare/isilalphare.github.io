@@ -1,0 +1,80 @@
+{
+  "slug": "2026-botanical-garden",
+  "title": "2026南京之春",
+  "date": "2026-03-22",
+  "location": "南京市中山植物园",
+  "text": "消磨春光",
+  "status": "published",
+  "recordId": "recvvR2vzEfsEN",
+  "assetFolder": "2026-botanical-garden",
+  "extension": "jpg",
+  "coverId": "07",
+  "coverCaption": "南京市中山植物园",
+  "endText": "消磨春光",
+  "photos": [
+    {
+      "id": "01",
+      "originalName": "9d8d47f2c1e03aeac52e44ea58067f76.jpg",
+      "alt": "公园中的饮品",
+      "width": 1080,
+      "height": 1440,
+      "collage": false
+    },
+    {
+      "id": "02",
+      "originalName": "5dc25fb5207cff6660f927a030a8667c.jpg",
+      "alt": "园中春花拼图",
+      "width": 1080,
+      "height": 3822,
+      "collage": true
+    },
+    {
+      "id": "03",
+      "originalName": "dcd483dcf15b2202f59070d22941e439.jpg",
+      "alt": "园景与飞鸟拼图",
+      "width": 1080,
+      "height": 4275,
+      "collage": true
+    },
+    {
+      "id": "04",
+      "originalName": "a6a5ab912dd9e51641bae37362905288.jpg",
+      "alt": "红墙与屋檐",
+      "width": 1440,
+      "height": 1080,
+      "collage": false
+    },
+    {
+      "id": "05",
+      "originalName": "0d55e4ae7e2f3a69994528a9f6d1a41e.jpg",
+      "alt": "池中的鸭子",
+      "width": 1440,
+      "height": 1080,
+      "collage": false
+    },
+    {
+      "id": "06",
+      "originalName": "1ac08b638117c679c8d656d511663911.jpg",
+      "alt": "草地上的喜鹊",
+      "width": 1440,
+      "height": 1080,
+      "collage": false
+    },
+    {
+      "id": "07",
+      "originalName": "76e028d308b240866c3a844e9663f6d3.jpg",
+      "alt": "盛开的郁金香",
+      "width": 1440,
+      "height": 1080,
+      "collage": false
+    },
+    {
+      "id": "08",
+      "originalName": "58ca1253742e3d3f94f7e2ff294c82b5.jpg",
+      "alt": "中山植物园入口",
+      "width": 1440,
+      "height": 1080,
+      "collage": false
+    }
+  ]
+}

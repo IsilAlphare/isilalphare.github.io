@@ -1,0 +1,8 @@
+{
+  "name": "starry-dome-comments",
+  "version": "1.0.0",
+  "private": true,
+  "engines": { "node": "24.x" },
+  "dependencies": { "@waline/vercel": "1.41.6" },
+  "overrides": { "jsdom": "26.1.0" }
+}

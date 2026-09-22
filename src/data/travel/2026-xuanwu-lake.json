@@ -1,0 +1,88 @@
+{
+  "slug": "2026-xuanwu-lake",
+  "title": "2026南京之春",
+  "date": "2026-03-09",
+  "location": "南京市玄武湖",
+  "text": "玄武湖之春盛大开幕",
+  "status": "published",
+  "recordId": "recvvR2U16x51O",
+  "assetFolder": "2026-xuanwu-lake",
+  "extension": "jpg",
+  "coverId": "05",
+  "coverCaption": "南京市玄武湖",
+  "endText": "玄武湖之春盛大开幕",
+  "photos": [
+    {
+      "id": "01",
+      "originalName": "3ed22f6370335676f7fb49186760c70c.jpg",
+      "alt": "玄武湖与春花拼图",
+      "width": 1080,
+      "height": 6335,
+      "collage": true
+    },
+    {
+      "id": "02",
+      "originalName": "83a65f6c03b961ddb2f13b9d4d08d732.jpg",
+      "alt": "湖畔风景拼图",
+      "width": 1080,
+      "height": 6335,
+      "collage": true
+    },
+    {
+      "id": "03",
+      "originalName": "d3557df821444800a5d54da05a1a1ee9.jpg",
+      "alt": "餐食拼图",
+      "width": 1080,
+      "height": 1920,
+      "collage": true
+    },
+    {
+      "id": "04",
+      "originalName": "77f2f948ea3aa752c30c8dfc155e6c20.jpg",
+      "alt": "白花上的蜜蜂",
+      "width": 1080,
+      "height": 1440,
+      "collage": false
+    },
+    {
+      "id": "05",
+      "originalName": "77d8e7149c68bdb1ceaa2b3f95c67a04.jpg",
+      "alt": "柳枝与湖面",
+      "width": 1440,
+      "height": 1080,
+      "collage": false
+    },
+    {
+      "id": "06",
+      "originalName": "c091aa6787a3d99e674db5c33a1904ce.jpg",
+      "alt": "粉色花枝",
+      "width": 1080,
+      "height": 1519,
+      "collage": false
+    },
+    {
+      "id": "07",
+      "originalName": "1ffa275049243721e2e86edc1254811f.jpg",
+      "alt": "盛开的粉色花朵",
+      "width": 1080,
+      "height": 1440,
+      "collage": false
+    },
+    {
+      "id": "08",
+      "originalName": "0066e441d5cea39f25fc1d584c70bddb.jpg",
+      "alt": "水族箱中的鱼",
+      "width": 1080,
+      "height": 1440,
+      "collage": false
+    },
+    {
+      "id": "09",
+      "originalName": "df309783321be5c2cade235b29328102.jpg",
+      "alt": "春日花丛",
+      "width": 1440,
+      "height": 1080,
+      "collage": false
+    }
+  ]
+}

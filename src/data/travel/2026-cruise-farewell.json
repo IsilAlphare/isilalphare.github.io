@@ -1,0 +1,88 @@
+{
+  "slug": "2026-cruise-farewell",
+  "title": "2026夏·海洋光谱号邮轮旅行",
+  "date": "2026-05-10",
+  "location": "皇家加勒比·海洋光谱号邮轮",
+  "text": "拜拜光谱号👋🏻\n转瞬即逝的五天四夜",
+  "status": "published",
+  "recordId": "recvvR1hunbovj",
+  "assetFolder": "2026-cruise-farewell",
+  "extension": "jpg",
+  "coverId": "09",
+  "coverCaption": "皇家加勒比·海洋光谱号邮轮",
+  "endText": "拜拜光谱号👋🏻\n转瞬即逝的五天四夜",
+  "photos": [
+    {
+      "id": "01",
+      "originalName": "d6345d6e83e02961ec0747d523391a28.jpg",
+      "alt": "邮轮餐食拼图",
+      "width": 1126,
+      "height": 8464,
+      "collage": true
+    },
+    {
+      "id": "02",
+      "originalName": "52009b1f7756d8ca2271a1b601936d6f.jpg",
+      "alt": "舞台演出拼图",
+      "width": 1440,
+      "height": 4994,
+      "collage": true
+    },
+    {
+      "id": "03",
+      "originalName": "cb3c347e4846866029368ad4bb8f9e10.jpg",
+      "alt": "甲板与人像拼图",
+      "width": 1440,
+      "height": 5804,
+      "collage": true
+    },
+    {
+      "id": "04",
+      "originalName": "1f5e10a06a8cd8943154a86eeb03d2d0.jpg",
+      "alt": "泳池与室内拼图",
+      "width": 1174,
+      "height": 7836,
+      "collage": true
+    },
+    {
+      "id": "05",
+      "originalName": "34c9ff540e00369da825418a8d323f1e.jpg",
+      "alt": "冲浪体验拼图",
+      "width": 1440,
+      "height": 1440,
+      "collage": true
+    },
+    {
+      "id": "06",
+      "originalName": "a26daa53d1b2bfa3ce90e0fc121fc5a2.jpg",
+      "alt": "邮轮细节拼图",
+      "width": 1440,
+      "height": 6031,
+      "collage": true
+    },
+    {
+      "id": "07",
+      "originalName": "500125660d1b624d67e1ae7e5d86351e.jpg",
+      "alt": "甲板与海景拼图",
+      "width": 1168,
+      "height": 7836,
+      "collage": true
+    },
+    {
+      "id": "08",
+      "originalName": "77d01c264039878b06bc9c82138a29a9.jpg",
+      "alt": "手持船卡与邮轮合影",
+      "width": 1440,
+      "height": 1080,
+      "collage": false
+    },
+    {
+      "id": "09",
+      "originalName": "59878580acfbc1c199e51e4f9448320f.jpg",
+      "alt": "海洋光谱号外观",
+      "width": 1440,
+      "height": 1080,
+      "collage": false
+    }
+  ]
+}

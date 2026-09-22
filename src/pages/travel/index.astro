@@ -1,0 +1,68 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import FlowingLabel from '../../components/FlowingLabel.astro';
+import { trips } from '../../data/travel';
+import type { ImageMetadata } from 'astro';
+const groups = [...new Set(trips.map(trip=>trip.title))].map(title=>({title,entries:trips.filter(trip=>trip.title===title)}));
+const images=import.meta.glob<{default:ImageMetadata}>('../../assets/travel/*/*.{webp,jpg}',{eager:true});
+---
+<BaseLayout title="旅途拾光 · Starry Dome" description="从朋友圈收下的旅行片段。">
+  <section class="page-hero">
+    <a class="article-back" href="/">← 回到首页</a>
+    <div class="travel-eyebrow"><FlowingLabel text="Collected Journeys" /></div>
+    <h1>旅途拾光</h1>
+    <p class="travel-verse">来日纵是千千阙歌，飘于远方我路上。<br />来日纵使千千晚星，亮过今晚月亮</p>
+    <nav aria-label="旅行分组">{groups.map((group,index)=><a href={`#journey-${index}`}>{group.title}</a>)}</nav>
+  </section>
+  <div class="content-section">
+    {groups.map((group,index)=><section class="journey-group" id={`journey-${index}`} aria-labelledby={`heading-${index}`}>
+      <header><span aria-hidden="true">✧</span><h2 id={`heading-${index}`}>{group.title}</h2><small>{group.entries.length} 则记忆</small></header>
+      <div class="journey-grid">{group.entries.slice(0, 1).map(trip=>{
+        const cover=(images[`../../assets/travel/${trip.assetFolder}/${trip.coverId}-thumb.${trip.extension}`] ?? images[`../../assets/travel/${trip.assetFolder}/${trip.coverId}.${trip.extension}`]).default;
+        return <a class="journey-card" href={`/travel/${trip.slug}/`}><img src={cover.src} alt={trip.photos.find(p=>p.id===trip.coverId)!.alt} width={cover.width} height={cover.height} loading="lazy"/><div class="journey-copy"><time datetime={trip.date}>{trip.date.replaceAll('-',' · ')}</time><h3>{trip.location}</h3><p>{trip.text.split('\n')[0]}</p><span class="journey-open">拾览 <b aria-hidden="true">✧</b></span></div></a>;
+      })}</div>
+      {group.entries.length > 1 && <details class="journey-more">
+        <summary><span class="when-closed">展开其余 {group.entries.length - 1} 则记忆</span><span class="when-open">收起记忆</span><b aria-hidden="true">✧</b></summary>
+      <div class="journey-grid">{group.entries.slice(1).map(trip=>{
+        const cover=(images[`../../assets/travel/${trip.assetFolder}/${trip.coverId}-thumb.${trip.extension}`] ?? images[`../../assets/travel/${trip.assetFolder}/${trip.coverId}.${trip.extension}`]).default;
+        return <a class="journey-card" href={`/travel/${trip.slug}/`}><img src={cover.src} alt={trip.photos.find(p=>p.id===trip.coverId)!.alt} width={cover.width} height={cover.height} loading="lazy"/><div class="journey-copy"><time datetime={trip.date}>{trip.date.replaceAll('-',' · ')}</time><h3>{trip.location}</h3><p>{trip.text.split('\n')[0]}</p><span class="journey-open">拾览 <b aria-hidden="true">✧</b></span></div></a>;
+      })}</div>
+      </details>}
+    </section>)}
+  </div>
+</BaseLayout>
+<style>
+  .page-hero .travel-verse { max-width: none; line-height: 2; }
+  .journey-more { margin-top: 22px; }
+  .journey-more summary { display: flex; align-items: center; gap: 18px; width: fit-content; cursor: pointer; list-style: none; color: #c3b494; font-size: 13px; padding: 10px 4px; }
+  .journey-more summary::-webkit-details-marker { display: none; }
+  .journey-more summary b { font-size: 24px; font-weight: 400; transition: transform .2s; }
+  .journey-more summary:focus-visible { outline: 2px solid var(--nebula-haze); outline-offset: 4px; border-radius: 8px; }
+  .journey-more .when-open, .journey-more[open] .when-closed { display: none; }
+  .journey-more[open] .when-open { display: inline; }
+  .journey-more[open] summary b { transform: rotate(45deg); }
+  .journey-more[open] .journey-grid { margin-top: 18px; }
+  .travel-eyebrow { display:flex; align-items:center; gap:24px; flex-wrap:wrap; margin:32px 0 20px; }
+  .travel-eyebrow > span { font-size:11px; color:var(--comet); }
+  .page-hero h1 { font-weight:400; letter-spacing:.06em; }
+  nav { display:flex; flex-wrap:wrap; gap:10px; margin-top:32px; }
+  nav a { padding:7px 14px; border:1px solid var(--crater-soft); border-radius:24px; font-size:12px; color:#bfb0c8; }
+  .journey-group { margin-bottom:64px; scroll-margin-top:30px; }
+  .journey-group header { display:flex; gap:18px; align-items:center; flex-wrap:wrap; border-bottom:1px solid var(--crater-soft); padding-bottom:20px; margin-bottom:24px; }
+  header > span { color:#c3afcb; font-size:25px; }
+  header h2 { font-size:clamp(22px,3vw,30px); font-weight:400; color:#e0d2bd; margin:0; }
+  header small { color:var(--comet); font-size:12px; }
+  .journey-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:24px; }
+  .journey-card { min-width:0; overflow:hidden; border-radius:22px 6px; border:1px solid var(--crater-soft); background:#17151dcc; transition:border-color .2s; }
+  .journey-card:hover { border-color:var(--nebula-haze); }
+  .journey-card img { display:block; width:100%; height:230px; object-fit:cover; }
+  .journey-copy { padding:24px; }
+  time { font-size:11px; letter-spacing:.1em; color:#ae9db9; }
+  h3 { font-size:19px; font-weight:400; line-height:1.7; color:#ded0bb; }
+  .journey-copy p { font-size:14px; color:var(--comet); line-height:1.9; }
+  .journey-open { display:flex; align-items:center; gap:20px; margin-top:28px; font-size:12px; color:#c3b494; }
+  .journey-open b { font-weight:400; font-size:24px; }
+  a:focus-visible { outline:2px solid var(--nebula-haze); outline-offset:4px; }
+  @media(max-width:900px) { .journey-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+  @media(max-width:580px) { .journey-grid { grid-template-columns:1fr; } }
+</style>

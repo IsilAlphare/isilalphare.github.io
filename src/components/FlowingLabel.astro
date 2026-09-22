@@ -1,0 +1,10 @@
+---
+interface Props { text: string; }
+const { text } = Astro.props;
+---
+<span class="flowing-label">{text}</span>
+<style>
+  .flowing-label { display: inline-block; padding: 8px 8px 12px 2px; font: 400 36px/1.3 'Great Vibes', 'Apple Chancery', 'URW Chancery L', cursive; color: #d6bdce; background: linear-gradient(110deg, #e6cba3 0%, #b4dcd7 25%, #c5afe8 48%, #edb9c7 72%, #e6cba3 100%); background-size: 250% 100%; background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: lettering-glow 14s ease-in-out infinite alternate; filter: drop-shadow(0 0 10px rgba(195,164,212,.15)); }
+  @keyframes lettering-glow { from { background-position: 0% 50%; } to { background-position: 100% 50%; } }
+  @media (prefers-reduced-motion: reduce) { .flowing-label { animation: none; } }
+</style>

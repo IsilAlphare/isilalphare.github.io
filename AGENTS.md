@@ -60,7 +60,7 @@ pnpm run preview
 pnpm run build
 ```
 
-成功构建时应看到约 26 个页面生成，且 `dist/CNAME` 存在。
+成功构建时应看到约 62 个页面生成，且 `dist/CNAME` 存在。
 
 ## 4. 目录结构
 
@@ -74,7 +74,9 @@ src/content/posts/                  Markdown 文章正文
 src/content.config.ts               Astro Content Collection schema
 src/data/site.ts                    站点标题、导航、slogan
 src/data/starfallLog.ts             逐星记时间线数据
-src/data/photos.ts                  照片墙数据
+src/data/travel.ts                  正式游记索引（仅 published）
+src/data/travel/                    游记 JSON
+src/assets/travel/                  游记照片与长卷缩略图
 src/data/collections.ts             收藏馆数据
 src/layouts/BaseLayout.astro        全站基础布局
 src/pages/                          页面路由
@@ -108,7 +110,7 @@ slug: article-slug
 约束来自 `src/content.config.ts`：
 
 - `category` 只能是 `技术札记`、`生活切片`、`拾光摘录`
-- `sourceDoc` 必须是合法 URL
+- `sourceDoc` 可省略；填写时必须是合法 URL
 - `slug` 决定最终访问路径：`/posts/<slug>/`
 
 新增文章步骤：
@@ -141,10 +143,11 @@ src/data/starfallLog.ts
 public/starfall/
 ```
 
-### 5.3 收藏馆与照片墙
+### 5.3 收藏馆与旅途拾光
 
 - 收藏馆：`src/data/collections.ts`
-- 照片墙：`src/data/photos.ts`
+- 旅途拾光：`src/data/travel/*.json`，由 `src/data/travel.ts` 收集 `published` 条目；图片在 `src/assets/travel/`。
+- 收集与维护流程见 `docs/travel-intake.md`，当前 13 篇已获用户确认转为正式内容。
 
 这两个页面目前是静态数据，不接数据库或外部 API。新增条目只需要改对应 TS 数据文件。
 
@@ -160,7 +163,9 @@ public/starfall/
 | `/posts/` | `src/pages/posts/index.astro` | 文章列表 |
 | `/posts/<slug>/` | `src/pages/posts/[slug].astro` | Markdown 文章详情 |
 | `/collections/` | `src/pages/collections.astro` | 收藏馆 |
-| `/photos/` | `src/pages/photos.astro` | 照片墙 |
+| `/travel/` | `src/pages/travel/index.astro` | 旅途拾光分组目录 |
+| `/travel/<slug>/` | `src/pages/travel/[slug].astro` | 游记详情 |
+| `/photos/` | `src/pages/photos.astro` | 兼容旧链接，跳转至旅途拾光 |
 
 另外有两个手写 Astro 文章页：
 
@@ -273,7 +278,7 @@ pnpm run build
 优先级较高的后续任务：
 
 1. 为旧 Hexo 链接增加重定向，避免历史分享链接失效。
-2. 把 `sourceDoc` 从必填改成可选，方便写原创本地文章。
+2. 原创写作流程见 `docs/writing-posts.md`，`sourceDoc` 已支持省略。
 3. 补齐更多逐星记事件的图片和详情文章。
 4. 为收藏馆接入更结构化的数据源。
 5. 给项目补一个面向普通访问者的 `README.md`。
