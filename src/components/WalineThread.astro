@@ -1,4 +1,5 @@
 ---
+import StarlightCount from './StarlightCount.astro';
 import { walineServerURL } from '../lib/comments';
 import '@waline/client/style';
 import '../styles/waline.css';
@@ -12,7 +13,7 @@ const Heading=publicBook?'h1':'h2';
     <span class="live-board-star" aria-hidden="true">✧</span>
     <div><p class="live-board-script">{publicBook?'Letters among the stars':'A little echo'}</p>
       <div class="live-title-row"><Heading id="comments-title">{publicBook?'星间来信':kind==='travel'?'旅途回声':'星下回声'}</Heading>
-      {publicBook && <span class="live-count">已有 <em data-starlight-count>…</em> 颗流星划过天幕</span>}</div>
+      {publicBook && <span class="live-count"><StarlightCount /></span>}</div>
       <p>{publicBook?'一颗流星曾路过这里':kind==='travel'?'在这段旅途的末尾，留下你的声音。':'读到这里，也留下你的声音。'}</p>
     </div>
   </header>
