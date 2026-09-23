@@ -22,7 +22,10 @@ const Heading=publicBook?'h1':'h2';
     <span>随信带来</span>
     {[['✧','星光'],['☾','月牙'],['❧','叶子'],['≈','海风']].map(([mark,label])=><button type="button" data-mark={mark} aria-label={'带来'+label}><b aria-hidden="true">{mark}</b>{label}</button>)}
   </div>
-  <div class="waline-thread"><p>正在展开信笺……</p></div>
+  <div class="waline-thread"><div class="letter-skeleton" role="status" aria-label="正在展开信笺">
+    <span class="skeleton-name" aria-hidden="true"></span><span class="skeleton-line" aria-hidden="true"></span><span class="skeleton-line short" aria-hidden="true"></span><span class="skeleton-send" aria-hidden="true"></span>
+    <p>正在展开信笺……</p>
+  </div></div>
   <noscript>请启用 JavaScript 查看与发送留言。</noscript>
   <a class="live-manage" href={walineServerURL+'/ui'} target="_blank" rel="noopener noreferrer">管理来信</a>
 </section>
@@ -76,3 +79,12 @@ const Heading=publicBook?'h1':'h2';
   }
   });
 </script>
+
+<style>
+.letter-skeleton{position:relative;min-height:270px;padding:24px;border:1px solid #bca5cc24;border-radius:8px 32px 8px 8px;background:#13111c55;overflow:hidden;}
+.letter-skeleton>span{display:block;border-radius:5px;background:linear-gradient(100deg,#bca5cc09,#bca5cc18,#bca5cc09);background-size:200% 100%;animation:letter-shimmer 2.4s ease-in-out infinite;}
+.skeleton-name{width:30%;height:18px;margin-bottom:32px;}.skeleton-line{width:85%;height:12px;margin-bottom:16px;}.skeleton-line.short{width:58%;}.skeleton-send{width:90px;height:32px;margin:40px 0 0 auto;}
+.letter-skeleton p{margin:14px 0 0;color:#a59aaf;font-size:12px;letter-spacing:.08em;}
+@keyframes letter-shimmer{to{background-position:-200% 0;}}
+@media(prefers-reduced-motion:reduce){.letter-skeleton>span{animation:none;}}
+</style>

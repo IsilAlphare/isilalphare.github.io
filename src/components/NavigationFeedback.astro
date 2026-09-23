@@ -1,0 +1,40 @@
+<div class="navigation-feedback" transition:persist="navigation-feedback" hidden aria-live="polite" role="status">
+  <span class="navigation-trail" aria-hidden="true"></span>
+  <span class="navigation-message"><span aria-hidden="true">✧</span> <span data-navigation-label></span></span>
+</div>
+<script>
+  import { createNavigationFeedback } from '../lib/navigationFeedback.mjs';
+  import type { TransitionBeforePreparationEvent } from 'astro:transitions/client';
+  const feedback = createNavigationFeedback({
+    show: ({ label, slow }: { label: string; slow: boolean }) => {
+      const node = document.querySelector<HTMLElement>('.navigation-feedback');
+      if (!node) return;
+      node.hidden = false;
+      node.querySelector('[data-navigation-label]')!.textContent = slow
+        ? '这段路有些慢，仍在加载…' : `正在前往${label}…`;
+    },
+    hide: () => {
+      const node = document.querySelector<HTMLElement>('.navigation-feedback');
+      if (node) node.hidden = true;
+    },
+  });
+  document.addEventListener('astro:before-preparation', (event) => {
+    const navigation = event as TransitionBeforePreparationEvent;
+    const target = [...document.querySelectorAll<HTMLAnchorElement>('.site-nav a')]
+      .find(link => new URL(link.href).pathname === navigation.to.pathname);
+    feedback.start(target?.textContent?.trim() || '下一页', navigation.signal);
+  });
+  // The new DOM is usable now; images and comments may keep loading independently.
+  document.addEventListener('astro:after-swap', feedback.finish);
+  window.addEventListener('pageshow', feedback.finish);
+</script>
+<style>
+.navigation-feedback[hidden]{display:none;}
+.navigation-feedback{position:fixed;inset:0 0 auto;z-index:100;pointer-events:none;color:#e8dfc4;}
+.navigation-trail{display:block;height:2px;background:linear-gradient(90deg,transparent,#9b7fd4 30%,#e8dfc4 55%,#7fb2e5 75%,transparent);background-size:200% 100%;animation:navigation-glimmer 2s linear infinite;box-shadow:0 0 10px #bca4dd66;}
+.navigation-message{position:absolute;top:max(12px,env(safe-area-inset-top));left:50%;transform:translateX(-50%);max-width:calc(100vw - 32px);padding:8px 16px;border-radius:24px;background:#13111ced;border:1px solid #bca4dd30;box-shadow:0 4px 24px #0003;font-size:12px;letter-spacing:.08em;white-space:nowrap;animation:navigation-message-in .2s .2s both;}
+.navigation-message>span:first-child{color:#b8cde5;margin-right:5px;}
+@keyframes navigation-glimmer{to{background-position:-200% 0;}}
+@keyframes navigation-message-in{from{opacity:0;}to{opacity:1;}}
+@media(prefers-reduced-motion:reduce){.navigation-trail,.navigation-message{animation:none;}}
+</style>
