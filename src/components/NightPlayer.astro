@@ -1,4 +1,4 @@
-<aside transition:persist="night-player" class="night-player" hidden aria-label="夜航播放器">
+<aside class="night-player" hidden aria-label="夜航播放器">
   <svg class="player-stardust" viewBox="0 0 460 130" preserveAspectRatio="none" aria-hidden="true"><path d="M302 16l2 5 5 2-5 2-2 5-2-5-5-2 5-2Z M388 54l1.5 4 4 1.5-4 1.5-1.5 4-1.5-4-4-1.5 4-1.5Z"/><circle cx="225" cy="13" r="1"/><circle cx="350" cy="38" r="1.2"/><circle cx="420" cy="22" r=".8"/><circle cx="270" cy="45" r=".7"/><path class="star-thread" d="M180 5Q275 55 440 10"/></svg>
   <div class="player-caption"><span class="player-star" aria-hidden="true"><svg viewBox="0 0 44 44"><defs><linearGradient id="player-prism" x2="1" y2="1"><stop stop-color="#f2dfad"/><stop offset=".45" stop-color="#d2b9ed"/><stop offset="1" stop-color="#8bc9d0"/></linearGradient></defs><path d="M22 3Q24 19 39 22Q24 25 22 41Q20 25 5 22Q20 19 22 3Z" fill="url(#player-prism)"/><path d="M22 3V41M5 22H39" stroke="#faf0d5" stroke-width=".5" opacity=".65"/></svg></span><div><strong data-player-title></strong><small data-player-artists></small></div><button type="button" class="player-close" aria-label="关闭播放器">×</button></div>
   <audio controls preload="none" aria-label="歌曲播放控制"></audio>
@@ -18,7 +18,6 @@
         button.setAttribute('aria-pressed',String(playing && button.dataset.songId===activeId));
       });
     }
-    document.addEventListener('astro:page-load',()=>highlight(!audio.paused));
     function failed(){
       clearTimeout(timeout);audio.pause();highlight(false);
       status.textContent='这首歌暂时无法播放，换一首听听吧。';

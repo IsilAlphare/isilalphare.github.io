@@ -28,7 +28,7 @@ const categoryCards = postCategories.map((category) => ({
   <section class="section hero">
     <div>
       <div class="home-wordmark">
-        <p class="wordmark-kicker"><span aria-hidden="true">✧</span> 星空穹庐</p>
+        <p class="wordmark-kicker"><span class="wordmark-zh-star" aria-hidden="true">✧</span><span class="wordmark-zh">星空穹庐</span></p>
         <h1 aria-label="Starry Dome"><span class="wordmark-script">Starry</span><span class="wordmark-serif">Dome<span class="title-star" aria-hidden="true">✧</span></span></h1>
         <div class="wordmark-rule" aria-hidden="true"><span></span>✦<span></span></div>
       </div>
@@ -139,9 +139,11 @@ const categoryCards = postCategories.map((category) => ({
 
 <style>
   .home-wordmark { position: relative; padding: 6px 0; }
-  .wordmark-kicker { display: flex; align-items: center; gap: 16px; color: #bcb0c9; letter-spacing: .36em; font-size: 12px; margin: 0 0 28px; }
-  .wordmark-kicker > span { font-size: 22px; color: #cfbc9b; }
-  .hero .home-wordmark h1 { font-weight: 400; letter-spacing: 0; line-height: 1; padding: 0 12px; }
+  .wordmark-kicker { display: flex; align-items: center; gap: 18px; margin: 0 0 24px; }
+  .wordmark-zh-star { font-size: 28px; color: #b9c9d0; text-shadow: 0 0 14px #b6a3d74d; }
+  .wordmark-zh { position: relative; font-family: 'Songti SC', 'STSong', 'Noto Serif CJK SC', serif; font-size: clamp(30px, 3.7vw, 48px); font-weight: 500; line-height: 1.65; letter-spacing: .14em; color: #ddd0e4; background: linear-gradient(115deg, #dfc397 5%, #b0d9d3 28%, #c4afe2 50%, #dfaebf 72%, #e6d6b1 95%); background-size: 220% 100%; background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 16px #ad8ed326); animation: title-shimmer 16s ease-in-out infinite alternate; }
+
+  .hero .home-wordmark h1 { font-weight: 400; letter-spacing: 0; line-height: 1; padding: 0 12px; margin-left: clamp(48px, 6vw, 88px); }
   .hero h1 .wordmark-script { font-family: 'Great Vibes', 'Apple Chancery', cursive; font-size: clamp(76px, 10vw, 136px); line-height: 1.25; padding-right: 24px; color: #ddc9d8; background: linear-gradient(115deg,#f0dab4 10%,#c4e3dc 32%,#cbb8e8 58%,#e7bbc8 78%,#f0dab4); background-size: 220% 100%; background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: title-shimmer 20s ease-in-out infinite alternate; }
   .hero h1 .wordmark-serif { position: relative; display: inline-block; margin: -13px 0 0 55px; font-family: 'Cormorant Garamond', Georgia, serif; font-size: clamp(72px, 9vw, 120px); line-height: 1.05; letter-spacing: .03em; color: #e5dccd; }
   .hero h1 .title-star { display: inline-block; position: absolute; top: 5px; right: -38px; font: 400 27px/1 Georgia,serif; color: #b5cbd2; }
@@ -153,9 +155,10 @@ const categoryCards = postCategories.map((category) => ({
     .hero h1 .wordmark-script { font-size: clamp(76px,20vw,116px); }
     .hero h1 .wordmark-serif { font-size: clamp(72px,19vw,108px); margin-left: 38px; }
     .wordmark-kicker { margin-bottom: 16px; }
+    .hero .home-wordmark h1 { margin-left: clamp(28px, 8vw, 48px); }
     .wordmark-rule { max-width: 270px; }
   }
-  @media (prefers-reduced-motion: reduce) { .hero h1 .wordmark-script { animation: none; } }
+  @media (prefers-reduced-motion: reduce) { .hero h1 .wordmark-script, .wordmark-zh { animation: none; } }
 </style>
 
 <style>
