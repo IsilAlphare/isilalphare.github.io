@@ -9,7 +9,14 @@
 .live-notice{font-size:11px;line-height:1.9;color:#a497af;}
 .live-marks{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:22px 0 15px;font-size:11px;color:#a798b3;}.live-marks button{border:1px solid #bca5cc35;border-radius:12px 3px;background:#bca5cc08;padding:8px 12px;color:#c6b8d2;cursor:pointer;font:inherit;}.live-marks b{font-size:20px;font-weight:400;margin-right:7px;color:#d3c6ab;}
 .live-letter-board .wl-panel{padding:22px;background:linear-gradient(135deg,#ae8ecd0b,transparent),#13101a80;border-radius:3px 24px 3px 3px;outline:1px solid #bca5cc18;outline-offset:-7px;box-shadow:none;}
-.live-letter-board .wl-header{border-bottom:1px solid #bda3cf25;}
+.live-letter-board .wl-header{border-bottom:1px solid #bda3cf25;padding:0 0 18px;margin-bottom:8px;}
+.live-letter-board .wl-header-item{flex-direction:column;gap:9px;min-width:0;}
+.live-letter-board .wl-header label{display:none;}
+.live-letter-board .wl-header input{box-sizing:border-box;flex:none;width:100%;max-width:260px;min-height:36px;padding:7px 11px;border:1px solid #bda3cf55;border-radius:8px 14px 8px 8px;background:#bca5cc09;color:#e2d7e9;font-size:13px;line-height:1.5;transition:border-color .2s,background .2s;}
+.live-letter-board .wl-header input::placeholder{color:#a99cb5;opacity:1;font-size:12px;}
+.live-letter-board .wl-header input:hover{border-color:#bda3cf88;}
+.live-letter-board .wl-header input:focus{border-color:#c8aee0;background:#bca5cc12;}
+
 .live-letter-board .wl-editor{min-height:130px;line-height:1.9;color:#ddd0e4;}
 .live-letter-board .wl-btn{border-radius:18px 5px;padding:9px 17px;}.live-letter-board .wl-btn.primary{background:#9b7fd420;color:#e2d3bc;border-color:#bba1cd60;}
 .live-letter-board .wl-card{border-bottom:0;padding:22px 25px;margin-bottom:18px;border:1px solid #c5b3cd25;border-radius:3px 16px 3px 3px;background:linear-gradient(135deg,#be9ed20b,#0e0c1566);}
@@ -17,7 +24,18 @@
 .live-letter-board .wl-content{font-size:14px;line-height:2.1;color:#cec3d6;overflow-wrap:anywhere;}
 .live-letter-board .wl-nick{font-size:13px;color:#ded2e5;}.live-letter-board .wl-badge{border-color:#c8b59650;color:#c1ad91;}.live-letter-board .wl-meta{color:#a192ab;}
 .live-letter-board .wl-sort{font-size:11px;}.live-letter-board .wl-count{font-size:13px;letter-spacing:.1em;}.live-letter-board .wl-footer{margin:35px 0 20px;}
-.live-letter-board .wl-avatar{display:none;}
+.live-letter-board .wl-comment{flex-wrap:wrap;}
+ .live-letter-board .wl-login-info{position:relative;display:block;flex:0 0 100%;max-width:none;margin:0 0 8px;text-align:left;}
+.live-letter-board .wl-login-info>.wl-login-nick{display:inline-flex;align-items:center;gap:8px;padding:8px 4px;font-size:13px;font-weight:500;color:#c7b9d3;text-decoration:none;}
+.live-letter-board .wl-login-info>.wl-login-nick::after{content:'⌄';font-size:12px;color:#9f91ad;}
+.live-letter-board .wl-login-info .wl-avatar{display:none;position:absolute;z-index:5;left:0;top:100%;width:140px;height:auto;margin:0;padding:6px;border:1px solid #bda3cf35;border-radius:12px;background:#1a1623f5;box-shadow:0 10px 28px #0005;backdrop-filter:blur(14px);}
+.live-letter-board .wl-login-info.identity-open .wl-avatar{display:grid;gap:2px;}
+.live-letter-board .wl-avatar>.wl-login-nick{display:none;}
+.live-letter-board :is(.wl-logout-btn,.identity-switch){position:static;display:flex;align-items:center;justify-content:flex-start;width:100%;min-height:38px;padding:8px 12px;border:0;border-radius:7px;color:#c5b8d0;background:transparent;font-size:12px;line-height:1.5;cursor:pointer;}
+.live-letter-board .wl-logout-btn svg{display:none;}
+.live-letter-board .wl-logout-btn::after{content:'退出登录';}
+.live-letter-board :is(.wl-logout-btn,.identity-switch):hover{background:#bca5cc14;color:#e2d7e9;}
+
 .live-manage{display:block;width:fit-content;margin:25px auto;color:#a798b3;font-size:11px;}
 @media(max-width:600px){
   .live-marks{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;}
@@ -45,10 +63,15 @@
   .live-letter-board .wl-login-nick{word-break:normal;}
   .live-letter-board .wl-login-nick img{width:28px;height:28px;}
   .live-letter-board .wl-panel{width:100%;box-sizing:border-box;}
-  .live-letter-board .wl-cards .wl-user{display:none;}
+  .live-letter-board .wl-cards .wl-user{display:block;--avatar-size:28px;margin-inline-end:8px;}
   .live-letter-board .wl-card-item{padding:0;}
   .live-letter-board .wl-card:first-child{margin-inline-start:0;}
   .live-letter-board .wl-quote{padding-left:10px;}
   .live-letter-board .wl-quote .wl-card{padding:14px 10px;}
   .live-letter-board .wl-comment-actions{float:none;display:flex;gap:8px;flex-wrap:wrap;margin:10px 0;}
 }
+
+.live-letter-board .wl-cards .wl-user{--avatar-size:34px;flex:none;}
+.live-letter-board .wl-cards .wl-user-avatar{object-fit:cover;border:1px solid #bda3cf30;background:#17131f;box-sizing:border-box;}
+.live-letter-board .wl-login-info>.wl-login-nick .identity-avatar{width:26px;height:26px;border-radius:50%;object-fit:cover;border:1px solid #bda3cf30;background:#17131f;}
+@media(max-width:600px){.live-letter-board .wl-cards .wl-user{--avatar-size:28px;}.live-letter-board .wl-quote .wl-user{--avatar-size:24px;}}

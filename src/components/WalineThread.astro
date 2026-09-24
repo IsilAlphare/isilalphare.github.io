@@ -45,15 +45,68 @@ const Heading=publicBook?'h1':'h2';
         lang:'zh-CN',dark:true,meta:['nick'],requiredMeta:[],login:'enable',
         wordLimit:520,pageSize:10,emoji:false,search:false,imageUploader:false,
         texRenderer:false,highlighter:false,reaction:false,pageview:false,
-        locale:{nick:'怎么称呼你',anonymous:'路过的朋友',placeholder:'留下此刻想到的事……',
+        locale:{nick:'昵称',anonymous:'路过的朋友',placeholder:'留下此刻想到的事……',
           submit:'寄出这封信',comment:'过往的信件',sofa:'第一封来信，正等着你。',
-          admin:'穹庐主人',reply:'回复',login:'登录',commentUnderReview:'来信已收到，等待展示。'}
+          admin:'穹庐主人',reply:'回复',login:'登录',logout:'退出登录',commentUnderReview:'来信已收到，等待展示。'}
       });
       cleanup(()=>instance?.destroy());
       return instance;
     }).catch(()=>{mount.textContent='信笺暂时未能展开，请刷新页面重试。';});
     function editor(){return mount.querySelector<HTMLTextAreaElement>('textarea');}
+    let focusIdentity=false;
+    function closeIdentityMenus(){
+      mount.querySelectorAll<HTMLElement>('.wl-login-info').forEach(info=>{
+        info.classList.remove('identity-open');
+        info.querySelector('.wl-login-nick')?.setAttribute('aria-expanded','false');
+      });
+    }
+    mount.addEventListener('click',(event)=>{
+      const target=event.target as HTMLElement;
+      const info=target.closest<HTMLElement>('.wl-login-info');
+      const nick=target.closest('.wl-login-info > .wl-login-nick');
+      if(nick && info){
+        event.preventDefault();event.stopImmediatePropagation();
+        const open=info.classList.toggle('identity-open');
+        nick.setAttribute('aria-expanded',String(open));
+      }
+    },{capture:true,signal});
+    document.addEventListener('click',(event)=>{
+      if(!(event.target as HTMLElement).closest('.wl-login-info'))closeIdentityMenus();
+    },{signal});
+    mount.addEventListener('keydown',(event)=>{
+      if(event.key==='Escape'){closeIdentityMenus();mount.querySelector<HTMLElement>('.wl-login-info > .wl-login-nick')?.focus();}
+      if(event.key===' ' && (event.target as HTMLElement).matches('.wl-login-info > .wl-login-nick')){
+        event.preventDefault();(event.target as HTMLElement).click();
+      }
+    },{signal});
     const observer=new MutationObserver(()=>{
+      mount.querySelectorAll<HTMLElement>('.wl-login-info').forEach(info=>{
+        const nick=info.querySelector<HTMLElement>(':scope > .wl-login-nick');
+        if(nick && !nick.hasAttribute('aria-expanded')){
+          nick.setAttribute('role','button');nick.setAttribute('aria-expanded','false');
+          nick.setAttribute('aria-label',`切换或退出：${nick.textContent}`);nick.title='管理留言身份';
+        }
+        const sourceAvatar=info.querySelector<HTMLImageElement>('.wl-avatar img');
+        if(nick && sourceAvatar && !nick.querySelector('.identity-avatar')){
+          const avatar=sourceAvatar.cloneNode(true) as HTMLImageElement;
+          avatar.className='identity-avatar';avatar.alt='';
+          nick.prepend(avatar);
+        }
+        const menu=info.querySelector<HTMLElement>('.wl-avatar');
+        const logout=menu?.querySelector<HTMLButtonElement>('.wl-logout-btn');
+        if(menu && logout && !menu.querySelector('.identity-switch')){
+          const change=document.createElement('button');change.type='button';change.className='identity-switch';change.textContent='切换身份';
+          change.addEventListener('click',()=>{focusIdentity=true;logout.click();},{signal});
+          menu.prepend(change);
+        }
+      });
+      const nickname=mount.querySelector<HTMLInputElement>('#wl-nick');
+      if(nickname){
+        nickname.placeholder='怎么称呼你？（填写昵称）';
+        nickname.setAttribute('aria-label','昵称（选填）');
+        nickname.autocomplete='nickname';
+        if(focusIdentity){focusIdentity=false;nickname.focus({preventScroll:true});}
+      }
       const input=editor();
       if(input){input.id='comment-message';input.setAttribute('aria-label','想留下的话');}
     });

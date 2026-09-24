@@ -1,5 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
+import { sortCategoriesByLatestPost } from '../../lib/postCategoryOrder.mjs';
 import FlowingLabel from '../../components/FlowingLabel.astro';
 import CelestialMotif from '../../components/CelestialMotif.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
@@ -9,10 +10,10 @@ const posts = (await getCollection('posts')).sort(
   (a, b) => b.data.date.getTime() - a.data.date.getTime(),
 );
 
-const categoryGroups = postCategories.map((category) => ({
+const categoryGroups = sortCategoriesByLatestPost(postCategories.map((category) => ({
   ...category,
   posts: posts.filter((post) => post.data.category === category.title),
-}));
+})));
 
 const formatDate = (date: Date) => date.toLocaleDateString('zh-CN', {
   year: 'numeric',
@@ -28,12 +29,12 @@ const formatDate = (date: Date) => date.toLocaleDateString('zh-CN', {
   </section>
   <section class="content-section">
     <div class="article-category-list">
-      {categoryGroups.map((category, index) => (
+      {categoryGroups.map((category) => (
         <section class="article-category panel" id={category.key} style="scroll-margin-top: 110px;">
           <header class="article-category-header">
-            <div class="archive-motif"><CelestialMotif variant={["astrolabe", "leaf", "prism"][index]} size={90} /></div>
+            <div class="archive-motif"><CelestialMotif variant={category.key === "tech" ? "astrolabe" : category.key === "life" ? "leaf" : "prism"} size={90} /></div>
             <div>
-              <div class="archive-label"><FlowingLabel text={["Craft", "Living", "Echoes"][index]} /><span>{category.posts.length} 篇</span></div>
+              <div class="archive-label"><FlowingLabel text={category.key === "tech" ? "Craft" : category.key === "life" ? "Living" : "Echoes"} /><span>{category.posts.length} 篇</span></div>
               <h2>{category.title}</h2>
               <p>{category.subtitle}</p>
             </div>

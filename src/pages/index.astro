@@ -1,5 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
+import { sortCategoriesByLatestPost } from '../lib/postCategoryOrder.mjs';
 import DomeObservatory from '../components/DomeObservatory.astro';
 import CelestialMotif from '../components/CelestialMotif.astro';
 import FlowingLabel from '../components/FlowingLabel.astro';
@@ -18,11 +19,11 @@ const allPosts = (await getCollection('posts')).sort(
   (a, b) => b.data.date.getTime() - a.data.date.getTime(),
 );
 const categoryEmblems: Record<string, { variant: string; label: string }> = { tech: { variant: 'astrolabe', label: 'Craft' }, life: { variant: 'leaf', label: 'Living' }, echo: { variant: 'prism', label: 'Echoes' } };
-const categoryCards = postCategories.map((category) => ({
+const categoryCards = sortCategoriesByLatestPost(postCategories.map((category) => ({
   ...category,
   posts: allPosts.filter((post) => post.data.category === category.title).slice(0, 3),
   count: allPosts.filter((post) => post.data.category === category.title).length,
-}));
+})));
 ---
 <BaseLayout title={site.title} description={site.description}>
   <section class="section hero">

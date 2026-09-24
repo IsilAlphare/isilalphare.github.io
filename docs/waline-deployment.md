@@ -113,3 +113,10 @@ GitHub 仓库 Actions variable 同名 PUBLIC_WALINE_SERVER_URL 已设置为上�
 ### 新域名发布准备
 
 GitHub 仓库变量 `PUBLIC_WALINE_SERVER_URL` 已改为 `https://comments.starrydome.top`，本地开发配置同步更新。此次发布包含立即点亮反馈和计数缓存；`blog-building-3.md` 草稿保持本地未跟踪，不纳入提交。新域名评论 POST 跨域预检已返回 204，未实际发送测试评论。
+
+## 2026-09-24 后台登录来源白名单修复
+
+- 根因：独立评论域名未加入 index.cjs 的 secureDomains，来自后台自身的请求被拒绝（403），博客来源请求仍成功。
+- 已精确加入 comments.starrydome.top，保留其他来源限制；Vercel Production 部署 dpl_B13tznJk3bHPfDMy2gsWFcmPG6o9 已 Ready，并绑定该域名。
+- 验证：后台及博客来源的评论只读请求均 HTTP 200 / errno 0；不可信来源仍 403。登录 POST 和找回密码 PUT 的空字段请求均进入参数校验（errno 1001），不再被来源拦截。
+- 未尝试用户密码、未发送重置邮件、未改动账号。真实登录及重置邮件送达待用户验证。管理员昵称 IsilAlphare 已知，但不能将通知邮箱直接认定为注册邮箱。
